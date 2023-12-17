@@ -1,0 +1,132 @@
+.header {
+  background-color: var(--white);
+  box-shadow: 0px 4px 4px rgba(var(--dark-rgb) / 0.06);
+}
+
+.header .search-and-input-wrapper {
+  background-color: #f3f3f3;
+}
+
+.auth {
+  margin-top: var(--header-height);
+}
+
+.auth__inner {
+  border-color: #542e7c !important;
+  border-radius: 37px;
+}
+
+.auth__inner__form {
+  border-radius: 37px;
+  background-color: #fefbff;
+  padding: 40px 60px;
+}
+
+@media (max-width: 991px) {
+  .auth__inner__form {
+    padding: 20px;
+  }
+}
+
+.auth-title {
+  font-weight: 700;
+  color: var(--primary);
+  padding-bottom: 29px;
+  position: relative;
+  margin-bottom: var(--space-xl);
+}
+
+.auth-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 120px;
+  background-color: var(--primary);
+}
+
+.auth-title:lang(ar):after {
+  right: 0;
+}
+
+.auth__inner__form .my-input-container {
+  height: 60px;
+}
+
+.auth__inner__form__divider {
+  color: var(--gray);
+  font-weight: 400;
+  z-index: 1;
+  margin-bottom: 13px;
+}
+
+.auth__inner__form__divider span {
+  background: #fefbff;
+  position: relative;
+  padding: 0 10px;
+}
+
+.auth__inner__form__divider::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: rgba(var(--dark-rgb) / 0.15);
+  z-index: -1;
+}
+
+.auth__inner__form__auth-list {
+}
+
+.auth__inner__form__auth-list__btn {
+  background: var(--white);
+  border: 1px solid #eaeaea;
+  border-radius: 9px;
+  width: 50px;
+  height: 50px;
+  padding: .5rem;
+}
+
+.auth__inner__form__submit {
+  margin-top: var(--space-xl);
+  min-width: 240px;
+  margin-bottom: var(--space-sm);
+}
+
+.auth__inner__form__note {
+  color: var(--dark);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.auth__inner__form__note a {
+  color: var(--primary);
+}
+
+.auth__inner_img {
+  border-radius: 37px;
+  padding: 40px 60px;
+}
+
+@media (max-width: 991px) {
+  .auth__inner_img {
+    padding: 20px;
+  }
+}
+
+.auth__inner__img__title {
+  line-height: 60px;
+  margin-bottom: var(--space-md);
+}
+
+.auth__inner__img__title span {
+  color: #df5a35;
+}
+
+.auth-login .auth__inner_img img {
+  max-width: 350px;
+}

@@ -1,0 +1,45 @@
+<?php
+
+return array (
+  'alert' => 
+  array (
+    'updated-success' => 'The sitemap setting updated successfully.',
+  ),
+  'disable' => 'Disable',
+  'edit-sitemap-setting' => 'Edit Sitemap Setting',
+  'edit-sitemap-setting-desc' => 'This page allows you to edit a sitemap setting. You can enable or disable sitemaps for each of the sections of the website, you can also set specific values of each sitemap.',
+  'enable' => 'Enable',
+  'not-show' => 'Not show',
+  'seo' => 
+  array (
+    'edit-sitemap' => 'Dashboard - Edit Sitemap Setting - :site_name',
+  ),
+  'show' => 'Show',
+  'show-in-footer' => 'Show Sitemap in Footer',
+  'sitemap' => 'Sitemap',
+  'sitemap-category' => 'Category',
+  'sitemap-format' => 'Format',
+  'sitemap-format-html' => 'html',
+  'sitemap-format-ror-rdf' => 'ror-rdf',
+  'sitemap-format-ror-rss' => 'ror-rss',
+  'sitemap-format-txt' => 'txt',
+  'sitemap-format-xml' => 'xml',
+  'sitemap-frequency' => 'Frequency',
+  'sitemap-frequency-always' => 'Always',
+  'sitemap-frequency-daily' => 'Daily',
+  'sitemap-frequency-hourly' => 'Hourly',
+  'sitemap-frequency-monthly' => 'Monthly',
+  'sitemap-frequency-never' => 'Never',
+  'sitemap-frequency-weekly' => 'Weekly',
+  'sitemap-frequency-yearly' => 'Yearly',
+  'sitemap-include' => 'Included',
+  'sitemap-include-to-index' => 'Include in Index',
+  'sitemap-index' => 'Sitemap Index',
+  'sitemap-listing' => 'Listing',
+  'sitemap-not-include' => 'Not Include',
+  'sitemap-page' => 'Page',
+  'sitemap-post' => 'Post',
+  'sitemap-status' => 'Status',
+  'sitemap-tag' => 'Tag',
+  'sitemap-topic' => 'Topic',
+);

@@ -1,0 +1,45 @@
+<?php
+
+return array (
+  'alert' => 
+  array (
+    'updated-success' => 'تم تحديث إعداد خريطة الموقع بنجاح.',
+  ),
+  'disable' => 'تعطيل',
+  'edit-sitemap-setting' => 'تحرير إعداد خريطة الموقع',
+  'edit-sitemap-setting-desc' => 'تسمح لك هذه الصفحة بتحرير إعداد خريطة الموقع. يمكنك تمكين أو تعطيل خرائط المواقع لكل قسم من أقسام موقع الويب ، كما يمكنك تعيين قيم محددة لكل خريطة موقع.',
+  'enable' => 'ممكن',
+  'not-show' => 'لا تظهر',
+  'seo' => 
+  array (
+    'edit-sitemap' => 'لوحة المعلومات - تحرير إعداد خريطة الموقع - :site_name',
+  ),
+  'show' => 'تبين',
+  'show-in-footer' => 'إظهار خريطة الموقع في التذييل',
+  'sitemap' => 'خريطة الموقع',
+  'sitemap-category' => 'الفئة',
+  'sitemap-format' => 'شكل',
+  'sitemap-format-html' => 'لغة البرمجة',
+  'sitemap-format-ror-rdf' => 'ror-rdf',
+  'sitemap-format-ror-rss' => 'ror-rss',
+  'sitemap-format-txt' => 'رسالة قصيرة',
+  'sitemap-format-xml' => 'xml',
+  'sitemap-frequency' => 'تكرر',
+  'sitemap-frequency-always' => 'دائما',
+  'sitemap-frequency-daily' => 'اليومي',
+  'sitemap-frequency-hourly' => 'ساعيا',
+  'sitemap-frequency-monthly' => 'شهريا',
+  'sitemap-frequency-never' => 'أبدا',
+  'sitemap-frequency-weekly' => 'أسبوعي',
+  'sitemap-frequency-yearly' => 'سنوي',
+  'sitemap-include' => 'متضمن',
+  'sitemap-include-to-index' => 'تضمين في الفهرس',
+  'sitemap-index' => 'فهرس خريطة الموقع',
+  'sitemap-listing' => 'قائمة',
+  'sitemap-not-include' => 'لا يتضمن',
+  'sitemap-page' => 'الصفحة',
+  'sitemap-post' => 'بريد',
+  'sitemap-status' => 'الحالة',
+  'sitemap-tag' => 'بطاقة شعار',
+  'sitemap-topic' => 'موضوع',
+);
