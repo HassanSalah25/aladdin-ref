@@ -222,26 +222,40 @@ $(document).ready(function () {
 
     $(document).on('click', function (e) {
         var selectSearchList = $('.select-searchautocomplete-list');
-
+        var select_search = $('.select-search');
         // Check if the click target is not inside select-searchautocomplete-list
-        if (!selectSearchList.is(e.target) && selectSearchList.has(e.target).length === 0) {
+        if (
+
+            !(!select_search.is(e.target) && select_search.has(e.target).length === 0)
+        ) {
             // Clear the content of select-searchautocomplete-list
 
             selectSearchList.empty();
+            selectSearchList.append('<div class="city" style="display:block;padding: 10px;color: black;cursor: pointer" > بالقرب مني</div>');
+            $(this).attr('name', 'filter_sort_by');
         } else {
             $('.select-search').attr('name', $(event.target).attr('name'));
             $('.select-search').val($(event.target).text());
             selectSearchList.empty();
         }
+       /* if (!select_search.is(e.target) && select_search.has(e.target).length === 0)
+        {
+            var select_search = $(this);
+            var resultsContainer = select_search.parent().find('.select-searchautocomplete-list');
+            resultsContainer.empty();
+            resultsContainer.append('<div class="city" style="display:block;padding: 10px;color: black" > بالقرب مني</div>');
+            $(this).attr('name', 'filter_sort_by');
+        }*/
     });
 
 
 
-    $('.select-search').on('click', function () {
+    $('.select-search').on('input', function () {
         var select_search = $(this);
         var self = this;
+
         if ($(this).val() === '') {
-            var resultsContainer = $('.select-searchautocomplete-list');
+            var resultsContainer = select_search.parent().find('.select-searchautocomplete-list');
             resultsContainer.empty();
             resultsContainer.append('<div class="city" style="display:block;padding: 10px;color: black" > بالقرب مني</div>');
             $(this).attr('name', 'filter_sort_by');
@@ -253,18 +267,18 @@ $(document).ready(function () {
                 type: "GET",
                 data: {query: query},
                 success: function (response) {
-                    var resultsContainer = $('.select-searchautocomplete-list');
+                    var resultsContainer = select_search.parent().find('.select-searchautocomplete-list');
                     resultsContainer.empty();
                     if (response['states'].length > 0) {
                         resultsContainer.append('<div style="display:block;padding: 10px;color:  gray">المحافظات</div>');
                         $.each(response['states'], function (index, result) {
-                            resultsContainer.append('<div name="search_state" style="display:block;padding: 10px;color: black" href="/category/' + result['id'] + '/البحث">' + result['state_name'] + '</div>');
+                            resultsContainer.append('<div name="search_state" style="display:block;cursor: pointer;padding: 10px;color: black" href="/category/' + result['id'] + '/البحث">' + result['state_name'] + '</div>');
                         });
                     }
                     if (response['cities'].length > 0) {
                         resultsContainer.append('<div style="display:block;padding: 10px;color:  gray">الاحياء</div>');
                         $.each(response['cities'], function (index, result) {
-                            resultsContainer.append('<div name="search_city" style="display:block;padding: 10px;color: black" href="/category/' + result['id'] + '/البحث">' + result['city_name'] + '</div>');
+                            resultsContainer.append('<div name="search_city" style="display:block;cursor: pointer;padding: 10px;color: black" href="/category/' + result['id'] + '/البحث">' + result['city_name'] + '</div>');
                         });
                     } else {
                         resultsContainer.append('<p>No results found.</p>');
@@ -272,7 +286,7 @@ $(document).ready(function () {
                 }
             });
             setTimeout(function () {
-                if (select_search.val() === '') {
+                if (select_search.val() == '') {
                     var resultsContainer = $('.select-searchautocomplete-list');
                     resultsContainer.empty();
                     resultsContainer.append('<div class="city" style="display:block;padding: 10px;color: black" > بالقرب مني</div>');

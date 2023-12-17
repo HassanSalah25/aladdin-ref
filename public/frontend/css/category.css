@@ -10,7 +10,8 @@
     position: absolute;
     transform: rotate(42deg);
     width: 10em;
-    left: 94rem;
+    left: 0px;
+    top: 0px;
     -webkit-filter: drop-shadow(0 1px 1px hsla(0,0%,0%,.3));
     color: white;
     overflow: hidden;

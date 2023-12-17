@@ -157,10 +157,10 @@
             <?php $__currentLoopData = $ads_side_before_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_side_before_states_key => $ads_side_before_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                 <div class="row mb-5">
                     <?php if(!$ads_side_before_states->item?->first()): ?>
-                    <div class="ads vertical d-none d-lg-flex">
+                        <div class="ads vertical d-none d-lg-flex">
 
-                        <img src="<?php echo e(asset('storage/ads/'.$ads_side_before_states->ad_image_vertical)); ?>"/>
-                    </div>
+                            <img src="<?php echo e(asset('storage/ads/'.$ads_side_before_states->ad_image_vertical)); ?>"/>
+                        </div>
 
                     <?php else: ?>
                         <div class="ads vertical d-none d-lg-flex">
@@ -282,30 +282,30 @@
     <div class="container pb">
         <?php if($ads_after_states->count() > 0): ?>
             <?php $__currentLoopData = $ads_after_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_after_states_key => $ads_after_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <div class="row mb-5">
-                        <?php if(!$ads_after_states->item?->first()): ?>
-                            <div class="ads">
+                <div class="row mb-5">
+                    <?php if(!$ads_after_states->item?->first()): ?>
+                        <div class="ads">
 
-                                <img src="<?php echo e(asset('storage/ads/'.$ads_after_states->ad_image_horizontal)); ?>"/>
-                            </div>
+                            <img src="<?php echo e(asset('storage/ads/'.$ads_after_states->ad_image_horizontal)); ?>"/>
+                        </div>
 
-                        <?php else: ?>
-                            <div class="row mb-5">
-                                <a href="<?php echo e(route('page.item',[
+                    <?php else: ?>
+                        <div class="row mb-5">
+                            <a href="<?php echo e(route('page.item',[
             'category_slug' => $ads_after_states->item->first()->category->parent?->category_slug ?? $ads_after_states->item->first()->category->category_slug,
             'sub_category_slug' => $ads_after_states->item->first()->category->category_slug,
             'state_slug' => $ads_after_states->item->first()->state->state_slug,
             'item_slug' => $ads_after_states->item->first()->item_slug
         ])); ?>" class="ads">
 
-                                    <img src="<?php echo e(asset('storage/ads/'.$ads_after_states->ad_image_horizontal)); ?>"/>
-                                </a>
+                                <img src="<?php echo e(asset('storage/ads/'.$ads_after_states->ad_image_horizontal)); ?>"/>
+                            </a>
 
-                            </div>
-                        <?php endif; ?>
+                        </div>
+                    <?php endif; ?>
 
-                    </div>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </div>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
         <?php else: ?>
             <div class="ads">
                 <img src="/storage/banner 2.jpg"/>
@@ -700,7 +700,8 @@
                 </div>
 
                 <div class="d-flex justify-content-center mt-xl">
-                    <a href="<?php echo e(route('page.blogs')); ?>" class="btn btn-primary my-btn"><?php echo e(__('frontend.contact.more')); ?></a>
+                    <a href="<?php echo e(route('page.blogs')); ?>"
+                       class="btn btn-primary my-btn"><?php echo e(__('frontend.contact.more')); ?></a>
                 </div>
             </div>
         </section>
@@ -765,7 +766,6 @@
 
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('scripts'); ?>
-
     <script src="<?php echo e(asset('frontend/js/index.js')); ?>"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -868,7 +868,12 @@
                                     </div>`
                     var content = '';
                     response.forEach(function (data) {
-                        $('#button').css('display', '')
+                        $('#button').css('display', '');
+                        var category = null;
+                        if (data['category']['parent'])
+                            category = data['category']['parent']['category_slug'];
+                        else
+                            category = data['category']['category_slug'];
                         var htmlContent = `<div class="swiper-slide hotels__items__swiper-slide">
                                             <div class="hotels__items__item">
                                                 <img
@@ -907,7 +912,10 @@
                                                             ${data['item_address']}
                                                         </p>
                                                     </div>
-
+                                                    <div class="row justify-content-center">
+<a class="btn btn-primary my-btn col-md-3" href="/listing/${category}/${data['category']['category_slug']}/${data['state']['state_slug']}/${data['item_slug']}"
+>المزيد</a>
+</div>
                                                 </div>
                                             </div>
                                         </div>`;

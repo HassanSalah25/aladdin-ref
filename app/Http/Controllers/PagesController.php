@@ -3029,7 +3029,6 @@ class PagesController extends Controller
         $item = Item::where('item_slug', $item_slug)
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->first();
-
         if ($item) {
             $item_user = $item->user()->first() ?? Auth::user();
             /*  if ($item_user) {
@@ -3162,7 +3161,8 @@ class PagesController extends Controller
              */
             $latitude = $item->item_lat;
             $longitude = $item->item_lng;
-
+            $nearby_items = null;
+/*
             $nearby_items = Item::selectRaw('items.*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
                 ->where('id', '!=', $item->id)
                 ->where('item_status', Item::ITEM_PUBLISHED)
@@ -3171,7 +3171,7 @@ class PagesController extends Controller
                 ->with('state')
                 ->with('city')
                 ->with('user')
-                ->take(4)->get();
+                ->take(4)->get();*/
 
             /**
              * get 4 similar items by current item lat and lng

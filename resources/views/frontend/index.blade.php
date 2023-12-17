@@ -157,10 +157,10 @@
             @foreach($ads_side_before_states as $ads_side_before_states_key => $ads_side_before_states)
                 <div class="row mb-5">
                     @if(!$ads_side_before_states->item?->first())
-                    <div class="ads vertical d-none d-lg-flex">
+                        <div class="ads vertical d-none d-lg-flex">
 
-                        <img src="{{asset('storage/ads/'.$ads_side_before_states->ad_image_vertical)}}"/>
-                    </div>
+                            <img src="{{asset('storage/ads/'.$ads_side_before_states->ad_image_vertical)}}"/>
+                        </div>
 
                     @else
                         <div class="ads vertical d-none d-lg-flex">
@@ -279,30 +279,30 @@
     <div class="container pb">
         @if($ads_after_states->count() > 0)
             @foreach($ads_after_states as $ads_after_states_key => $ads_after_states)
-                    <div class="row mb-5">
-                        @if(!$ads_after_states->item?->first())
-                            <div class="ads">
+                <div class="row mb-5">
+                    @if(!$ads_after_states->item?->first())
+                        <div class="ads">
 
-                                <img src="{{asset('storage/ads/'.$ads_after_states->ad_image_horizontal)}}"/>
-                            </div>
+                            <img src="{{asset('storage/ads/'.$ads_after_states->ad_image_horizontal)}}"/>
+                        </div>
 
-                        @else
-                            <div class="row mb-5">
-                                <a href="{{route('page.item',[
+                    @else
+                        <div class="row mb-5">
+                            <a href="{{route('page.item',[
             'category_slug' => $ads_after_states->item->first()->category->parent?->category_slug ?? $ads_after_states->item->first()->category->category_slug,
             'sub_category_slug' => $ads_after_states->item->first()->category->category_slug,
             'state_slug' => $ads_after_states->item->first()->state->state_slug,
             'item_slug' => $ads_after_states->item->first()->item_slug
         ])}}" class="ads">
 
-                                    <img src="{{asset('storage/ads/'.$ads_after_states->ad_image_horizontal)}}"/>
-                                </a>
+                                <img src="{{asset('storage/ads/'.$ads_after_states->ad_image_horizontal)}}"/>
+                            </a>
 
-                            </div>
-                        @endif
+                        </div>
+                    @endif
 
-                    </div>
-                @endforeach
+                </div>
+            @endforeach
         @else
             <div class="ads">
                 <img src="/storage/banner 2.jpg"/>
@@ -758,7 +758,8 @@
                 </div>
 
                 <div class="d-flex justify-content-center mt-xl">
-                    <a href="{{ route('page.blogs') }}" class="btn btn-primary my-btn">{{ __('frontend.contact.more')}}</a>
+                    <a href="{{ route('page.blogs') }}"
+                       class="btn btn-primary my-btn">{{ __('frontend.contact.more')}}</a>
                 </div>
             </div>
         </section>
@@ -821,7 +822,6 @@
 
 @endsection
 @push('scripts')
-
     <script src="{{ asset('frontend/js/index.js')}}"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -924,7 +924,12 @@
                                     </div>`
                     var content = '';
                     response.forEach(function (data) {
-                        $('#button').css('display', '')
+                        $('#button').css('display', '');
+                        var category = null;
+                        if (data['category']['parent'])
+                            category = data['category']['parent']['category_slug'];
+                        else
+                            category = data['category']['category_slug'];
                         var htmlContent = `<div class="swiper-slide hotels__items__swiper-slide">
                                             <div class="hotels__items__item">
                                                 <img
@@ -963,7 +968,10 @@
                                                             ${data['item_address']}
                                                         </p>
                                                     </div>
-
+                                                    <div class="row justify-content-center">
+<a class="btn btn-primary my-btn col-md-3" href="/listing/${category}/${data['category']['category_slug']}/${data['state']['state_slug']}/${data['item_slug']}"
+>المزيد</a>
+</div>
                                                 </div>
                                             </div>
                                         </div>`;

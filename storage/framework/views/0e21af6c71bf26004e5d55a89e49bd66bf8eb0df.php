@@ -1,6 +1,27 @@
 <?php $__env->startPush('styles'); ?>
     <link rel="stylesheet" href="<?php echo e(asset('frontend/css/category.css')); ?>"/>
+    <style>
 
+        .date {
+            position: absolute;
+            top: 0;
+            right: 1rem;
+            background: linear-gradient(#b269ff, #000000e3);
+            color: white;
+            padding: 0.8em;
+
+            span {
+                display: block;
+                text-align: center;
+            }
+
+            .day {
+                font-weight: 700;
+                font-size: 24px;
+                text-shadow: 2px 3px 2px rgba($ black, 0.18);
+            }
+        }
+    </style>
 <?php $__env->stopPush(); ?>
 <?php $__env->startSection('content'); ?>
     <!-- bread crumb  -->
@@ -57,7 +78,7 @@
                         <?php $__currentLoopData = $item_galleries; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $galleries_key => $gallery): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="swiper-slide">
                                 <div class="category-slide__item">
-                                    <img
+                                    <img style="height:300px"
                                         src="<?php echo e(empty($gallery->item_image_gallery_name) ? Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name) : Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name)); ?>"
                                         alt="category slider" class="img-fluid"/>
                                 </div>
@@ -84,19 +105,22 @@
         <div class="container">
             <div class="d-flex justify-content-between flex-wrap gap-3">
 
-                <div class="tape">
-                    <a href="<?php echo e(route('page.branches',$item->user)); ?>" style="color: white">
-                    <p class="h1">
-                        <?php echo e(__('frontend.item.branches')); ?>
-
-                    </p>
-                    </a>
-                </div>
                 <!-- details  -->
                 <div class="profile__details d-flex flex-wrap flex-lg-nowrap gap-4">
-                    <img
-                        src=" <?php echo e(empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image)); ?>"
-                        alt="profile" class="img-fluid profile__details__img"/>
+                  <div style="position: relative">
+                      <?php if($item->user): ?>
+
+                          <div class="date">
+                              <span class="month"><?php echo e(__('frontend.item.branches')); ?>    </span>
+                              <span class="day"><?php echo e($item->user->items->count()); ?></span>
+                          </div>
+
+                      <?php endif; ?>
+                      <img
+                          src=" <?php echo e(empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image)); ?>"
+                          alt="profile" class="img-fluid profile__details__img"/>
+
+                  </div>
                     <div class="flex-fill">
                         <!-- head  -->
                         <div class="d-flex flex-wrap align-items-center mb-base gap-5 profile__details__head">
@@ -248,6 +272,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- other  -->
                 <?php if(!$item->item_image): ?>
                     <div class="profile__other text-center">
@@ -257,11 +282,11 @@
                                الشكل وليس المحتوى) ويُستخدم في صناعات المطابع
                            </p> -->
                         <div class="d-flex flex-column align-items-center gap-3">
-                            <button disabled data-bs-toggle="modal" data-bs-target="#idenityModal"
+                            <button  data-bs-toggle="modal" data-bs-target="#idenityModal"
                                     class="btn btn-primary my-btn">طلب
                                 اثبات ملكيه
                             </button>
-                            <button disabled data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
+                            <button  data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
                                 الإبلاغ عن بيانات غير صحيحة ​
                             </button>
                         </div>

@@ -1,7 +1,28 @@
 @extends('frontend.layouts.app')
 @push('styles')
     <link rel="stylesheet" href="{{ asset('frontend/css/category.css') }}"/>
+    <style>
 
+        .date {
+            position: absolute;
+            top: 0;
+            right: 1rem;
+            background: linear-gradient(#b269ff, #000000e3);
+            color: white;
+            padding: 0.8em;
+
+            span {
+                display: block;
+                text-align: center;
+            }
+
+            .day {
+                font-weight: 700;
+                font-size: 24px;
+                text-shadow: 2px 3px 2px rgba($ black, 0.18);
+            }
+        }
+    </style>
 @endpush
 @section('content')
     <!-- bread crumb  -->
@@ -111,9 +132,20 @@
 
                 <!-- details  -->
                 <div class="profile__details d-flex flex-wrap flex-lg-nowrap gap-4">
-                    <img
-                        src=" {{ empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image) }}"
-                        alt="profile" class="img-fluid profile__details__img"/>
+                  <div style="position: relative">
+                      @if($item->user)
+
+                          <div class="date">
+                              <span class="month">{{ __('frontend.item.branches') }}    </span>
+                              <span class="day">{{$item->user->items->count()}}</span>
+                          </div>
+
+                      @endif
+                      <img
+                          src=" {{ empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image) }}"
+                          alt="profile" class="img-fluid profile__details__img"/>
+
+                  </div>
                     <div class="flex-fill">
                         <!-- head  -->
                         <div class="d-flex flex-wrap align-items-center mb-base gap-5 profile__details__head">
@@ -263,15 +295,7 @@
                         </div>
                     </div>
                 </div>
-                @if($item->user)
-                    <div class="tape">
-                        <a href="{{ route('page.branches',$item->user) }}" style="color: white">
-                            <p class="h1 text-center">
-                                {{ __('frontend.item.branches') }}
-                            </p>
-                        </a>
-                    </div>
-                @endif()
+
                 <!-- other  -->
                 @if(!$item->item_image)
                     <div class="profile__other text-center">
@@ -281,11 +305,11 @@
                                الشكل وليس المحتوى) ويُستخدم في صناعات المطابع
                            </p> -->
                         <div class="d-flex flex-column align-items-center gap-3">
-                            <button disabled data-bs-toggle="modal" data-bs-target="#idenityModal"
+                            <button  data-bs-toggle="modal" data-bs-target="#idenityModal"
                                     class="btn btn-primary my-btn">طلب
                                 اثبات ملكيه
                             </button>
-                            <button disabled data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
+                            <button  data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
                                 الإبلاغ عن بيانات غير صحيحة ​
                             </button>
                         </div>
