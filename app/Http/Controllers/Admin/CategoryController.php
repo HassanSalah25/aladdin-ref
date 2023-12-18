@@ -72,14 +72,10 @@ class CategoryController extends Controller
         $categories_query->select('categories.*');
 
         // search query
-        if(is_array($search_values) && count($search_values) > 0)
+        if($search_query)
         {
-            $categories_query->where(function ($query) use ($search_values) {
-                foreach($search_values as $search_values_key => $search_value)
-                {
-                    $query->orWhere('categories.category_name', 'LIKE', "%".$search_value."%");
-                }
-            });
+            $categories_query->where('categories.category_name', 'LIKE', "%".$search_query."%");
+
         }
 
         // sort by

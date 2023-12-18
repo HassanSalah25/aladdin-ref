@@ -969,9 +969,9 @@
                                                         </p>
                                                     </div>
                                                     <div class="row justify-content-center">
-<a class="btn btn-primary my-btn col-md-3" href="/listing/${category}/${data['category']['category_slug']}/${data['state']['state_slug']}/${data['item_slug']}"
->المزيد</a>
-</div>
+                                                        <a class="btn btn-primary my-btn col-md-3" href="/listing/${category}/${data['category']['category_slug']}/${data['state']['state_slug']}/${data['item_slug']}"
+                                                        >المزيد</a>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>`;

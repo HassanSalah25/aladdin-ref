@@ -303,8 +303,10 @@ class ItemController extends Controller
          * End SEO
          */
 
-        $all_categories = new Category();
-        $all_categories = $all_categories->getPrintableCategories();
+        // $all_categories = new Category();
+        $all_categories = Category::whereNotNull('category_parent_id')
+            ->orderBy('category_name', 'asc')
+            ->where('locale', app()->getLocale())->get();
         $user_id = empty($request->user_id) ? array() : $request->user_id;
 
 
@@ -419,48 +421,48 @@ class ItemController extends Controller
         {
 ////            // validate country_id
             $select_country = Country::find($request->country_id);
-            if(!$select_country)
-            {
-                throw ValidationException::withMessages(
-                    [
-                        'country_id' => __('prefer_country.country-not-found'),
-                    ]);
-            }
-
-            // validate state_id
+////            if(!$select_country)
+////            {
+////                throw ValidationException::withMessages(
+////                    [
+////                        'country_id' => __('prefer_country.country-not-found'),
+////                    ]);
+////            }
+////
+////            // validate state_id
             $select_state = State::find($request->state_id);
-            if(!$select_state)
-            {
-                throw ValidationException::withMessages(
-                    [
-                        'state_id' => __('prefer_country.state-not-found'),
-                    ]);
-            }
-            // validate city_id
+////            if(!$select_state)
+////            {
+////                throw ValidationException::withMessages(
+////                    [
+////                        'state_id' => __('prefer_country.state-not-found'),
+////                    ]);
+////            }
+////            // validate city_id
             $select_city = City::find($request->city_id);
-            if(!$select_city)
-            {
-                throw ValidationException::withMessages(
-                    [
-                        'city_id' => __('prefer_country.city-not-found'),
-                    ]);
-            }
-
+////            if(!$select_city)
+////            {
+////                throw ValidationException::withMessages(
+////                    [
+////                        'city_id' => __('prefer_country.city-not-found'),
+////                    ]);
+////            }
+////
             $select_country_id = $select_country->id;
             $select_state_id = $select_state->id;
             $select_city_id = $select_city->id;
-
-            if(empty($request->item_lat) || empty($request->item_lng))
-            {
-                $select_item_lat = $select_city->city_lat;
-                $select_item_lng = $select_city->city_lng;
-            }
-            else
-            {
-                $select_item_lat = $request->item_lat;
-                $select_item_lng = $request->item_lng;
-             }
-
+//
+//            if(empty($request->item_lat) || empty($request->item_lng))
+//            {
+//                $select_item_lat = $select_city->city_lat;
+//                $select_item_lng = $select_city->city_lng;
+//            }
+//            else
+//            {
+//                $select_item_lat = $request->item_lat;
+//                $select_item_lng = $request->item_lng;
+            // }
+//
             $item_location_str = $select_city->city_name . ' ' . $select_state->state_name . ' ' . $select_country->country_name . ' ' . $item_postal_code;
         }
         /**
@@ -589,7 +591,7 @@ class ItemController extends Controller
 
         // fill new item data
         $new_item = new Item(array(
-            'user_id' => $user_exist->id,
+            'user_id' => $user_id,
             'category_id' => $select_categories,
             'item_status' => $item_status,
             'item_featured' => $item_featured,
@@ -833,7 +835,9 @@ class ItemController extends Controller
         $item_owner = $item->user()->first()??Auth::user();
 
         $all_categories = new Category();
-        $all_categories = $all_categories->getPrintableCategories();
+        $all_categories = Category::whereNotNull('category_parent_id')
+            ->orderBy('category_name', 'asc')
+            ->where('locale', app()->getLocale())->get();
 
         /**
          * Start initial country, state, city selector
