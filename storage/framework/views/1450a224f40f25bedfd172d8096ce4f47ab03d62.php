@@ -31,7 +31,7 @@
 </div>
 <?php if($ads_before_content->count() > 0): ?>
     <?php $__currentLoopData = $ads_before_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-        <section class="category-swiper" style="min-height: 5rem;">
+        <section class="category-swiper d-flex align-items-center m-1" style="min-height: 5rem;">
             <div class="container">
                 <div class="swiper category-swiper__inner">
                     <div class="swiper-wrapper">
@@ -67,7 +67,7 @@
 
 
 
-<div class="site-section"  style="margin-top:4rem">
+<div class="site-section"  >
     <div class="container">
 
         <?php if($children_categories->count() > 0): ?>
@@ -115,8 +115,8 @@
 
             </div>
             <?php endif; ?>
-            <section class="mt-xl mb-xl activites position-relative">
-                    <div class="container">
+            <section class=" mb-xl activites position-relative">
+                    <div class="container" >
                         <h1><?php echo e($category->category_description); ?></h1>
                     </div>
             </section>
@@ -143,7 +143,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>" name="filter_state" id="filter_state" data-live-search="true">
-                                        <option value="0" <?php echo e(empty($filter_state) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-state')); ?></option>
+                                        <option value="" <?php echo e(empty($filter_state) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-state')); ?></option>
                                         <?php $__currentLoopData = $all_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_states_key => $state): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e($state->id); ?>" <?php echo e($filter_state == $state->id ? 'selected' : ''); ?>><?php echo e($state->state_name); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -162,7 +162,7 @@ endif;
 unset($__errorArgs, $__bag); ?>
                                 </div>
                                 <div class="col-12 col-md-12 pl-0">
-                                    <label for="filter_city"><?php echo e(__('theme_alaadin.s         -city')); ?></label>
+                                    <label for="filter_city"><?php echo e(__('theme_alaadin.filter-city')); ?></label>
                                     <select class="selectpicker form-control <?php $__errorArgs = ['filter_city'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
@@ -171,7 +171,7 @@ $message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
 if (isset($__messageOriginal)) { $message = $__messageOriginal; }
 endif;
 unset($__errorArgs, $__bag); ?>" name="filter_city" id="filter_city" data-live-search="true">
-                                        <option value="0" <?php echo e(empty($filter_city) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-city')); ?></option>
+                                        <option value="" <?php echo e(empty($filter_city) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-city')); ?></option>
                                         <?php $__currentLoopData = $all_cities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_cities_key => $city): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                         <option value="<?php echo e($city->id); ?>" <?php echo e($filter_city == $city->id ? 'selected' : ''); ?>><?php echo e($city->city_name); ?></option>
                                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -279,7 +279,8 @@ unset($__errorArgs, $__bag); ?>
                     <!-- items  -->
                     <div class="cateogires__items flex-fill">
                         <!-- start order-area  -->
-                        <div class="categories__orders d-flex justify-content-between align-content-center gap-4">
+                        <div class="categories__orders d-flex justify-content-between align-content-center gap-4"
+                        style="z-index: 3">
                             <div class="d-flex align-items-center gap-4">
                                 <button type="button" class="categories__orders__toggle-filter-btn bg-transparent p-0 border-0 d-xl-none">
                                     <i class="las la-filter"></i>
@@ -362,14 +363,12 @@ unset($__errorArgs, $__bag); ?>
 
     <?php $__env->startPush('scripts'); ?>
 
-
     <?php if($site_global_settings->setting_site_map == \App\Models\Setting::SITE_MAP_OPEN_STREET_MAP): ?>
     <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="<?php echo e(asset('frontend/vendor/leaflet/leaflet.js')); ?>"></script>
     <?php endif; ?>
 
 
-    <?php echo $__env->make('frontend.partials.bootstrap-select-locale', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
 
     <script>
@@ -481,6 +480,14 @@ unset($__errorArgs, $__bag); ?>
              */
         });
     </script>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+
     <?php if($site_global_settings->setting_site_map == \App\Models\Setting::SITE_MAP_GOOGLE_MAP): ?>
             <script>
 
@@ -702,15 +709,6 @@ unset($__errorArgs, $__bag); ?>
             <script async defer src="https://maps.googleapis.com/maps/api/js??v=quarterly&key=<?php echo e($site_global_settings->setting_site_map_google_api_key); ?>&callback=initMap"></script>
     <?php endif; ?>
 
-        <script>
-            $('.selectpicker').each(function () {
-                if($(this).attr('multiple'))
-                    $(this).addClass('js-example-basic-multiple');
-                else
-                    $(this).addClass('js-example-basic-single');
-
-            })
-        </script>
     <?php $__env->stopPush(); ?>
 
 <?php echo $__env->make('frontend.layouts.app', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/hassan/Downloads/refactore aladdin/resources/views/frontend/category.blade.php ENDPATH**/ ?>

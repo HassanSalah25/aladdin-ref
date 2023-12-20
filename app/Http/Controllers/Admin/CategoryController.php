@@ -74,8 +74,11 @@ class CategoryController extends Controller
         // search query
         if($search_query)
         {
-            $categories_query->where('categories.category_name', 'LIKE', "%".$search_query."%");
-
+            $categories_query
+                ->where('categories.category_name', 'LIKE', "%".$search_query."%")
+                ->orWhereHas('parent',function($q) use ($search_query){
+                    $q->where('category_name', 'LIKE', "%".$search_query."%");
+                });
         }
 
         // sort by

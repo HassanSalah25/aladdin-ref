@@ -4,13 +4,11 @@
     <style>
 
         .date {
-            position: absolute;
-            top: 0;
-            right: 1rem;
             background: linear-gradient(#b269ff, #000000e3);
             color: white;
             padding: 0.8em;
-
+            height: 100%;
+            margin-right: -243px;
             span {
                 display: block;
                 text-align: center;
@@ -128,19 +126,12 @@
 
     <section class="pt pb profile overflow-hidden">
         <div class="container">
-            <div class="d-flex justify-content-between flex-wrap gap-3">
+            <div class="d-flex justify-content-between flex-wrap gap-3" style="position: relative">
 
                 <!-- details  -->
                 <div class="profile__details d-flex flex-wrap flex-lg-nowrap gap-4">
-                  <div style="position: relative">
-                      @if($item->user)
+                  <div >
 
-                          <div class="date">
-                              <span class="month">{{ __('frontend.item.branches') }}    </span>
-                              <span class="day">{{$item->user->items->count()}}</span>
-                          </div>
-
-                      @endif
                       <img
                           src=" {{ empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image) }}"
                           alt="profile" class="img-fluid profile__details__img"/>
@@ -197,14 +188,16 @@
 
                         <!-- contacts  -->
                         <div class="d-flex flex-wrap align-items-center justify-content-start gap-4">
-                            <a href="tel:{{ $item->item_phone}}"
+                            @if($item->item_phone)
+                                <a href="tel:{{ $item->item_phone}}"
                                class="btn my-btn btn-primary profile__details__contact-btn">
                                 <i class="las la-phone"></i>
                                 <span>الهاتف</span>
                             </a>
+                            @endif
                             @if(!empty($item->itemPhones))
                                 @foreach($item->itemPhones as $phone)
-                                    <a href="tel:{{ $phone}}"
+                                    <a href="tel:{{ $phone->phone}}"
                                        class="btn my-btn btn-primary profile__details__contact-btn">
                                         <i class="las la-phone"></i>
                                         <span>الهاتف {{$loop->iteration}}</span>
@@ -217,8 +210,8 @@
                                 <i class="las la-map-marker"></i>
                                 <span>الموقع</span>
                             </a>
-                            @if($item->item_phone)
-                                <a target="_blank" href="https://wa.me/{{ $item->item_phone}}"
+                            @if($item->item_social_whatsapp)
+                                <a target="_blank" href="https://wa.me/+020{{ $item->item_social_whatsapp}}"
                                    class="btn my-btn btn-primary btn-p profile__details__contact-btn">
                                     <i class="lab la-whatsapp"></i>
                                     <span>واتساب</span>
@@ -235,6 +228,16 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-facebook"></i></a>
                             @endif
+                            @if($item->item_social_instagram)
+                                <a href="{{ $item->item_social_instagram}}"
+                                   class="categories__items__list__item__info__footer__contacts__item"><i
+                                        class="fab fa-instagram"></i></a>
+                            @endif
+                            @if($item->item_social_youtube)
+                                <a href="{{ $item->item_social_youtube}}"
+                                   class="categories__items__list__item__info__footer__contacts__item"><i
+                                        class="fab fa-youtube"></i></a>
+                            @endif
                             @if($item->item_social_twitter)
                                 <a href="{{ $item->item_social_twitter}}"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -245,11 +248,11 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-linkedin"></i></a>
                             @endif
-                            @if($item->item_social_facebook)
+                           {{-- @if($item->item_social_whatsapp)
                                 <a href="tel:{{ $item->item_social_whatsapp}}"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-whatsapp"></i></a>
-                            @endif
+                            @endif--}}
                             @if($item->item_social_tiktok)
                                 <a href="{{ $item->item_social_tiktok}}"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -295,7 +298,16 @@
                         </div>
                     </div>
                 </div>
+                @if($item->user?->items->count() > 1)
 
+                    <div class="date">
+                        <a href="{{route('page.branches',$item->user)}}" style="color: white">
+                            <span class="month">{{ __('frontend.item.branches') }}    </span>
+                            <span class="day">{{$item->user->items->count()}}</span>
+                        </a>
+                    </div>
+
+                @endif
                 <!-- other  -->
                 @if(!$item->item_image)
                     <div class="profile__other text-center">

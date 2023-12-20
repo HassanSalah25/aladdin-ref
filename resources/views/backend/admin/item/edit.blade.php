@@ -2322,12 +2322,13 @@
             });
             $('#item_phone_create_button').on('click', function () {
 
-                if (count <= {{@$plan?->check_plan(6)->value ?? 1}}) {
+                {{--if (count <= {{@$plan?->check_plan(6)->value ?? 1}}) {--}}
                     var item_phone = $("#item_phone").val();
 
                     $("#item_phones_container").append("<div class='col-12 col-md-3'><input type='hidden' name='item_phones[]' value='" + item_phone + "'>" + item_phone + "<a class='btn btn-sm text-danger bg-white' onclick='$(this).parent().remove();'><i class='far fa-trash-alt'></i></a></div>");
-                    count++;
-                }
+                    $("#item_phone").val("");
+                        count++;
+                // }
             });
 
             $('#item_hour_exception_create_button').on('click', function () {

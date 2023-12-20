@@ -31,7 +31,6 @@
           href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css"/>
     <link rel="preload" onload="this.rel='stylesheet'"
           href="<?php echo e(asset('frontend/vendor/fontawesome-free/css/all.min.css')); ?>" as="style">
-    <link href="<?php echo e(asset('frontend/js/select2/select2.min.css')); ?>" rel="stylesheet"/>
 
 
     <!-- animation css  -->
@@ -109,8 +108,8 @@
 <script src="<?php echo e(asset('frontend/js/global.js')); ?>" type="module"></script>
 <script src="<?php echo e(asset('frontend/js/categories.js')); ?>"></script>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/css/bootstrap-select.min.css">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js"></script>
 
 <?php echo $__env->yieldPushContent('scripts'); ?>
 <script>
@@ -303,6 +302,11 @@
 </script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
+
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<!-- Bootstrap Selectpicker -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 <script>
     <?php if($errors->any()): ?>
     toastr.error('<?php echo app('translator')->get('messages.have_some_errors'); ?>')

@@ -97,11 +97,28 @@
                 </p>
 
             @endif
-            <button type="button"
+          {{--  <button type="button"
                     class="white-space-nowrap categories__items__list__item__info__footer__btn btn btn-primary my-btn">
                 <i class="las la-phone"></i>
                 <span>تواصل</span>
-            </button>
+            </button>--}}
+            @if($item->item_phone)
+                <a href="tel:{{ $item->item_phone}}"
+                   class="btn my-btn btn-primary profile__details__contact-btn">
+                    <i class="las la-phone"></i>
+                    <span>الهاتف</span>
+                </a>
+            @endif
+            @if(!empty($item->itemPhones))
+                @foreach($item->itemPhones as $phone)
+                    <a href="tel:{{ $phone->phone}}"
+                       class="btn my-btn btn-primary profile__details__contact-btn">
+                        <i class="las la-phone"></i>
+                        <span>الهاتف {{$loop->iteration}}</span>
+                    </a>
+                @endforeach
+
+            @endif
             @if($item->item_website)
                 <a href="{{ $item->item_website}}"
                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -122,10 +139,20 @@
                    class="categories__items__list__item__info__footer__contacts__item"><i
                         class="fab fa-linkedin"></i></a>
             @endif
-            @if($item->item_social_facebook)
-                <a href="tel:{{ $item->item_social_whatsapp}}"
+            @if($item->item_social_whatsapp)
+                <a href="https://wa.me/+020{{ $item->item_social_whatsapp}}"
                    class="categories__items__list__item__info__footer__contacts__item"><i
                         class="fab fa-whatsapp"></i></a>
+            @endif
+            @if($item->item_social_instagram)
+                <a href="{{ $item->item_social_instagram}}"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-instagram"></i></a>
+            @endif
+            @if($item->item_social_youtube)
+                <a href="{{ $item->item_social_youtube}}"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-youtube"></i></a>
             @endif
             @if($item->item_social_tiktok)
                     <a href="{{ $item->item_social_tiktok}}"
@@ -154,18 +181,18 @@
                 @endif
 
 
-            <div class="flex flex-column gap-2 categories__items__list__item__info__footer__contacts position-absolute">
-{{--                <a--}}
-{{--                    href="#mapid-box"--}}
-{{--                    class="categories__items__list__item__info__footer__contacts__item"--}}
-{{--                    ><i class="las la-map-marker-alt"></i></a>--}}
+           {{-- <div class="flex flex-column gap-2 categories__items__list__item__info__footer__contacts position-absolute">
+--}}{{--                <a--}}{{--
+--}}{{--                    href="#mapid-box"--}}{{--
+--}}{{--                    class="categories__items__list__item__info__footer__contacts__item"--}}{{--
+--}}{{--                    ><i class="las la-map-marker-alt"></i></a>--}}{{--
 
-                <a href="https://wa.me/{{ $item->item_phone}}"
+                <a href="https://wa.me/{{ $item->item_social_whatsapp}}"
                    class="categories__items__list__item__info__footer__contacts__item"><i
                         class="lab la-whatsapp"></i></a>
                 <a href="tel:{{ $item->item_phone}}"
                    class="categories__items__list__item__info__footer__contacts__item"><i class="las la-phone"></i></a>
-            </div>
+            </div>--}}
         </div>
     </div>
 </div>

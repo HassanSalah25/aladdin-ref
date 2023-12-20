@@ -22,37 +22,39 @@
                             <select class="form-select border-0" id="selectOrderBy" name="filter_sort_by">
                                 <option value="">___</option>
 
-                                <option value="7" <?php echo e(("بالقرب مني" == request('filter_sort_by') || 7 == request('filter_sort_by')) ? 'selected' : ''); ?>><?php echo e(__('frontend.homepage.nearby-listings')); ?></option>
+                                <option value="7" <?php echo e(("بالقرب مني" == request('search_city_state') || 7 == request('filter_sort_by')) ? 'selected' : ''); ?>><?php echo e(__('frontend.homepage.nearby-listings')); ?></option>
                             </select>
                         </div>
-                        <div class="d-flex gap-3 align-items-center categories__orders__item">
-                            <label for="selectOrderBy" class="white-space-nowrap">
-                                <i class="las la-filter"></i>
-                                <span><?php echo e(__('theme_alaadin.filter-state')); ?></span>
-                            </label>
+                        <?php if(request('search_city_state') != 'بالقرب مني'): ?>
+                            <div class="d-flex gap-3 align-items-center categories__orders__item">
+                                <label for="selectOrderBy" class="white-space-nowrap">
+                                    <i class="las la-filter"></i>
+                                    <span><?php echo e(__('theme_alaadin.filter-state')); ?></span>
+                                </label>
 
-                            <select class="form-select border-0" id="selectOrderBy" name="filter_state">
-                                <option value=""><?php echo e(__('prefer_country.all-state')); ?></option>
-                                
-                                <?php $__currentLoopData = $all_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_states_key => $state): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($state->id); ?>" <?php echo e($filter_state == $state->id ? 'selected' : ''); ?>><?php echo e($state->state_name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
-                        <div class="d-flex gap-3 align-items-center categories__orders__item">
-                            <label for="selectOrderBy" class="white-space-nowrap">
-                                <i class="las la-filter"></i>
-                                <span><?php echo e(__('theme_alaadin.filter-city')); ?></span>
-                            </label>
+                                <select class="form-select border-0" id="selectOrderBy" name="filter_state">
+                                    <option value=""><?php echo e(__('prefer_country.all-state')); ?></option>
+                                    
+                                    <?php $__currentLoopData = $all_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_states_key => $state): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($state->id); ?>" <?php echo e($filter_state == $state->id ? 'selected' : ''); ?>><?php echo e($state->state_name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                            <div class="d-flex gap-3 align-items-center categories__orders__item">
+                                <label for="selectOrderBy" class="white-space-nowrap">
+                                    <i class="las la-filter"></i>
+                                    <span><?php echo e(__('theme_alaadin.filter-city')); ?></span>
+                                </label>
 
-                            <select class="form-select border-0" id="selectOrderBy" name="filter_city">
-                                <option value="" <?php echo e(empty($filter_city) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-city')); ?></option>
-                                
-                                <?php $__currentLoopData = $all_cities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_cities_key => $city): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <option value="<?php echo e($city->id); ?>" <?php echo e($filter_city == $city->id ? 'selected' : ''); ?>><?php echo e($city->city_name); ?></option>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            </select>
-                        </div>
+                                <select class="form-select border-0" id="selectOrderBy" name="filter_city">
+                                    <option value="" <?php echo e(empty($filter_city) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-city')); ?></option>
+                                    
+                                    <?php $__currentLoopData = $all_cities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_cities_key => $city): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <option value="<?php echo e($city->id); ?>" <?php echo e($filter_city == $city->id ? 'selected' : ''); ?>><?php echo e($city->city_name); ?></option>
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                </select>
+                            </div>
+                        <?php endif; ?>
 
 
 
@@ -74,7 +76,7 @@
                                  src="<?php echo e(asset('assets/icons8-search-50.png')); ?>" style="width: 8%;">
                             <input autocomplete="off" name="search_query" type="text" id="search-what"
                                    value="<?php echo e($search_query); ?>"
-                                   placeholder="ابحث بـ اسم العمل، النشاط التجاري، العلامة التجارية أو كلمة بحث ..."
+                                       placeholder="ابحث بـ اسم العمل، النشاط التجاري، العلامة التجارية أو كلمة بحث ..."
                                    class="form-control px-3 autocomplete search-query-what what_original_top"
                                    style="padding: 5px 0px 5px 0px;" >
                             <img id="loading-search-what" class="loading-search-img-ar lazyload"

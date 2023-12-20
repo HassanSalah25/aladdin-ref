@@ -24,37 +24,39 @@
                             <select class="form-select border-0" id="selectOrderBy" name="filter_sort_by">
                                 <option value="">___</option>
 {{--                                <option value="max_price" {{ 'max_price' == request('filter_sort_by') ? 'selected' : '' }}>{{__('listings_filter.sort-by-price-high')}}</option>--}}
-                                <option value="7" {{ ("بالقرب مني" == request('filter_sort_by') || 7 == request('filter_sort_by')) ? 'selected' : '' }}>{{__('frontend.homepage.nearby-listings')}}</option>
+                                <option value="7" {{ ("بالقرب مني" == request('search_city_state') || 7 == request('filter_sort_by')) ? 'selected' : '' }}>{{__('frontend.homepage.nearby-listings')}}</option>
                             </select>
                         </div>
-                        <div class="d-flex gap-3 align-items-center categories__orders__item">
-                            <label for="selectOrderBy" class="white-space-nowrap">
-                                <i class="las la-filter"></i>
-                                <span>{{__('theme_alaadin.filter-state')}}</span>
-                            </label>
+                        @if(request('search_city_state') != 'بالقرب مني')
+                            <div class="d-flex gap-3 align-items-center categories__orders__item">
+                                <label for="selectOrderBy" class="white-space-nowrap">
+                                    <i class="las la-filter"></i>
+                                    <span>{{__('theme_alaadin.filter-state')}}</span>
+                                </label>
 
-                            <select class="form-select border-0" id="selectOrderBy" name="filter_state">
-                                <option value="">{{__('prefer_country.all-state')}}</option>
-                                {{--                                <option value="max_price" {{ 'max_price' == request('filter_sort_by') ? 'selected' : '' }}>{{__('listings_filter.sort-by-price-high')}}</option>--}}
-                                @foreach($all_states as $all_states_key => $state)
-                                    <option value="{{ $state->id }}" {{ $filter_state == $state->id ? 'selected' : '' }}>{{ $state->state_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="d-flex gap-3 align-items-center categories__orders__item">
-                            <label for="selectOrderBy" class="white-space-nowrap">
-                                <i class="las la-filter"></i>
-                                <span>{{__('theme_alaadin.filter-city')}}</span>
-                            </label>
+                                <select class="form-select border-0" id="selectOrderBy" name="filter_state">
+                                    <option value="">{{__('prefer_country.all-state')}}</option>
+                                    {{--                                <option value="max_price" {{ 'max_price' == request('filter_sort_by') ? 'selected' : '' }}>{{__('listings_filter.sort-by-price-high')}}</option>--}}
+                                    @foreach($all_states as $all_states_key => $state)
+                                        <option value="{{ $state->id }}" {{ $filter_state == $state->id ? 'selected' : '' }}>{{ $state->state_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="d-flex gap-3 align-items-center categories__orders__item">
+                                <label for="selectOrderBy" class="white-space-nowrap">
+                                    <i class="las la-filter"></i>
+                                    <span>{{__('theme_alaadin.filter-city')}}</span>
+                                </label>
 
-                            <select class="form-select border-0" id="selectOrderBy" name="filter_city">
-                                <option value="" {{ empty($filter_city) ? 'selected' : '' }}>{{ __('prefer_country.all-city') }}</option>
-                                {{--                                <option value="max_price" {{ 'max_price' == request('filter_sort_by') ? 'selected' : '' }}>{{__('listings_filter.sort-by-price-high')}}</option>--}}
-                                @foreach($all_cities as $all_cities_key => $city)
-                                    <option value="{{ $city->id }}" {{ $filter_city == $city->id ? 'selected' : '' }}>{{ $city->city_name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+                                <select class="form-select border-0" id="selectOrderBy" name="filter_city">
+                                    <option value="" {{ empty($filter_city) ? 'selected' : '' }}>{{ __('prefer_country.all-city') }}</option>
+                                    {{--                                <option value="max_price" {{ 'max_price' == request('filter_sort_by') ? 'selected' : '' }}>{{__('listings_filter.sort-by-price-high')}}</option>--}}
+                                    @foreach($all_cities as $all_cities_key => $city)
+                                        <option value="{{ $city->id }}" {{ $filter_city == $city->id ? 'selected' : '' }}>{{ $city->city_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        @endif
 {{--                        <div class="d-flex gap-3 align-items-center categories__orders__item">--}}
 {{--                            <label for="selectNumberOfProducts" class="white-space-nowrap">--}}
 {{--                                <i class="las la-briefcase"></i>--}}
@@ -91,7 +93,7 @@
                                  src="{{asset('assets/icons8-search-50.png')}}" style="width: 8%;">
                             <input autocomplete="off" name="search_query" type="text" id="search-what"
                                    value="{{$search_query}}"
-                                   placeholder="ابحث بـ اسم العمل، النشاط التجاري، العلامة التجارية أو كلمة بحث ..."
+                                       placeholder="ابحث بـ اسم العمل، النشاط التجاري، العلامة التجارية أو كلمة بحث ..."
                                    class="form-control px-3 autocomplete search-query-what what_original_top"
                                    style="padding: 5px 0px 5px 0px;" >
                             <img id="loading-search-what" class="loading-search-img-ar lazyload"

@@ -118,7 +118,7 @@
   }
 
   .cateogries__filters:lang(ar) {
-    right: -100%;
+    right: -200%;
     left: auto;
   }
 
@@ -129,6 +129,8 @@
   .cateogries__filters.active-sidebar:lang(ar) {
     left: auto;
     right: 0;
+      z-index: 6;
+      width: 75%;
   }
 }
 
@@ -515,7 +517,7 @@
 }
 
 .categories__items__list__item__info__footer__contacts.active:lang(ar) {
-  left: 15px;
+  left: 30px;
 }
 
 .categories__items__list__item__info__footer__contacts__item {

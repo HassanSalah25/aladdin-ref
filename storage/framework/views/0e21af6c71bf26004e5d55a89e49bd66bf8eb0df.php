@@ -3,13 +3,11 @@
     <style>
 
         .date {
-            position: absolute;
-            top: 0;
-            right: 1rem;
             background: linear-gradient(#b269ff, #000000e3);
             color: white;
             padding: 0.8em;
-
+            height: 100%;
+            margin-right: -243px;
             span {
                 display: block;
                 text-align: center;
@@ -103,19 +101,12 @@
 
     <section class="pt pb profile overflow-hidden">
         <div class="container">
-            <div class="d-flex justify-content-between flex-wrap gap-3">
+            <div class="d-flex justify-content-between flex-wrap gap-3" style="position: relative">
 
                 <!-- details  -->
                 <div class="profile__details d-flex flex-wrap flex-lg-nowrap gap-4">
-                  <div style="position: relative">
-                      <?php if($item->user): ?>
+                  <div >
 
-                          <div class="date">
-                              <span class="month"><?php echo e(__('frontend.item.branches')); ?>    </span>
-                              <span class="day"><?php echo e($item->user->items->count()); ?></span>
-                          </div>
-
-                      <?php endif; ?>
                       <img
                           src=" <?php echo e(empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image)); ?>"
                           alt="profile" class="img-fluid profile__details__img"/>
@@ -174,14 +165,16 @@
 
                         <!-- contacts  -->
                         <div class="d-flex flex-wrap align-items-center justify-content-start gap-4">
-                            <a href="tel:<?php echo e($item->item_phone); ?>"
+                            <?php if($item->item_phone): ?>
+                                <a href="tel:<?php echo e($item->item_phone); ?>"
                                class="btn my-btn btn-primary profile__details__contact-btn">
                                 <i class="las la-phone"></i>
                                 <span>الهاتف</span>
                             </a>
+                            <?php endif; ?>
                             <?php if(!empty($item->itemPhones)): ?>
                                 <?php $__currentLoopData = $item->itemPhones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $phone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <a href="tel:<?php echo e($phone); ?>"
+                                    <a href="tel:<?php echo e($phone->phone); ?>"
                                        class="btn my-btn btn-primary profile__details__contact-btn">
                                         <i class="las la-phone"></i>
                                         <span>الهاتف <?php echo e($loop->iteration); ?></span>
@@ -194,8 +187,8 @@
                                 <i class="las la-map-marker"></i>
                                 <span>الموقع</span>
                             </a>
-                            <?php if($item->item_phone): ?>
-                                <a target="_blank" href="https://wa.me/<?php echo e($item->item_phone); ?>"
+                            <?php if($item->item_social_whatsapp): ?>
+                                <a target="_blank" href="https://wa.me/+020<?php echo e($item->item_social_whatsapp); ?>"
                                    class="btn my-btn btn-primary btn-p profile__details__contact-btn">
                                     <i class="lab la-whatsapp"></i>
                                     <span>واتساب</span>
@@ -212,6 +205,16 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-facebook"></i></a>
                             <?php endif; ?>
+                            <?php if($item->item_social_instagram): ?>
+                                <a href="<?php echo e($item->item_social_instagram); ?>"
+                                   class="categories__items__list__item__info__footer__contacts__item"><i
+                                        class="fab fa-instagram"></i></a>
+                            <?php endif; ?>
+                            <?php if($item->item_social_youtube): ?>
+                                <a href="<?php echo e($item->item_social_youtube); ?>"
+                                   class="categories__items__list__item__info__footer__contacts__item"><i
+                                        class="fab fa-youtube"></i></a>
+                            <?php endif; ?>
                             <?php if($item->item_social_twitter): ?>
                                 <a href="<?php echo e($item->item_social_twitter); ?>"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -222,11 +225,7 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-linkedin"></i></a>
                             <?php endif; ?>
-                            <?php if($item->item_social_facebook): ?>
-                                <a href="tel:<?php echo e($item->item_social_whatsapp); ?>"
-                                   class="categories__items__list__item__info__footer__contacts__item"><i
-                                        class="fab fa-whatsapp"></i></a>
-                            <?php endif; ?>
+                           
                             <?php if($item->item_social_tiktok): ?>
                                 <a href="<?php echo e($item->item_social_tiktok); ?>"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -272,7 +271,16 @@
                         </div>
                     </div>
                 </div>
+                <?php if($item->user?->items->count() > 1): ?>
 
+                    <div class="date">
+                        <a href="<?php echo e(route('page.branches',$item->user)); ?>" style="color: white">
+                            <span class="month"><?php echo e(__('frontend.item.branches')); ?>    </span>
+                            <span class="day"><?php echo e($item->user->items->count()); ?></span>
+                        </a>
+                    </div>
+
+                <?php endif; ?>
                 <!-- other  -->
                 <?php if(!$item->item_image): ?>
                     <div class="profile__other text-center">

@@ -48,7 +48,6 @@
                     <div class="row">
                         <div class="col-12">
                             <form action="{{ route('admin.items.create') }}" method="GET">
-                                <input type="hidden" name="user_id" value="{{request('user_id')}}">
                                 <div class="form-row">
                                     <div class="col-6 col-sm-8 col-md-9 col-lg-10">
                                         <select id="user_id"
@@ -92,6 +91,7 @@
                         @if($plan)
                             <form method="POST" action="{{ route('admin.items.store') }}" id="item-create-form">
                                 @csrf
+                                <input type="hidden" name="user_id" value="{{request('user_id')}}">
 
                                 <div class="row border-left-primary mb-4">
                                     <div class="col-12">

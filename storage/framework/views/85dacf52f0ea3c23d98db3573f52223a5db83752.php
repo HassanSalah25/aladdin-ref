@@ -101,11 +101,24 @@
                 </p>
 
             <?php endif; ?>
-            <button type="button"
-                    class="white-space-nowrap categories__items__list__item__info__footer__btn btn btn-primary my-btn">
-                <i class="las la-phone"></i>
-                <span>تواصل</span>
-            </button>
+          
+            <?php if($item->item_phone): ?>
+                <a href="tel:<?php echo e($item->item_phone); ?>"
+                   class="btn my-btn btn-primary profile__details__contact-btn">
+                    <i class="las la-phone"></i>
+                    <span>الهاتف</span>
+                </a>
+            <?php endif; ?>
+            <?php if(!empty($item->itemPhones)): ?>
+                <?php $__currentLoopData = $item->itemPhones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $phone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <a href="tel:<?php echo e($phone->phone); ?>"
+                       class="btn my-btn btn-primary profile__details__contact-btn">
+                        <i class="las la-phone"></i>
+                        <span>الهاتف <?php echo e($loop->iteration); ?></span>
+                    </a>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
+            <?php endif; ?>
             <?php if($item->item_website): ?>
                 <a href="<?php echo e($item->item_website); ?>"
                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -126,10 +139,20 @@
                    class="categories__items__list__item__info__footer__contacts__item"><i
                         class="fab fa-linkedin"></i></a>
             <?php endif; ?>
-            <?php if($item->item_social_facebook): ?>
-                <a href="tel:<?php echo e($item->item_social_whatsapp); ?>"
+            <?php if($item->item_social_whatsapp): ?>
+                <a href="https://wa.me/+020<?php echo e($item->item_social_whatsapp); ?>"
                    class="categories__items__list__item__info__footer__contacts__item"><i
                         class="fab fa-whatsapp"></i></a>
+            <?php endif; ?>
+            <?php if($item->item_social_instagram): ?>
+                <a href="<?php echo e($item->item_social_instagram); ?>"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-instagram"></i></a>
+            <?php endif; ?>
+            <?php if($item->item_social_youtube): ?>
+                <a href="<?php echo e($item->item_social_youtube); ?>"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-youtube"></i></a>
             <?php endif; ?>
             <?php if($item->item_social_tiktok): ?>
                     <a href="<?php echo e($item->item_social_tiktok); ?>"
@@ -158,18 +181,7 @@
                 <?php endif; ?>
 
 
-            <div class="flex flex-column gap-2 categories__items__list__item__info__footer__contacts position-absolute">
-
-
-
-
-
-                <a href="https://wa.me/<?php echo e($item->item_phone); ?>"
-                   class="categories__items__list__item__info__footer__contacts__item"><i
-                        class="lab la-whatsapp"></i></a>
-                <a href="tel:<?php echo e($item->item_phone); ?>"
-                   class="categories__items__list__item__info__footer__contacts__item"><i class="las la-phone"></i></a>
-            </div>
+           
         </div>
     </div>
 </div>

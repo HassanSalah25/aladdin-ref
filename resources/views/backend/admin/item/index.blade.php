@@ -133,9 +133,7 @@
                                                             <hr class="mt-2 mb-2">
 
                                                             <div class="pt-2">
-                                                            @foreach($item->allCategories()->get() as $categories_key => $category)
-                                                                <span class="border border-info text-info pl-1 pr-1 rounded">{{ $category->category_name }}</span>
-                                                            @endforeach
+                                                                <span class="border border-info text-info pl-1 pr-1 rounded">{{ $item->category->category_name }}</span>
                                                             </div>
 
                                                             <hr class="mt-3 mb-2">

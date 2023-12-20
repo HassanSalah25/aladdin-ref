@@ -33,7 +33,7 @@
 </div>
 @if($ads_before_content->count() > 0)
     @foreach($ads_before_content as $ad)
-        <section class="category-swiper" style="min-height: 5rem;">
+        <section class="category-swiper d-flex align-items-center m-1" style="min-height: 5rem;">
             <div class="container">
                 <div class="swiper category-swiper__inner">
                     <div class="swiper-wrapper">
@@ -69,7 +69,7 @@
 
 
 
-<div class="site-section"  style="margin-top:4rem">
+<div class="site-section"  >
     <div class="container">
 
         @if($children_categories->count() > 0)
@@ -117,8 +117,8 @@
 
             </div>
             @endif
-            <section class="mt-xl mb-xl activites position-relative">
-                    <div class="container">
+            <section class=" mb-xl activites position-relative">
+                    <div class="container" >
                         <h1>{{$category->category_description}}</h1>
                     </div>
             </section>
@@ -138,7 +138,7 @@
                                 <div class="col-12 col-md-12 pl-0">
                                     <label for="filter_state">{{ __('theme_alaadin.filter-state') }}</label>
                                     <select class="selectpicker form-control @error('filter_state') is-invalid @enderror" name="filter_state" id="filter_state" data-live-search="true">
-                                        <option value="0" {{ empty($filter_state) ? 'selected' : '' }}>{{ __('prefer_country.all-state') }}</option>
+                                        <option value="" {{ empty($filter_state) ? 'selected' : '' }}>{{ __('prefer_country.all-state') }}</option>
                                         @foreach($all_states as $all_states_key => $state)
                                         <option value="{{ $state->id }}" {{ $filter_state == $state->id ? 'selected' : '' }}>{{ $state->state_name }}</option>
                                         @endforeach
@@ -150,9 +150,9 @@
                                     @enderror
                                 </div>
                                 <div class="col-12 col-md-12 pl-0">
-                                    <label for="filter_city">{{ __('theme_alaadin.s         -city') }}</label>
+                                    <label for="filter_city">{{ __('theme_alaadin.filter-city') }}</label>
                                     <select class="selectpicker form-control @error('filter_city') is-invalid @enderror" name="filter_city" id="filter_city" data-live-search="true">
-                                        <option value="0" {{ empty($filter_city) ? 'selected' : '' }}>{{ __('prefer_country.all-city') }}</option>
+                                        <option value="" {{ empty($filter_city) ? 'selected' : '' }}>{{ __('prefer_country.all-city') }}</option>
                                         @foreach($all_cities as $all_cities_key => $city)
                                         <option value="{{ $city->id }}" {{ $filter_city == $city->id ? 'selected' : '' }}>{{ $city->city_name }}</option>
                                         @endforeach
@@ -229,7 +229,8 @@
                     <!-- items  -->
                     <div class="cateogires__items flex-fill">
                         <!-- start order-area  -->
-                        <div class="categories__orders d-flex justify-content-between align-content-center gap-4">
+                        <div class="categories__orders d-flex justify-content-between align-content-center gap-4"
+                        style="z-index: 3">
                             <div class="d-flex align-items-center gap-4">
                                 <button type="button" class="categories__orders__toggle-filter-btn bg-transparent p-0 border-0 d-xl-none">
                                     <i class="las la-filter"></i>
@@ -256,7 +257,7 @@
                             @endif
 
                         </div>
-                        <div class="pagination center-block row justify-content-center" style="width: auto;margin-top:2rem">
+                        <div class="pagination center-block row justify-content-center w-100" style="width: auto;margin-top:2rem">
                             {{ $pagination->appends(request()->query())->links() }}
                         </div>
                     </div>
@@ -311,14 +312,12 @@
 
     @push('scripts')
 
-
     @if($site_global_settings->setting_site_map == \App\Models\Setting::SITE_MAP_OPEN_STREET_MAP)
     <!-- Make sure you put this AFTER Leaflet's CSS -->
     <script src="{{ asset('frontend/vendor/leaflet/leaflet.js') }}"></script>
     @endif
 
 
-    @include('frontend.partials.bootstrap-select-locale')
 
 
     <script>
@@ -430,6 +429,9 @@
              */
         });
     </script>
+
+
+
     @if($site_global_settings->setting_site_map == \App\Models\Setting::SITE_MAP_GOOGLE_MAP)
             <script>
 
@@ -651,13 +653,4 @@
             <script async defer src="https://maps.googleapis.com/maps/api/js??v=quarterly&key={{ $site_global_settings->setting_site_map_google_api_key }}&callback=initMap"></script>
     @endif
 
-        <script>
-            $('.selectpicker').each(function () {
-                if($(this).attr('multiple'))
-                    $(this).addClass('js-example-basic-multiple');
-                else
-                    $(this).addClass('js-example-basic-single');
-
-            })
-        </script>
     @endpush

@@ -427,7 +427,7 @@ class PagesController extends Controller
                     ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
             });
         // filter paid listings state
-        if (!empty($filter_city_state)) {
+        if ($filter_city_state) {
             $state = State::where('state_name', $filter_city_state)->first();
             $city = City::where('city_name', $filter_city_state)->first();
             if ($state)
@@ -499,23 +499,29 @@ class PagesController extends Controller
   //            }, $search_values));
 
           }*/
-        $free_items_query->select('*')
-            ->selectRaw("LOCATE('$search_values', item_title) as position")
-            ->where('items.item_title', 'like', '%' . $search_values . '%')
-            ->orderBy('position')->orderBy('item_title');
-//        dd($free_items_query->limit(5)->get());
-        $free_items_query->where("items.item_status", Item::ITEM_PUBLISHED)
-            ->where(function ($query) use ($site_prefer_country_id) {
-                $query->where('items.country_id', $site_prefer_country_id)
-                    ->orWhereNull('items.country_id');
-            })
-//             ->orderBy('items.item_featured', 'DESC')
-            // ->where('items.item_featured_by_admin', Item::ITEM_NOT_FEATURED_BY_ADMIN)
-            ->where(function ($q) use ($free_user_ids) {
-                $q->whereIn('items.user_id', $free_user_ids)
-                    ->orWhereNull('items.user_id');
-            });
-        if (!empty($filter_city_state)) {
+
+
+        if($search_values){
+            $free_items_query->select('*')
+                ->selectRaw("LOCATE('$search_values', item_title) as position")
+                ->where('items.item_title', 'like', '%' . $search_values . '%')
+                ->orderBy('position')->orderBy('item_title');
+            //        dd($free_items_query->limit(5)->get());
+            $free_items_query->where("items.item_status", Item::ITEM_PUBLISHED)
+                ->where(function ($query) use ($site_prefer_country_id) {
+                    $query->where('items.country_id', $site_prefer_country_id)
+                        ->orWhereNull('items.country_id');
+                })
+                //             ->orderBy('items.item_featured', 'DESC')
+                // ->where('items.item_featured_by_admin', Item::ITEM_NOT_FEATURED_BY_ADMIN)
+                ->where(function ($q) use ($free_user_ids) {
+                    $q->whereIn('items.user_id', $free_user_ids)
+                        ->orWhereNull('items.user_id');
+                });
+
+        }
+
+        if ($filter_city_state) {
             $state = State::where('state_name', $filter_city_state)->first();
             $city = City::where('city_name', $filter_city_state)->first();
             if ($state)
@@ -524,7 +530,6 @@ class PagesController extends Controller
                 $free_items_query->where('items.city_id', $city->id);
 
         }
-
         // filter free listings state
         if (!empty($filter_state)) {
             $free_items_query->where('items.state_id', $filter_state);
@@ -577,14 +582,16 @@ class PagesController extends Controller
                 ->where('items.item_type', Item::ITEM_TYPE_REGULAR)
                 ->orderBy('distance', 'ASC');
         }*/
-        elseif ($filter_sort_by == 'بالقرب مني' || $filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
+        if ($filter_city_state == 'بالقرب مني' || $filter_sort_by == 'بالقرب مني' || $filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
+
             if (!$this->getLatitude()) {
                 \Session::flash('flash_message', __('Open Location Permission'));
                 \Session::flash('flash_type', 'danger');
                 return back();
             }
-            $latitude = $this->getLatitude()[0];
-            $longitude = $this->getLongitude()[0];
+            $latitude = is_array($this->getLatitude()) ? $this->getLatitude()[0] : $this->getLatitude();
+
+            $longitude = is_array($this->getLongitude()) ? $this->getLongitude()[0] : $this->getLongitude();
             $cities = [];
             $states = [];
             $placeSearchUrl = 'https://maps.googleapis.com/maps/api/place/textsearch/json';
@@ -681,6 +688,7 @@ class PagesController extends Controller
             }
 
         }
+
         /**
          * End filter sort by for free listing
          */
@@ -1405,21 +1413,21 @@ class PagesController extends Controller
             $filter_categories = empty($request->filter_categories) ? array() : $request->filter_categories;
             $category_obj = new Category();
 
-          /*  if ($parent_category_id)
-                $item_ids = $category->getItemIdsByCategoryIds();
-            if (count($filter_categories) > 0) {
-                $item_ids = $category_obj->getItemIdsByCategoryIds($filter_categories);
-            } else {
-                // Get all child categories of this category
-                $all_child_categories = collect();
-                $all_child_categories_ids = array();
-                $category->allChildren($category, $all_child_categories);
-                foreach ($all_child_categories as $key => $all_child_category) {
-                    $all_child_categories_ids[] = $all_child_category->id;
-                }
+            /*  if ($parent_category_id)
+                  $item_ids = $category->getItemIdsByCategoryIds();
+              if (count($filter_categories) > 0) {
+                  $item_ids = $category_obj->getItemIdsByCategoryIds($filter_categories);
+              } else {
+                  // Get all child categories of this category
+                  $all_child_categories = collect();
+                  $all_child_categories_ids = array();
+                  $category->allChildren($category, $all_child_categories);
+                  foreach ($all_child_categories as $key => $all_child_category) {
+                      $all_child_categories_ids[] = $all_child_category->id;
+                  }
 
-                $item_ids = $category_obj->getItemIdsByCategoryIds($all_child_categories_ids);
-            }*/
+                  $item_ids = $category_obj->getItemIdsByCategoryIds($all_child_categories_ids);
+              }*/
             // state & city
             $filter_state = empty($request->filter_state) ? null : $request->filter_state;
             $filter_city = empty($request->filter_city) ? null : $request->filter_city;
@@ -1463,24 +1471,22 @@ class PagesController extends Controller
             $total_paid_items = $paid_items_query->count();
 
             // free listing
-            $free_items_query = Item::query()->where('locale', app()->getLocale());
-
+            $free_items_query = Item::query()->where('locale', app()->getLocale())
+                ->orderBy('item_featured','DESC');
             // get free users id array
             //$free_user_ids = $subscription_obj->getFreeUserIds();
             $free_user_ids = $subscription_obj->getActiveUserIds();
             $free_items_query->where('category_id', $category->id);
 
-            $free_items_query->where("items.item_status", Item::ITEM_PUBLISHED)
-                ->where(function ($query) use ($site_prefer_country_id) {
-                    $query->where('items.country_id', $site_prefer_country_id)
-                        ->orWhereNull('items.country_id');
-                })
-                // ->where('items.item_featured', Item::ITEM_NOT_FEATURED)
-                // ->where('items.item_featured_by_admin', Item::ITEM_NOT_FEATURED_BY_ADMIN)
-                ->where(function ($query) use ($free_user_ids) {
-                    $query->whereIn('items.user_id', $free_user_ids)
-                        ->orWhereNull('items.user_id');
-                });
+            $free_items_query->where("items.item_status", Item::ITEM_PUBLISHED);
+
+            // ->where('items.item_featured', Item::ITEM_NOT_FEATURED)
+            // ->where('items.item_featured_by_admin', Item::ITEM_NOT_FEATURED_BY_ADMIN)
+            // ->where(function ($query) use ($free_user_ids) {
+            //     $query->whereIn('items.user_id', $free_user_ids)
+            //         ->orWhereNull('items.user_id');
+            // })
+
 
             // filter free listings state
             if (!empty($filter_state)) {
@@ -1497,7 +1503,7 @@ class PagesController extends Controller
              */
             $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
             if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
-                $free_items_query->orderBy('items.created_at', 'DESC');
+                // $free_items_query->orderBy('items.created_at', 'DESC');
             } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
                 $free_items_query->orderBy('items.created_at', 'ASC');
             } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
@@ -1530,33 +1536,33 @@ class PagesController extends Controller
 
 
             $pagination = $paid_items->appends($querystringArray);
-           $pagination = $free_items->appends($querystringArray);
+            $pagination = $free_items->appends($querystringArray);
 
-           /* if ($total_free_items == 0 || $total_paid_items == 0) {
-                $paid_items = $paid_items_query->paginate(10);
-                $free_items = $free_items_query->paginate(13);
+            /* if ($total_free_items == 0 || $total_paid_items == 0) {
+                 $paid_items = $paid_items_query->paginate(10);
+                 $free_items = $free_items_query->paginate(13);
 
-                if ($total_free_items == 0) {
-                    $pagination = $paid_items->appends($querystringArray);
-                }
-                if ($total_paid_items == 0) {
-                    $pagination = $free_items->appends($querystringArray);
-                }
-            }
-            else {
-                $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
-                $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
-                $free_items_per_page = 10 - $paid_items_per_page;
+                 if ($total_free_items == 0) {
+                     $pagination = $paid_items->appends($querystringArray);
+                 }
+                 if ($total_paid_items == 0) {
+                     $pagination = $free_items->appends($querystringArray);
+                 }
+             }
+             else {
+                 $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
+                 $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
+                 $free_items_per_page = 10 - $paid_items_per_page;
 
-                $paid_items = $paid_items_query->paginate($paid_items_per_page);
-                $free_items = $free_items_query->paginate($free_items_per_page);
+                 $paid_items = $paid_items_query->paginate($paid_items_per_page);
+                 $free_items = $free_items_query->paginate($free_items_per_page);
 
-                if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
-                    $pagination = $paid_items->appends($querystringArray);
-                } else {
-                    $pagination = $free_items->appends($querystringArray);
-                }
-            }*/
+                 if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
+                     $pagination = $paid_items->appends($querystringArray);
+                 } else {
+                     $pagination = $free_items->appends($querystringArray);
+                 }
+             }*/
             /**
              * End do listing query
              */
@@ -2706,7 +2712,11 @@ class PagesController extends Controller
                     ->with('city');
 
                 $all_item_cities = $item_select_city_query->get();
-
+                $search_categories = Category::orderBy('category_name')
+                    ->whereNull('category_parent_id')
+                    ->select('category_name', 'id', 'category_image', 'category_icon')
+                    ->where('locale', app()->getLocale())
+                    ->get();
                 /**
                  * Start initial filter
                  */
@@ -2734,6 +2744,7 @@ class PagesController extends Controller
                         'paid_items',
                         'free_items',
                         'pagination',
+                        'search_categories',
                         'all_item_cities',
                         'ads_before_content',
                         'ads_after_content',
@@ -3162,16 +3173,16 @@ class PagesController extends Controller
             $latitude = $item->item_lat;
             $longitude = $item->item_lng;
             $nearby_items = null;
-/*
-            $nearby_items = Item::selectRaw('items.*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
-                ->where('id', '!=', $item->id)
-                ->where('item_status', Item::ITEM_PUBLISHED)
-                ->where('item_type', Item::ITEM_TYPE_REGULAR)
-                ->orderBy('distance', 'ASC')
-                ->with('state')
-                ->with('city')
-                ->with('user')
-                ->take(4)->get();*/
+            /*
+                        $nearby_items = Item::selectRaw('items.*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
+                            ->where('id', '!=', $item->id)
+                            ->where('item_status', Item::ITEM_PUBLISHED)
+                            ->where('item_type', Item::ITEM_TYPE_REGULAR)
+                            ->orderBy('distance', 'ASC')
+                            ->with('state')
+                            ->with('city')
+                            ->with('user')
+                            ->take(4)->get();*/
 
             /**
              * get 4 similar items by current item lat and lng

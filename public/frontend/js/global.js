@@ -174,7 +174,7 @@ $(document).ready(function () {
             $.ajax({
                 url: "/searchajax",
                 type: "GET",
-                data: {query: query,category_id: category_id,sub_category_id: sub_category_id},
+                data: {query: query, category_id: category_id, sub_category_id: sub_category_id},
                 success: function (response) {
                     var resultsContainer = search_what.parent().find('.search-whatautocomplete-list');
                     resultsContainer.empty();
@@ -193,12 +193,12 @@ $(document).ready(function () {
                         resultsContainer.append('<a style="display:block;padding: 10px;color: gray">اسم الشركة</a>');
                         $.each(response['items'], function (index, result) {
                             var category = null;
-                            if(result['category']['parent'])
-                                 category = result['category']['parent']['category_slug'];
+                            if (result['category']['parent'])
+                                category = result['category']['parent']['category_slug'];
                             else
-                                 category = result['category']['category_slug'];
+                                category = result['category']['category_slug'];
                             resultsContainer.append('<a style="display:block;padding: 10px;color: black" href="/listing/'
-                                + category  +
+                                + category +
                                 '/'
                                 + result['category']['category_slug'] +
                                 '/' + result['state']['state_slug'] +
@@ -221,33 +221,30 @@ $(document).ready(function () {
     });
 
     $(document).on('click', function (e) {
-        var selectSearchList = $('.select-searchautocomplete-list');
+        var selectSearchList = $('.select-searchautocomplete-list').find('div');
         var select_search = $('.select-search');
+
         // Check if the click target is not inside select-searchautocomplete-list
-        if (
 
-            !(!select_search.is(e.target) && select_search.has(e.target).length === 0)
-        ) {
-            // Clear the content of select-searchautocomplete-list
-
-            selectSearchList.empty();
-            selectSearchList.append('<div class="city" style="display:block;padding: 10px;color: black;cursor: pointer" > بالقرب مني</div>');
-            $(this).attr('name', 'filter_sort_by');
-        } else {
+        if (selectSearchList.is(e.target))
+        {
             $('.select-search').attr('name', $(event.target).attr('name'));
             $('.select-search').val($(event.target).text());
-            selectSearchList.empty();
+            selectSearchList.parent().empty();
         }
-       /* if (!select_search.is(e.target) && select_search.has(e.target).length === 0)
+        else if (select_search.is(e.target))
         {
-            var select_search = $(this);
-            var resultsContainer = select_search.parent().find('.select-searchautocomplete-list');
-            resultsContainer.empty();
-            resultsContainer.append('<div class="city" style="display:block;padding: 10px;color: black" > بالقرب مني</div>');
+            var selectSearchList2 = $('.select-searchautocomplete-list');
+            selectSearchList2.empty();
+            selectSearchList2.append('<div class="city" style="display:block;padding: 10px;color: black" > بالقرب مني</div>');
             $(this).attr('name', 'filter_sort_by');
-        }*/
-    });
+        }
+        else {
+            // Clear the content of select-searchautocomplete-list
+                selectSearchList.parent().empty();
+        }
 
+    });
 
 
     $('.select-search').on('input', function () {
