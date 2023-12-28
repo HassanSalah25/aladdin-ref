@@ -20,7 +20,9 @@
     </nav>
     </div>
 </div>
-
+<h1 class="mx-5">
+    محافظات
+</h1>
 <section class="pt pb d-flex provinces provinces-list position-relative">
       <div class="container">
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">

@@ -55,15 +55,15 @@ class PagesController extends Controller
          * Start SEO
          */
 //        SEOMeta::setTitle($settings->setting_site_seo_home_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
-        SEOMeta::setTitle('تطبيق علاء الدين الموقع الرسمي مصر - دليل الاعمال بأكملها الان في هاتفك', false);
-        SEOMeta::setDescription('تطبيق علاء الدين هو اكبر دليل هواتف للاعمال التجارية فهو دليل الشركات ودليل الصناعات وايضا دليل مصانع يشمل كل ما تريده في كافة التخصصات حمل التطبيق وشاهده من هنا الان');
-        SEOMeta::setCanonical(request()->fullUrl()                                                                          );
-        SEOMeta::addKeyword('تطبيق علاء الدين مصر، علاء الدين، دليل الأعمال في مصر، دليل الأعمال، الإدراج المجاني في دليل الأعمال في مصر، علاء الدين المحلية، الإدراجات التجارية، دليل تليفونات علاء الدين، دليل علاء الدين للأعمال، دليل علاء الدين لأرقام الهاتف، علاء الدين مصر، دليل علاء الدين بمصر، موقع علاء الدين مصر، دليل تليفونات مصر، دليل مصر، دليل الأعمال بمصر، موقع دليل الأعمال، دليل التليفونات التجارية، أرقام تليفونات مصر، دليل علاء الدين للتليفونات، إعلانات تجارية بمصر، أرقام هواتف مصر، دليل تليفونات مصر، محرك بحث محلي، إعلانات علاء الدين التجارية، موقع البحث المحلي الرسمي في مصر، دليل مصر المحلي، إعلانات مصر التجارية، علاء الدين للأعمال، علاء الدين على الإنترنت، هواتف علاء الدين مصر، علاء الدين المصرية، البحث في علاء الدين، علاء الدين العالمية، علاء الدين القاهرة، دليل مدينة القاهرة، القاهرة الكبرى، الإسكندرية، الساحل الشمالي، صعيد مصر، الصحراء، الدلتا، القنال');
+        SEOMeta::setTitle($settings->setting_site_seo_home_title, false);
+        SEOMeta::setDescription($settings->setting_site_seo_home_description);
+        SEOMeta::setCanonical(request()->fullUrl());
+        SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
 
         // OpenGraph
-        OpenGraph::setTitle($settings->setting_site_seo_home_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
+        OpenGraph::setTitle($settings->setting_site_seo_home_title);
         OpenGraph::setDescription($settings->setting_site_seo_home_description);
-        OpenGraph::setUrl(request()->fullUrl()                                                                          );
+        OpenGraph::setUrl(request()->fullUrl());
         if (empty($settings->setting_site_logo)) {
             OpenGraph::addImage(asset('favicon-96x96.ico'));
         } else {
@@ -71,7 +71,7 @@ class PagesController extends Controller
         }
 
         // Twitter
-        TwitterCard::setTitle($settings->setting_site_seo_home_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
+        TwitterCard::setTitle($settings->setting_site_seo_home_title);
         /**
          * End SEO
          */
@@ -101,8 +101,7 @@ class PagesController extends Controller
         $search_bar_categories = Category::orderBy('category_name')
             ->select('category_name', 'category_slug', 'category_icon')
             ->where("category_name", "مطاعم")
-            ->orWhere("category_name", "دكاترة")
-            ->orWhere("category_name", "مستلزمات طبية")
+            ->orWhere("category_name", "دكاتره")
             ->orWhere("category_name", "احتياجات")
             ->get();
 
@@ -195,22 +194,21 @@ class PagesController extends Controller
             ->inRandomOrder()->take(4)->get();
 
 
-        $ads_side_before_states = Advertisement::where('advertisementable_id', 'home')
+        $ads_side_before_states = Advertisement::where('advertisementable_id', 1)
             ->where('advertisement_position', Advertisement::AD_POSITION_SIDEBAR_BEFORE_CONTENT)
             ->where('advertisement_status', Advertisement::AD_STATUS_ENABLE)
             ->get();
 
-        $ads_side_after_states = Advertisement::where('advertisementable_id', 'home')
+        $ads_side_after_states = Advertisement::where('advertisementable_id', 1)
             ->where('advertisement_position', Advertisement::AD_POSITION_SIDEBAR_AFTER_CONTENT)
             ->where('advertisement_status', Advertisement::AD_STATUS_ENABLE)
             ->get();
 
-        $ads_after_states = Advertisement::where('advertisementable_id', 'home')
+        $ads_after_states = Advertisement::where('advertisementable_id', 1)
             ->where('advertisement_position', Advertisement::AD_POSITION_BEFORE_CONTENT)
             ->where('advertisement_status', Advertisement::AD_STATUS_ENABLE)
             ->get();
-
-        $ads_after_lisitng = Advertisement::where('advertisementable_id', 'home')
+        $ads_after_lisitng = Advertisement::where('advertisementable_id', 1)
             ->where('advertisement_position', Advertisement::AD_POSITION_AFTER_CONTENT)
             ->where('advertisement_status', Advertisement::AD_STATUS_ENABLE)
             ->get();
@@ -257,7 +255,25 @@ class PagesController extends Controller
             ->orderBy('id', 'asc')
             ->where('states.locale', app()->getLocale())
             ->paginate(8);
+        /**
+         * Start SEO
+         */
+        SEOMeta::setTitle($settings->setting_site_seo_states_title,false);
+        SEOMeta::setDescription($settings->setting_site_seo_states_title);
+        SEOMeta::setCanonical(request()->fullUrl());
 
+        // OpenGraph
+        OpenGraph::setTitle($settings->setting_site_seo_states_title);
+        OpenGraph::setDescription($settings->setting_site_seo_states_title);
+        OpenGraph::setUrl(request()->fullUrl());
+        if (empty($settings->setting_site_logo)) {
+            OpenGraph::addImage(asset('favicon-96x96.ico'));
+        } else {
+            OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+        }
+        /**
+         * End SEO
+         */
         $subscription_obj = new Subscription();
 
         /**
@@ -292,8 +308,31 @@ class PagesController extends Controller
         $settings = app('site_global_settings');
         $site_prefer_country_id = app('site_prefer_country_id');
         $state = State::where('state_slug', $state_slug)->first();
-        $all_cities = $state->cities()->paginate(10);
+        $search_keyword = $request->search_keyword;
 
+        $all_cities = $state->cities()->orderBy('city_name','asc');
+        if($search_keyword){
+            $all_cities->where('city_name','like', '%' . $search_keyword . '%');
+        }
+
+        $all_cities = $all_cities->paginate(12);
+        /**
+         * Start SEO
+         */
+        SEOMeta::setTitle($settings->setting_site_seo_cities_title,false);
+        SEOMeta::setDescription($settings->setting_site_seo_cities_description);
+        SEOMeta::setCanonical(request()->fullUrl());
+        OpenGraph::setTitle($settings->setting_site_seo_cities_title);
+        OpenGraph::setDescription($settings->setting_site_seo_cities_description);
+        OpenGraph::setUrl(request()->fullUrl());
+        if (empty($settings->setting_site_logo)) {
+            OpenGraph::addImage(asset('favicon-96x96.ico'));
+        } else {
+            OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+        }
+        /**
+         * End SEO
+         */
         /**
          * first 6 categories order by total listings
          */
@@ -332,6 +371,14 @@ class PagesController extends Controller
         SEOMeta::setDescription('');
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
+        OpenGraph::setTitle(__('seo.frontend.search', ['site_name' => 'علاء الدين']));
+        OpenGraph::setDescription(__('seo.frontend.search', ['site_name' => 'علاء الدين']));
+        OpenGraph::setUrl(request()->fullUrl());
+        if (empty($settings->setting_site_logo)) {
+            OpenGraph::addImage(asset('favicon-96x96.ico'));
+        } else {
+            OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+        }
         /**
          * End SEO
          */
@@ -501,23 +548,18 @@ class PagesController extends Controller
           }*/
 
 
+
+        $search_values = $this->unifyArabicCharacters($search_values);
+
         if($search_values){
             $free_items_query->select('*')
                 ->selectRaw("LOCATE('$search_values', item_title) as position")
                 ->where('items.item_title', 'like', '%' . $search_values . '%')
                 ->orderBy('position')->orderBy('item_title');
             //        dd($free_items_query->limit(5)->get());
+
             $free_items_query->where("items.item_status", Item::ITEM_PUBLISHED)
-                ->where(function ($query) use ($site_prefer_country_id) {
-                    $query->where('items.country_id', $site_prefer_country_id)
-                        ->orWhereNull('items.country_id');
-                })
-                //             ->orderBy('items.item_featured', 'DESC')
-                // ->where('items.item_featured_by_admin', Item::ITEM_NOT_FEATURED_BY_ADMIN)
-                ->where(function ($q) use ($free_user_ids) {
-                    $q->whereIn('items.user_id', $free_user_ids)
-                        ->orWhereNull('items.user_id');
-                });
+                ->orderBy('items.item_featured', 'DESC');
 
         }
 
@@ -568,9 +610,10 @@ class PagesController extends Controller
          * Start filter sort by for free listing
          */
 
-        $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
+        $filter_sort_by = empty($request->filter_sort_by) ? null : $request->filter_sort_by;
 
         if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
+            $free_items_query->orderBy('items.created_at', 'DESC');
         } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
             $free_items_query->orderBy('items.created_at', 'ASC');
         } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
@@ -752,22 +795,22 @@ class PagesController extends Controller
             'item_features_string',
         ];
 
-        $paid_items = $paid_items->sortByDesc(function ($paid_collection, $paid_collection_key) use ($search_values, $props) {
-
-            // The bigger the weight, the higher the record
-            $weight = 0;
-            // Iterate through search terms
-            if($search_values)
-                foreach ($search_values as $search_values_key => $search_value) {
-                    // Iterate through $props
-                    foreach ($props as $prop) {
-                        if (stripos($paid_collection->$prop, $search_value) !== false) {
-                            $weight += 1; // Increase weight if the search term is found
-                        }
-                    }
-                }
-            return $weight;
-        });
+//        $paid_items = $paid_items->sortByDesc(function ($paid_collection, $paid_collection_key) use ($search_values, $props) {
+//
+//            // The bigger the weight, the higher the record
+//            $weight = 0;
+//            // Iterate through search terms
+//            if(!empty($search_values))
+//                foreach ($search_values as $search_values_key => $search_value) {
+//                    // Iterate through $props
+//                    foreach ($props as $prop) {
+//                        if (stripos($paid_collection->$prop, $search_value) !== false) {
+//                            $weight += 1; // Increase weight if the search term is found
+//                        }
+//                    }
+//                }
+//            return $weight;
+//        });
 
 
         /*  $free_items = $free_items->sortByDesc(function ($free_collection, $free_collection_key) use ($search_values, $props) {
@@ -843,7 +886,13 @@ class PagesController extends Controller
             ->select('category_name', 'id', 'category_image', 'category_icon')
             ->where('locale', app()->getLocale())
             ->get();
+        $all_sub_categories = collect([]);
+        if(!empty($search_category)){
+            $all_sub_categories = Category::where('category_parent_id', $search_category)
+                ->orderBy('category_name', 'asc')
+                ->where('locale', app()->getLocale())->get();
 
+        }
 
         /**
          * Start initial blade view file path
@@ -875,6 +924,7 @@ class PagesController extends Controller
                 'total_results',
                 'search_categories',
                 'categories',
+                'all_sub_categories'
             )
         );
     }
@@ -902,10 +952,19 @@ class PagesController extends Controller
         /**
          * Start SEO
          */
-        SEOMeta::setTitle(__('seo.frontend.about', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setTitle($settings->setting_site_seo_about_title,false);
+        SEOMeta::setDescription($settings->setting_site_seo_about_description);
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
-        SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
+        SEOMeta::addKeyword($settings->setting_site_seo_about_keywords);
+
+        OpenGraph::setTitle($settings->setting_site_seo_about_title);
+        OpenGraph::setDescription($settings->setting_site_seo_about_description);
+        OpenGraph::setUrl(request()->fullUrl());
+        if (empty($settings->setting_site_logo)) {
+            OpenGraph::addImage(asset('favicon-96x96.ico'));
+        } else {
+            OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+        }
         /**
          * End SEO
          */
@@ -945,6 +1004,14 @@ class PagesController extends Controller
         SEOMeta::setDescription('');
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
+        OpenGraph::setTitle('صفحة من نحن - تطبيق علاء الدين');
+        OpenGraph::setDescription('صفحة من نحن عن تطبيق علاء الدين تعرف عنا اكبر دليل شامل في مصر يجمع فيه كافة الشركات');
+        OpenGraph::setUrl(request()->fullUrl());
+        if (empty($settings->setting_site_logo)) {
+            OpenGraph::addImage(asset('favicon-96x96.ico'));
+        } else {
+            OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+        }
         /**
          * End SEO
          */
@@ -1077,10 +1144,19 @@ class PagesController extends Controller
         /**
          * Start SEO
          */
-        SEOMeta::setTitle(__('seo.frontend.categories', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setTitle($settings->setting_site_seo_categories_title,false);
+        SEOMeta::setDescription($settings->setting_site_seo_categories_description);
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
-        SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
+        SEOMeta::addKeyword($settings->setting_site_seo_categories_keywords);
+
+        OpenGraph::setTitle($settings->setting_site_seo_categories_title);
+        OpenGraph::setDescription($settings->setting_site_seo_categories_description);
+        OpenGraph::setUrl(request()->fullUrl());
+        if (empty($settings->setting_site_logo)) {
+            OpenGraph::addImage(asset('favicon-96x96.ico'));
+        } else {
+            OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+        }
         /**
          * End SEO
          */
@@ -1219,10 +1295,8 @@ class PagesController extends Controller
          */
 
         SEOMeta::setTitle($category->meta_title, false);
-        SEOMeta::setTitleDefault('');
         SEOMeta::setDescription($category->meta_description);
         SEOMeta::setCanonical($category->canonical ?? request()->fullUrl()                                                                          );
-
         SEOMeta::addKeyword($category->meta_keywords);
         /**
          * End SEO
@@ -1364,6 +1438,53 @@ class PagesController extends Controller
         );
     }
 
+    public function search_categories(Request $request)
+    {
+        $settings = app('site_global_settings');
+        $site_prefer_country_id = app('site_prefer_country_id');
+        /**
+         * Start SEO
+         */
+      /*  SEOMeta::setTitle($category->meta_title, false);
+        SEOMeta::setTitleDefault('');
+        SEOMeta::setDescription($category->meta_description);
+        SEOMeta::setCanonical($category->canonical ?? request()->fullUrl()                                                                          );
+        SEOMeta::addKeyword($category->meta_keywords);*/
+        /**
+         * End SEO
+         */
+        $search_keyword = $request->search_keyword ?? null;
+        $search_keyword = $this->unifyArabicCharacters($search_keyword);
+        $categories = Category::when($search_keyword, function ($query) use ($search_keyword) {
+                // make sure `name` field is added index
+                return $query->where('category_name', 'like', "%{$search_keyword}%");
+            })
+            ->orderBy('category_name', 'asc')
+            ->where('locale', app()->getLocale())->paginate(20);
+        /**
+         * Start initial blade view file path
+         */
+        $theme_view_path = Theme::find($settings->setting_site_active_theme_id);
+        $theme_view_path = $theme_view_path->getViewPath();
+        /**
+         * End initial blade view file path
+         */
+        $search_categories = Category::orderBy('category_name')
+            ->whereNull('category_parent_id')
+            ->select('category_name', 'id', 'category_image', 'category_icon')
+            ->where('locale', app()->getLocale())
+            ->get();
+
+        return response()->view(
+            $theme_view_path . 'search_categories',
+            compact(
+                'categories',
+                'search_categories',
+                'site_prefer_country_id',
+            )
+        );
+    }
+
     public function category(Request $request, string $parent_category_slug, string $category_slug)
     {
         $category = Category::where('category_slug', $category_slug)->first();
@@ -1380,6 +1501,15 @@ class PagesController extends Controller
             SEOMeta::setDescription($category->meta_description);
             SEOMeta::setCanonical($category->canonical ?? request()->fullUrl()                                                                          );
             SEOMeta::addKeyword($category->meta_keywords);
+
+            OpenGraph::setTitle($category->meta_title);
+            OpenGraph::setDescription($category->meta_description);
+            OpenGraph::setUrl(request()->fullUrl());
+            if (empty($settings->setting_site_logo)) {
+                OpenGraph::addImage(asset('favicon-96x96.ico'));
+            } else {
+                OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+            }
             /**
              * End SEO
              */
@@ -1605,6 +1735,10 @@ class PagesController extends Controller
             /**
              * Start initial filter
              */
+
+
+
+
             $all_states = Country::find($site_prefer_country_id)
                 ->states()
                 ->where('locale', app()->getLocale())
@@ -2257,16 +2391,21 @@ class PagesController extends Controller
              * Start SEO
              */
             if (!$state->meta_title)
-                SEOMeta::setTitle(
-                    __('seo.frontend.categories-state',
-                        ['state_name' => $state->state_name,
-                            'site_name' => empty($settings->setting_site_name) ?
-                                config('app.name', 'Laravel') : $settings->setting_site_name]));
+                SEOMeta::setTitle($state->state_name);
             else
                 SEOMeta::setTitle($state->meta_title);
-            SEOMeta::setDescription($state->meta_description);
-            SEOMeta::setCanonical($state->canonical ?? request()->fullUrl()                                                                         );
-            SEOMeta::addKeyword($state->meta_keywords);
+            SEOMeta::setDescription($state->meta_description??$state->state_name);
+            SEOMeta::addKeyword($state->meta_keywords??$state->state_name);
+            SEOMeta::setCanonical(request()->fullUrl());
+
+            OpenGraph::setTitle($state->meta_title ?? $state->state_name);
+            OpenGraph::setDescription($state->meta_description ?? $state->state_name);
+            OpenGraph::setUrl(request()->fullUrl());
+            if (empty($settings->setting_site_logo)) {
+                OpenGraph::addImage(asset('favicon-96x96.ico'));
+            } else {
+                OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+            }
             /**
              * End SEO
              */
@@ -2540,16 +2679,23 @@ class PagesController extends Controller
                  * Start SEO
                  */
                 if (!$city->meta_title)
-                    SEOMeta::setTitle(__('seo.frontend.categories-state-city', ['state_name' => $state->state_name, 'city_name' => $city->city_name, 'site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
+                    SEOMeta::setTitle(__('seo.frontend.categories-state-city', ['state_name' => $state->state_name, 'city_name' => $city->city_name, 'site_name' => 'علاء الدين']),false);
                 else
-                    SEOMeta::setTitle($city->meta_title);
-                SEOMeta::setDescription($city->meta_description);
-                SEOMeta::setCanonical($city->canonical ?? request()->fullUrl()                                                                          );
-                SEOMeta::addKeyword($city->meta_keywords);
+                SEOMeta::setTitle($city->meta_title,false);
+                SEOMeta::setDescription(__('seo.frontend.categories-state-city', ['state_name' => $state->state_name, 'city_name' => $city->city_name, 'site_name' => 'علاء الدين']));
+                SEOMeta::setCanonical(request()->fullUrl());
+
+                OpenGraph::setTitle($city->meta_title);
+                OpenGraph::setDescription(__('seo.frontend.categories-state-city', ['state_name' => $state->state_name, 'city_name' => $city->city_name, 'site_name' => 'علاء الدين']));
+                OpenGraph::setUrl(request()->fullUrl());
+                if (empty($settings->setting_site_logo)) {
+                    OpenGraph::addImage(asset('favicon-96x96.ico'));
+                } else {
+                    OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+                }
                 /**
                  * End SEO
                  */
-
                 /**
                  * Do listing query
                  * 1. get paid listings and free listings.
@@ -2566,7 +2712,7 @@ class PagesController extends Controller
                  */
                 // categories
                 $filter_categories = Category::orderBy('category_name')
-                    ->whereNotNull('category_parent_id')
+                    ->whereNull('category_parent_id')
                     ->select('category_name', 'id', 'category_image', 'category_icon')
                     ->where('locale', app()->getLocale())
                     ->get();;
@@ -2617,7 +2763,14 @@ class PagesController extends Controller
                             ->orWhereNull('items.user_id');
                     });
                 if ($request->filter_category)
-                    $free_items_query->where('category_id', $request->filter_category);
+                {
+                    $categories_ids = Category::find($request->filter_category)->children->pluck('id');
+                    if ($request->filter_sub_category)
+                        $free_items_query->where('category_id', $request->filter_sub_category);
+                    else
+                        $free_items_query->whereIn('category_id', $categories_ids);
+                }
+
 
                 /**
                  * Start filter sort by for free listing
@@ -2662,16 +2815,13 @@ class PagesController extends Controller
                 } else {
                     $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
                     $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
-                    $free_items_per_page = 10 - $paid_items_per_page;
+                    $free_items_per_page = 10;
 
                     $paid_items = $paid_items_query->paginate($paid_items_per_page);
                     $free_items = $free_items_query->paginate($free_items_per_page);
 
-                    if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
-                        $pagination = $paid_items->appends($querystringArray);
-                    } else {
+
                         $pagination = $free_items->appends($querystringArray);
-                    }
                 }
                 /**
                  * End do listing query
@@ -3056,7 +3206,7 @@ class PagesController extends Controller
             SEOMeta::addKeyword($item->meta_keywords ?? $settings->setting_site_seo_home_keywords);
 
             // OpenGraph
-            OpenGraph::setTitle($item->item_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
+            OpenGraph::setTitle($item->item_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name),false);
             OpenGraph::setDescription($item->item_description);
             OpenGraph::setUrl(request()->fullUrl()                                                                          );
             if (empty($item->item_image)) {
@@ -3811,10 +3961,13 @@ class PagesController extends Controller
         /**
          * Start SEO
          */
-        SEOMeta::setTitle(__('seo.frontend.blog', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setTitle($settings->setting_site_seo_blogs_title,false);
+        SEOMeta::setDescription($settings->setting_site_seo_blogs_description);
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
+
+        OpenGraph::setTitle($settings->setting_site_seo_blogs_title);
+        OpenGraph::setDescription($settings->setting_site_seo_blogs_description);
         /**
          * End SEO
          */
@@ -3907,6 +4060,15 @@ class PagesController extends Controller
             SEOMeta::setDescription($blog->meta_description);
             SEOMeta::setCanonical($blog->canonical ?? request()->fullUrl()                                                                          );
             SEOMeta::addKeyword($blog->meta_keyword ?? $settings->setting_site_seo_home_keywords);
+
+            OpenGraph::setTitle($blog->meta_title);
+            OpenGraph::setDescription($blog->meta_description);
+            OpenGraph::setUrl(request()->fullUrl());
+            if (empty($settings->setting_site_logo)) {
+                OpenGraph::addImage(asset('favicon-96x96.ico'));
+            } else {
+                OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
+            }
             /**
              * End SEO
              */
@@ -5015,12 +5177,16 @@ class PagesController extends Controller
         $query1 = $request->input('query');
         $subCategory = Category::find($request->sub_category_id);
         $parentCategory = Category::find($request->category_id);
+
+        $query1 = $this->unifyArabicCharacters($query1);
+
         // Perform the search query on your model
         $items = Item::query()->select('*')
             ->with('category.parent', 'state','city')
             ->selectRaw("LOCATE('$query1', item_title) as position")
             ->where('items.item_title', 'like', '%' . $query1 . '%')
             ->orderBy('position')->orderBy('item_title');
+
         if ($subCategory) {
             $items->where('category_id', $subCategory?->id);
         }
@@ -5047,5 +5213,38 @@ class PagesController extends Controller
         ]);
     }
 
+    function unifyArabicCharacters($input) {
+        $arabicEquivalence = [
+            'ا' => 'ا', // Aleph
+            'أ' => 'ا', // Alef with Hamza
+            'إ' => 'ا', // Alef with Hamza Below
+            'آ' => 'ا', // Alef with Maddah
+
+            'ى' => 'ي', // Alef with Yaa Above
+
+            'هـ' => 'ه', // Ha with Ta Marbuta
+            'ـه' => 'ه', // Ta Marbuta with Ha
+            'ة' => 'ه', // Treat تاء مربوطة (Ta Marbuta) as Ha
+
+            'ئ' => 'ء', // Alef with Hamza Above
+            'ؤ' => 'ء', // Waw with Hamza Above
+
+            '٠' => '0', // Arabic-Indic Digit Zero
+            '١' => '1', // Arabic-Indic Digit One
+            '٩' => '9', // Arabic-Indic Digit Nine
+            '٨' => '8', // Arabic-Indic Digit Eight
+
+            '٪' => '%', // Percent Sign
+            '٫' => '.', // Decimal Separator
+
+            '،' => ',', // Arabic Comma
+        ];
+
+
+        // Replace Arabic variations with unified representations
+        $unifiedInput = strtr($input, $arabicEquivalence);
+
+        return $unifiedInput;
+    }
 
 }

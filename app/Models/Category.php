@@ -306,10 +306,6 @@ class Category extends Model
     }
 
 
-    protected $dispatchesEvents = [
-        'created' => IncrementCategoryCountEvent::class,
-        'deleted' => DecrementCategoryCountEvent::class,
-    ];
 
 
 }

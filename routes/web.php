@@ -3,6 +3,7 @@
     use App\Http\Controllers\Admin\PlanController;
     use App\Http\Controllers\PagesController;
     use App\Http\Controllers\Admin\PagesController as AdminDashboard;
+    use App\Http\Controllers\UploadDataController;
     use App\Http\Controllers\UtilsController;
     use App\Http\Controllers\Auth\LoginController;
     use App\Http\Controllers\Admin\UserController;
@@ -104,6 +105,7 @@
         Route::get('/popular', [PagesController::class,'search'])->name('page.popular');
         Route::get('/branches/{user}', [PagesController::class,'branches'])->name('page.branches');
         Route::get('/sub_categories/{parent_category_slug}/{category_slug}', [PagesController::class,'category'])->name('page.category');
+        Route::get('/search_categories', [PagesController::class,'search_categories'])->name('page.search_categories');
         Route::get('/category/{category_slug}/state/{state_slug}', [PagesController::class,'categoryByState'])->name('page.category.state');
         Route::get('/category/{category_slug}/state/{state_slug}/city/{city_slug}', [PagesController::class,'categoryByStateCity'])->name('page.category.state.city');
 
@@ -111,6 +113,12 @@
         Route::get('/state/{state_slug}/city/{city_slug}', [PagesController::class,'city'])->name('page.city');
         Route::get('/states', [PagesController::class,'states'])->name('page.states');
         Route::get('/cities/{state_slug}', [PagesController::class,'cities'])->name('page.cities');
+
+        Route::get('/normalize_arabic', [UploadDataController::class,'normalize_arabic'])->name('page.normalize_arabic');
+        Route::get('/normalize_arabic_category', [UploadDataController::class,'normalize_arabic_category'])->name('page.normalize_arabic_category');
+        Route::get('/delete_duplicates', [UploadDataController::class,'delete_dublicates'])->name('page.delete_duplicates');
+        Route::get('/update_counts', [UploadDataController::class,'update_counts'])->name('page.update_counts');
+        Route::get('/update_company_id', [UploadDataController::class,'update_company_id'])->name('page.update_company_id');
 
     //    Route::get('/listing/{item_slug}', [PagesController::class,'item'])->name('page.item');
         Route::get('/listing/{category_slug}/{sub_category_slug}/{state_slug}/{item_slug}', [PagesController::class,'item'])->name('page.item');
@@ -216,6 +224,7 @@
         /**
          * ajax routes serve frontend elements
          */
+
         Route::get('/ajax/cities/{state_id}', [PagesController::class,'jsonGetCitiesByState'])->name('json.city');
         Route::get('/ajax/states/{country_id}', [PagesController::class,'jsonGetStatesByCountry'])->name('json.state');
         Route::post('/ajax/state/image/delete/{item_id}', [PagesController::class,'jsonDeleteStateFeatureImage'])->name('json.state.image.feature');
@@ -483,7 +492,7 @@
              * Start bulk importer routes
              */
             Route::get('/importer/csv/upload', [ImporterController::class,'showUpload'])->name('importer.csv.upload.show');
-            Route::post('/importer/csv/upload', [ImporterController::class,'processUpload'])->name('importer.csv.upload.process');
+            Route::post('/importer/csv/upload', [ImporterController::class,'uploadFolder'])->name('importer.csv.upload.process');
 
             Route::get('/importer/csv/data', [ImporterController::class,'indexCsvData'])->name('importer.csv.upload.data.index');
             Route::get('/importer/csv/data/{import_csv_data}/edit', [ImporterController::class,'editCsvData'])->name('importer.csv.upload.data.edit');

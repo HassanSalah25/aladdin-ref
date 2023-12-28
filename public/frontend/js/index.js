@@ -20,6 +20,16 @@ var landingSwiper = new Swiper(".landing__swiper", {
   },
 });
 
+var category_swiper = new Swiper(".category-swiper__inner", {
+    autoplay: {
+        delay: 5000, // Set the delay in milliseconds (e.g., 3000ms or 3 seconds)
+        disableOnInteraction: false, // Set to false if you want autoplay to continue even when user interacts with the swiper
+    },
+    loop: true,
+    slidesPerView: 1,
+
+});
+
 var hotelsSwiper = new Swiper(".hotels__items__swiper", {
   // autoplay: true,
   slidesPerView: 1,
@@ -64,8 +74,8 @@ var exploreSwiper = new Swiper(".explore__items__swiper", {
     clickable: true,
   },
   navigation: {
-    nextEl: ".explore__items__swiper__button-next",
-    prevEl: ".explore__items__swiper__button-prev",
+    nextEl: ".explore__items__swiper__button-prev",
+    prevEl: ".explore__items__swiper__button-next",
   },
   breakpoints: {
     400: {

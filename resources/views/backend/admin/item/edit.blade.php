@@ -85,8 +85,8 @@
                                 <a href="{{ route('page.item',  [
                         'category_slug' => $item->category->parent?->category_slug ?? $item->category->category_slug,
                         'sub_category_slug' => $item->category->category_slug,
-                        'state_slug' => $item->state->state_slug,
-                        'item_slug' => $item->item_slug
+                        'state_slug' => $item->state->state_slug ?? 'اونلاين',
+                        'item_slug' => $item->item_slug ?? 'اونلاين'
                     ]) }}"
                                    target="_blank">{{ route('page.item', [
                         'category_slug' => $item->category->parent?->category_slug ?? $item->category->category_slug,

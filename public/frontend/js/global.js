@@ -293,3 +293,13 @@ $(document).ready(function () {
         }
     });
 });
+
+var mySwiper = new Swiper('.swiper-container-ads', {
+    // Optional parameters
+    loop: true, // Enable loop mode
+    slidesPerView: 1,
+    autoplay: {
+        delay: 5000, // Set the delay in milliseconds (e.g., 3000ms or 3 seconds)
+        disableOnInteraction: false, // Set to false if you want autoplay to continue even when user interacts with the swiper
+    }
+});

@@ -30,52 +30,55 @@
         </div>
     </div>
 
-    <?php if($ads_before_content->count() > 0): ?>
-        <?php $__currentLoopData = $ads_before_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-            <section class="category-swiper" style="min-height: 5rem;">
-                <div class="container">
-                    <div class="swiper category-swiper__inner">
-                        <div class="swiper-wrapper">
+
+    <section class="category-swiper" style="min-height: 5rem;">
+        <div class="container">
+            <div class="swiper category-swiper__inner">
+                <div class="swiper-wrapper">
+
+                    <?php if($ads_before_content->count() > 0): ?>
+                        <?php $__currentLoopData = $ads_before_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="swiper-slide">
-                                <?php if(!$ad->item?->first()): ?>
-                                    <div class="category-slide__item  d-flex justify-content-center">
-                                        <img src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"
-                                             alt="category slider" class="img-fluid"/>
-                                    </div>
-                                <?php else: ?>
-                                    <a class="category-slide__item  d-flex justify-content-center" href="<?php echo e(route('page.item',[
+                                <a
+
+                                    class="category-slide__item  d-flex justify-content-center"
+                                    <?php if($ad->item?->first()): ?>
+                                        href="<?php echo e(route('page.item',[
                                                                                                                             'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                                                                                             'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                                                                                             'state_slug' => $ad->item->first()->state->state_slug,
                                                                                                                             'item_slug' => $ad->item->first()->item_slug
                                                                                                                         ])); ?>"
-                                       class="ads">
 
-                                        <img src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"/>
-                                    </a>
+                                    <?php endif; ?>
+                                >
 
-                                <?php endif; ?>
+                                    <img style="width: 100%" src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"/>
+                                </a>
+
                             </div>
-
-                        </div>
-                        <div class="swiper-pagination category-swiper__inner-pagination our-swiper-pagination"></div>
-                    </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php else: ?>
+                        <div class="ads categories__items__list__item__ads">ads</div>
+                    <?php endif; ?>
                 </div>
-            </section>
-        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-    <?php else: ?>
-        <div class="ads categories__items__list__item__ads">ads</div>
-    <?php endif; ?>
+            </div>
+        </div>
+    </section>
 
 
 
+
+    <h1 class="mx-5 mt-3">
+        <?php echo e($city->city_name); ?>
+
+    </h1>
 
     <div class="site-section" style="margin-top:4rem">
         <div class="container">
 
             <div class="row">
-               
+                
                 
                 <!-- Start Filter -->
                 <div class="row">
@@ -115,6 +118,42 @@ unset($__errorArgs, $__bag); ?>"
                                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                             </select>
                                             <?php $__errorArgs = ['filter_category'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="invalid-tooltip">
+                                        <strong><?php echo e($message); ?></strong>
+                                    </span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- filters  -->
+                                <div class="col-12 col-sm-6 col-md-12">
+                                    <div class=" filter_sub_category_div">
+                                        <div class="col-12 col-md-12 pl-0">
+                                            <label for="filter_sub_category"
+                                                   class="my-4"><?php echo e(__('theme_alaadin.filter-sub-category')); ?></label>
+                                            <select
+                                                class="selectpicker form-control <?php $__errorArgs = ['filter_sub_category'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                                name="filter_sub_category" id="filter_sub_category"
+                                                data-live-search="true">
+                                                <option
+                                                    value="0" <?php echo e(request('filter_sub_category') ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-sub-categories')); ?></option>
+                                            </select>
+                                            <?php $__errorArgs = ['filter_sub_category'];
 $__bag = $errors->getBag($__errorArgs[1] ?? 'default');
 if ($__bag->has($__errorArgs[0])) :
 if (isset($message)) { $__messageOriginal = $message; }
@@ -210,7 +249,7 @@ unset($__errorArgs, $__bag); ?>
                                      class="categories__items__list__item categories__items__list__item-map">
                                 </div>
 
-                              
+                                
 
                                 <?php if($free_items->count() > 0): ?>
                                     <?php $__currentLoopData = $free_items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $free_items_key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -218,50 +257,50 @@ unset($__errorArgs, $__bag); ?>
                                     <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                                 <?php endif; ?>
                             </div>
-                            <div class="pagination center-block row justify-content-center w-100" style="float: right;width: auto;margin-top:2rem">
+                            <div class="pagination center-block row justify-content-center w-100"
+                                 style="float: right;width: auto;margin-top:2rem">
                                 <?php echo e($pagination->appends(request()->query())->links()); ?>
 
                             </div>
                         </div>
                     </div>
-                    <?php if($ads_after_content): ?>
 
-                        <?php $__currentLoopData = $ads_after_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <section class="category-swiper mb-3" style="min-height: 5rem;">
-                                <div class="container">
-                                    <div class="swiper category-swiper__inner">
-                                        <div class="swiper-wrapper">
+                    <section class="category-swiper mb-3" style="min-height: 5rem;">
+                        <div class="container">
+                            <div class="swiper category-swiper__inner">
+                                <div class="swiper-wrapper">
+
+                                    <?php if($ads_after_content): ?>
+                                        <?php $__currentLoopData = $ads_after_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                             <div class="swiper-slide">
-                                                <?php if(!$ad->item?->first()): ?>
-                                                    <div class="category-slide__item  d-flex justify-content-center">
-                                                        <img src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"
-                                                             alt="category slider" class="img-fluid"/>
-                                                    </div>
-                                                <?php else: ?>
-                                                    <a class="category-slide__item  d-flex justify-content-center" href="<?php echo e(route('page.item',[
+                                                <a
+
+                                                    class="category-slide__item  d-flex justify-content-center"
+                                                    <?php if($ad->item?->first()): ?>
+                                                        href="<?php echo e(route('page.item',[
                                                                                                                             'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                                                                                             'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                                                                                             'state_slug' => $ad->item->first()->state->state_slug,
                                                                                                                             'item_slug' => $ad->item->first()->item_slug
                                                                                                                         ])); ?>"
-                                                       class="ads">
+                                                    <?php endif; ?>
+                                                >
 
-                                                        <img src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"/>
-                                                    </a>
+                                                    <img style="width: 100%"
+                                                         src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"/>
+                                                </a>
 
-                                                <?php endif; ?>
+
                                             </div>
-
-                                        </div>
-                                        <div
-                                            class="swiper-pagination category-swiper__inner-pagination our-swiper-pagination"></div>
-                                    </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <?php else: ?>
+                                        <div class="ads categories__items__list__item__ads mb-3">ads</div>
+                                    <?php endif; ?>
                                 </div>
-                            </section>
-                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                    <?php else: ?>
-                        <div class="ads categories__items__list__item__ads mb-3">ads</div>
-                    <?php endif; ?>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             </div>
 
@@ -599,7 +638,50 @@ unset($__errorArgs, $__bag); ?>
                 </script>
                 <script async defer
                         src="https://maps.googleapis.com/maps/api/js??v=quarterly&key=<?php echo e($site_global_settings->setting_site_map_google_api_key); ?>&callback=initMap"></script>
+                <script>
 
+                    function getSubs(category_id) {
+                        var ajax_url = '<?php echo e(route('getSubCategories')); ?>';
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+                        jQuery.ajax({
+                            url: ajax_url,
+                            method: 'get',
+                            data: {'category_id': category_id},
+                            success: function (result) {
+                                console.log(result.data);
+                                $('#filter_sub_category').html("<option value='0'><?php echo e(__('prefer_country.all-sub-categories')); ?></option>");
+                                $('#filter_sub_category').selectpicker('refresh');
+                                $.each(result.data, function (key, value) {
+                                    var seleced = null;
+                                    var sub_category_id = value.id;
+                                    var sub_category_name = value.category_name;
+                                    <?php if(request('filter_sub_category')): ?>
+                                        if(<?php echo e(request('filter_sub_category')); ?> === sub_category_id)
+                                            seleced = 'selected' ;
+                                    <?php endif; ?>
+                                    $('#filter_sub_category').append('<option value="' + sub_category_id +'"' +
+                                        seleced +
+                                        '>' + sub_category_name + '</option>');
+                                });
+                                $('#filter_sub_category').selectpicker('refresh');
+                            }
+                        });
+                    }
+
+                    $(document).ready(function () {
+                        $('#filter_category').on('change', function () {
+                            var category_id = $(this).val();
+                            getSubs(category_id);
+                        });
+                        <?php if(request('filter_category')): ?>
+                        getSubs(<?php echo e(request('filter_category')); ?>);
+                        <?php endif; ?>
+                    });
+                </script>
     <?php endif; ?>
 
 

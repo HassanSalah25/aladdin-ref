@@ -17,7 +17,9 @@
     </div>
     <div>
         @if($item->item_image_medium)
-            <img src="{{ !empty($item->item_image_medium) ? Storage::disk('public')->url('item/' . $item->item_image_medium) : (!empty($item->item_image) ? Storage::disk('public')->url('item/' . $item->item_image) : asset('frontend/images/placeholder/full_item_feature_image_medium.webp')) }}" alt="item" class="img-fluid categories__items__list__item__img w-100" />
+            <img
+                src="{{ !empty($item->item_image_medium) ? Storage::disk('public')->url('item/' . $item->item_image_medium) : (!empty($item->item_image) ? Storage::disk('public')->url('item/' . $item->item_image) : asset('frontend/images/placeholder/full_item_feature_image_medium.webp')) }}"
+                alt="item" class="img-fluid categories__items__list__item__img w-100"/>
         @endif
     </div>
     <div class="categories__items__list__item__info w-100">
@@ -74,7 +76,17 @@
 
                 </div>
                 <div class="mb-base d-flex gap-2">
-                    <span class="fw-bold">المجال : </span>{{ $item->category->category_name}}
+                    <span class="fw-bold">المجال : </span>
+                    <a class="item_category mb-2"
+                       @if($item->category->parent)
+                           href="{{route('page.category',['parent_category_slug'=> $item->category->parent?->category_slug,'category_slug'=>$item->category->category_slug])}}"
+                       @else
+                           href="{{route('page.sub_categories',['category_slug'=>$item->category->category_slug])}}"
+                        @endif
+                    >
+                        {{$item->category->category_name}}
+                    </a>
+
                 </div>
             </div>
 
@@ -97,11 +109,11 @@
                 </p>
 
             @endif
-          {{--  <button type="button"
-                    class="white-space-nowrap categories__items__list__item__info__footer__btn btn btn-primary my-btn">
-                <i class="las la-phone"></i>
-                <span>تواصل</span>
-            </button>--}}
+            {{--  <button type="button"
+                      class="white-space-nowrap categories__items__list__item__info__footer__btn btn btn-primary my-btn">
+                  <i class="las la-phone"></i>
+                  <span>تواصل</span>
+              </button>--}}
             @if($item->item_phone)
                 <a href="tel:{{ $item->item_phone}}"
                    class="btn my-btn btn-primary profile__details__contact-btn">
@@ -119,10 +131,23 @@
                 @endforeach
 
             @endif
+            @if($item->item_lat != 0 && $item->item_lng != 0)
+                <a class="btn my-btn btn-primary profile__details__contact-btn"
+                   target="_blank"
+                   href="{{ 'https://www.google.com/maps/dir/?api=1&destination=' . $item->item_lat . ',' . $item->item_lng }}">
+                    <i class="las la-map-marker"></i>
+                    <span>الموقع</span>
+                </a>
+            @endif
             @if($item->item_website)
                 <a href="{{ $item->item_website}}"
                    class="categories__items__list__item__info__footer__contacts__item"><i
                         class="las la-globe-europe"></i></a>
+            @endif
+            @if($item->item_social_email)
+                <a href="mailto:{{ $item->item_social_email}}"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fa fa-envelope"></i></a>
             @endif
             @if($item->item_social_facebook)
                 <a href="{{ $item->item_social_facebook}}"
@@ -155,44 +180,39 @@
                         class="fab fa-youtube"></i></a>
             @endif
             @if($item->item_social_tiktok)
-                    <a href="{{ $item->item_social_tiktok}}"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-tiktok"></i></a>
-                @endif
-            @if($item->item_social_pinterest)
-                    <a href="{{ $item->item_social_pinterest}}"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-pinterest"></i></a>
-                @endif
-            @if($item->item_social_telegram)
-                    <a href="tel:{{ $item->item_social_telegram}}"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-telegram"></i></a>
-                @endif
-            @if($item->item_social_youtube)
-                    <a href="{{ $item->item_social_youtube}}"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-youtube"></i></a>
-                @endif
-            @if($item->item_social_snapchat)
-                    <a href="{{ $item->item_social_snapchat}}"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-snapchat"></i></a>
-                @endif
-
-
-           {{-- <div class="flex flex-column gap-2 categories__items__list__item__info__footer__contacts position-absolute">
---}}{{--                <a--}}{{--
---}}{{--                    href="#mapid-box"--}}{{--
---}}{{--                    class="categories__items__list__item__info__footer__contacts__item"--}}{{--
---}}{{--                    ><i class="las la-map-marker-alt"></i></a>--}}{{--
-
-                <a href="https://wa.me/{{ $item->item_social_whatsapp}}"
+                <a href="{{ $item->item_social_tiktok}}"
                    class="categories__items__list__item__info__footer__contacts__item"><i
-                        class="lab la-whatsapp"></i></a>
-                <a href="tel:{{ $item->item_phone}}"
-                   class="categories__items__list__item__info__footer__contacts__item"><i class="las la-phone"></i></a>
-            </div>--}}
+                        class="fab fa-tiktok"></i></a>
+            @endif
+            @if($item->item_social_pinterest)
+                <a href="{{ $item->item_social_pinterest}}"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-pinterest"></i></a>
+            @endif
+            @if($item->item_social_telegram)
+                <a href="tel:{{ $item->item_social_telegram}}"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-telegram"></i></a>
+            @endif
+            @if($item->item_social_snapchat)
+                <a href="{{ $item->item_social_snapchat}}"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-snapchat"></i></a>
+            @endif
+
+
+            {{-- <div class="flex flex-column gap-2 categories__items__list__item__info__footer__contacts position-absolute">
+ --}}{{--                <a--}}{{--
+ --}}{{--                    href="#mapid-box"--}}{{--
+ --}}{{--                    class="categories__items__list__item__info__footer__contacts__item"--}}{{--
+ --}}{{--                    ><i class="las la-map-marker-alt"></i></a>--}}{{--
+
+                 <a href="https://wa.me/{{ $item->item_social_whatsapp}}"
+                    class="categories__items__list__item__info__footer__contacts__item"><i
+                         class="lab la-whatsapp"></i></a>
+                 <a href="tel:{{ $item->item_phone}}"
+                    class="categories__items__list__item__info__footer__contacts__item"><i class="las la-phone"></i></a>
+             </div>--}}
         </div>
     </div>
 </div>

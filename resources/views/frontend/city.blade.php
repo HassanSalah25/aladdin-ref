@@ -31,99 +31,101 @@
         </div>
     </div>
 
-    @if($ads_before_content->count() > 0)
-        @foreach($ads_before_content as $ad)
-            <section class="category-swiper" style="min-height: 5rem;">
-                <div class="container">
-                    <div class="swiper category-swiper__inner">
-                        <div class="swiper-wrapper">
+
+    <section class="category-swiper" style="min-height: 5rem;">
+        <div class="container">
+            <div class="swiper category-swiper__inner">
+                <div class="swiper-wrapper">
+
+                    @if($ads_before_content->count() > 0)
+                        @foreach($ads_before_content as $ad)
                             <div class="swiper-slide">
-                                @if(!$ad->item?->first())
-                                    <div class="category-slide__item  d-flex justify-content-center">
-                                        <img src="{{ asset('storage/ads/'.$ad->ad_image_horizontal) }}"
-                                             alt="category slider" class="img-fluid"/>
-                                    </div>
-                                @else
-                                    <a class="category-slide__item  d-flex justify-content-center" href="{{route('page.item',[
+                                <a
+
+                                    class="category-slide__item  d-flex justify-content-center"
+                                    @if($ad->item?->first())
+                                        href="{{route('page.item',[
                                                                                                                             'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                                                                                             'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                                                                                             'state_slug' => $ad->item->first()->state->state_slug,
                                                                                                                             'item_slug' => $ad->item->first()->item_slug
                                                                                                                         ])}}"
-                                       class="ads">
 
-                                        <img src="{{asset('storage/ads/'.$ad->ad_image_horizontal)}}"/>
-                                    </a>
+                                    @endif
+                                >
 
-                                @endif
+                                    <img style="width: 100%" src="{{asset('storage/ads/'.$ad->ad_image_horizontal)}}"/>
+                                </a>
+
                             </div>
-
-                        </div>
-                        <div class="swiper-pagination category-swiper__inner-pagination our-swiper-pagination"></div>
-                    </div>
+                        @endforeach
+                    @else
+                        <div class="ads categories__items__list__item__ads">ads</div>
+                    @endif
                 </div>
-            </section>
-        @endforeach
-
-    @else
-        <div class="ads categories__items__list__item__ads">ads</div>
-    @endif
+            </div>
+        </div>
+    </section>
 
 
 
+
+    <h1 class="mx-5 mt-3">
+        {{ $city->city_name }}
+    </h1>
 
     <div class="site-section" style="margin-top:4rem">
         <div class="container">
 
             <div class="row">
-               {{-- <div class="col-md-8 " style="margin:auto;margin-top: -5rem;">
+                {{-- <div class="col-md-8 " style="margin:auto;margin-top: -5rem;">
 
-                    <div class="overlap-category ">
+                     <div class="overlap-category ">
 
-                       --}}{{-- <div class="row align-items-stretch no-gutters">
-                            @foreach( $filter_categories as $categories_key => $category )
-                                <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2">
-                                    @if($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_ICON)
-                                        <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
-                                           class="popular-category h-100">
-                                <span class="icon">
-                                    <span>
-                                        @if($category->category_icon)
-                                            <i class="{{ $category->category_icon }}"></i>
-                                        @else
-                                            <i class="fa-solid fa-heart"></i>
-                                        @endif
-                                    </span>
-                                </span>
+                        --}}{{-- <div class="row align-items-stretch no-gutters">
+                             @foreach( $filter_categories as $categories_key => $category )
+                                 <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2">
+                                     @if($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_ICON)
+                                         <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
+                                            class="popular-category h-100">
+                                 <span class="icon">
+                                     <span>
+                                         @if($category->category_icon)
+                                             <i class="{{ $category->category_icon }}"></i>
+                                         @else
+                                             <i class="fa-solid fa-heart"></i>
+                                         @endif
+                                     </span>
+                                 </span>
 
-                                            <span class="caption d-block">{{ $category->category_name }}</span>
-                                        </a>
-                                    @elseif($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_IMAGE)
-                                        <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
-                                           class="popular-category h-100 image-category">
-                                <span class="icon image-category-span">
-                                    <span>
-                                        @if($category->category_image)
-                                            <img
-                                                src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url('category/'. $category->category_image) }}"
-                                                alt="Image" class="img-fluid rounded image-category-img">
-                                        @else
-                                            <img src="{{ asset('frontend/images/placeholder/category-image.webp') }}"
+                                             <span class="caption d-block">{{ $category->category_name }}</span>
+                                         </a>
+                                     @elseif($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_IMAGE)
+                                         <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
+                                            class="popular-category h-100 image-category">
+                                 <span class="icon image-category-span">
+                                     <span>
+                                         @if($category->category_image)
+                                             <img
+                                                 src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url('category/'. $category->category_image) }}"
                                                  alt="Image" class="img-fluid rounded image-category-img">
-                                        @endif
-                                    </span>
-                                </span>
-                                            <span
-                                                class="caption d-block image-category-caption">{{ $category->category_name }}</span>
-                                        </a>
-                                    @endif
+                                         @else
+                                             <img src="{{ asset('frontend/images/placeholder/category-image.webp') }}"
+                                                  alt="Image" class="img-fluid rounded image-category-img">
+                                         @endif
+                                     </span>
+                                 </span>
+                                             <span
+                                                 class="caption d-block image-category-caption">{{ $category->category_name }}</span>
+                                         </a>
+                                     @endif
 
-                                </div>
-                            @endforeach
-                        </div>--}}{{--
-                    </div>
+                                 </div>
+                             @endforeach
+                         </div>--}}{{--
+                     </div>
 
-                </div>--}}
+                 </div>--}}
                 {{--<section class="mt-xl mb-xl activites position-relative">
                         <div class="container">
                             <div class="activites__items d-flex align-items-center flex-wrap gap-4">
@@ -180,6 +182,28 @@
                                                 @endforeach
                                             </select>
                                             @error('filter_category')
+                                            <span class="invalid-tooltip">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- filters  -->
+                                <div class="col-12 col-sm-6 col-md-12">
+                                    <div class=" filter_sub_category_div">
+                                        <div class="col-12 col-md-12 pl-0">
+                                            <label for="filter_sub_category"
+                                                   class="my-4">{{ __('theme_alaadin.filter-sub-category') }}</label>
+                                            <select
+                                                class="selectpicker form-control @error('filter_sub_category') is-invalid @enderror"
+                                                name="filter_sub_category" id="filter_sub_category"
+                                                data-live-search="true">
+                                                <option
+                                                    value="0" {{ request('filter_sub_category') ? 'selected' : '' }}>{{ __('prefer_country.all-sub-categories') }}</option>
+                                            </select>
+                                            @error('filter_sub_category')
                                             <span class="invalid-tooltip">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -252,11 +276,11 @@
                                      class="categories__items__list__item categories__items__list__item-map">
                                 </div>
 
-                              {{--  @if($paid_items->count() > 0)
-                                    @foreach($paid_items as $paid_items_key => $item)
-                                        @include('frontend.partials.free-item-inline')
-                                    @endforeach
-                                @endif--}}
+                                {{--  @if($paid_items->count() > 0)
+                                      @foreach($paid_items as $paid_items_key => $item)
+                                          @include('frontend.partials.free-item-inline')
+                                      @endforeach
+                                  @endif--}}
 
                                 @if($free_items->count() > 0)
                                     @foreach($free_items as $free_items_key => $item)
@@ -264,49 +288,49 @@
                                     @endforeach
                                 @endif
                             </div>
-                            <div class="pagination center-block row justify-content-center w-100" style="float: right;width: auto;margin-top:2rem">
+                            <div class="pagination center-block row justify-content-center w-100"
+                                 style="float: right;width: auto;margin-top:2rem">
                                 {{ $pagination->appends(request()->query())->links() }}
                             </div>
                         </div>
                     </div>
-                    @if($ads_after_content)
 
-                        @foreach($ads_after_content as $ad)
-                            <section class="category-swiper mb-3" style="min-height: 5rem;">
-                                <div class="container">
-                                    <div class="swiper category-swiper__inner">
-                                        <div class="swiper-wrapper">
+                    <section class="category-swiper mb-3" style="min-height: 5rem;">
+                        <div class="container">
+                            <div class="swiper category-swiper__inner">
+                                <div class="swiper-wrapper">
+
+                                    @if($ads_after_content)
+                                        @foreach($ads_after_content as $ad)
                                             <div class="swiper-slide">
-                                                @if(!$ad->item?->first())
-                                                    <div class="category-slide__item  d-flex justify-content-center">
-                                                        <img src="{{ asset('storage/ads/'.$ad->ad_image_horizontal) }}"
-                                                             alt="category slider" class="img-fluid"/>
-                                                    </div>
-                                                @else
-                                                    <a class="category-slide__item  d-flex justify-content-center" href="{{route('page.item',[
+                                                <a
+
+                                                    class="category-slide__item  d-flex justify-content-center"
+                                                    @if($ad->item?->first())
+                                                        href="{{route('page.item',[
                                                                                                                             'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                                                                                             'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                                                                                             'state_slug' => $ad->item->first()->state->state_slug,
                                                                                                                             'item_slug' => $ad->item->first()->item_slug
                                                                                                                         ])}}"
-                                                       class="ads">
+                                                    @endif
+                                                >
 
-                                                        <img src="{{asset('storage/ads/'.$ad->ad_image_horizontal)}}"/>
-                                                    </a>
+                                                    <img style="width: 100%"
+                                                         src="{{asset('storage/ads/'.$ad->ad_image_horizontal)}}"/>
+                                                </a>
 
-                                                @endif
+
                                             </div>
-
-                                        </div>
-                                        <div
-                                            class="swiper-pagination category-swiper__inner-pagination our-swiper-pagination"></div>
-                                    </div>
+                                        @endforeach
+                                    @else
+                                        <div class="ads categories__items__list__item__ads mb-3">ads</div>
+                                    @endif
                                 </div>
-                            </section>
-                        @endforeach
-                    @else
-                        <div class="ads categories__items__list__item__ads mb-3">ads</div>
-                    @endif
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
             </div>
 
@@ -644,7 +668,50 @@
                 </script>
                 <script async defer
                         src="https://maps.googleapis.com/maps/api/js??v=quarterly&key={{ $site_global_settings->setting_site_map_google_api_key }}&callback=initMap"></script>
+                <script>
 
+                    function getSubs(category_id) {
+                        var ajax_url = '{{route('getSubCategories')}}';
+                        $.ajaxSetup({
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            }
+                        });
+                        jQuery.ajax({
+                            url: ajax_url,
+                            method: 'get',
+                            data: {'category_id': category_id},
+                            success: function (result) {
+                                console.log(result.data);
+                                $('#filter_sub_category').html("<option value='0'>{{ __('prefer_country.all-sub-categories') }}</option>");
+                                $('#filter_sub_category').selectpicker('refresh');
+                                $.each(result.data, function (key, value) {
+                                    var seleced = null;
+                                    var sub_category_id = value.id;
+                                    var sub_category_name = value.category_name;
+                                    @if(request('filter_sub_category'))
+                                        if({{request('filter_sub_category')}} === sub_category_id)
+                                            seleced = 'selected' ;
+                                    @endif
+                                    $('#filter_sub_category').append('<option value="' + sub_category_id +'"' +
+                                        seleced +
+                                        '>' + sub_category_name + '</option>');
+                                });
+                                $('#filter_sub_category').selectpicker('refresh');
+                            }
+                        });
+                    }
+
+                    $(document).ready(function () {
+                        $('#filter_category').on('change', function () {
+                            var category_id = $(this).val();
+                            getSubs(category_id);
+                        });
+                        @if(request('filter_category'))
+                        getSubs({{request('filter_category')}});
+                        @endif
+                    });
+                </script>
     @endif
 
 

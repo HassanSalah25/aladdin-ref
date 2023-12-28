@@ -17,7 +17,9 @@
     </div>
     <div>
         <?php if($item->item_image_medium): ?>
-            <img src="<?php echo e(!empty($item->item_image_medium) ? Storage::disk('public')->url('item/' . $item->item_image_medium) : (!empty($item->item_image) ? Storage::disk('public')->url('item/' . $item->item_image) : asset('frontend/images/placeholder/full_item_feature_image_medium.webp'))); ?>" alt="item" class="img-fluid categories__items__list__item__img w-100" />
+            <img
+                src="<?php echo e(!empty($item->item_image_medium) ? Storage::disk('public')->url('item/' . $item->item_image_medium) : (!empty($item->item_image) ? Storage::disk('public')->url('item/' . $item->item_image) : asset('frontend/images/placeholder/full_item_feature_image_medium.webp'))); ?>"
+                alt="item" class="img-fluid categories__items__list__item__img w-100"/>
         <?php endif; ?>
     </div>
     <div class="categories__items__list__item__info w-100">
@@ -77,7 +79,17 @@
 
                 </div>
                 <div class="mb-base d-flex gap-2">
-                    <span class="fw-bold">المجال : </span><?php echo e($item->category->category_name); ?>
+                    <span class="fw-bold">المجال : </span>
+                    <a class="item_category mb-2"
+                       <?php if($item->category->parent): ?>
+                           href="<?php echo e(route('page.category',['parent_category_slug'=> $item->category->parent?->category_slug,'category_slug'=>$item->category->category_slug])); ?>"
+                       <?php else: ?>
+                           href="<?php echo e(route('page.sub_categories',['category_slug'=>$item->category->category_slug])); ?>"
+                        <?php endif; ?>
+                    >
+                        <?php echo e($item->category->category_name); ?>
+
+                    </a>
 
                 </div>
             </div>
@@ -101,7 +113,7 @@
                 </p>
 
             <?php endif; ?>
-          
+            
             <?php if($item->item_phone): ?>
                 <a href="tel:<?php echo e($item->item_phone); ?>"
                    class="btn my-btn btn-primary profile__details__contact-btn">
@@ -119,10 +131,23 @@
                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
             <?php endif; ?>
+            <?php if($item->item_lat != 0 && $item->item_lng != 0): ?>
+                <a class="btn my-btn btn-primary profile__details__contact-btn"
+                   target="_blank"
+                   href="<?php echo e('https://www.google.com/maps/dir/?api=1&destination=' . $item->item_lat . ',' . $item->item_lng); ?>">
+                    <i class="las la-map-marker"></i>
+                    <span>الموقع</span>
+                </a>
+            <?php endif; ?>
             <?php if($item->item_website): ?>
                 <a href="<?php echo e($item->item_website); ?>"
                    class="categories__items__list__item__info__footer__contacts__item"><i
                         class="las la-globe-europe"></i></a>
+            <?php endif; ?>
+            <?php if($item->item_social_email): ?>
+                <a href="mailto:<?php echo e($item->item_social_email); ?>"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fa fa-envelope"></i></a>
             <?php endif; ?>
             <?php if($item->item_social_facebook): ?>
                 <a href="<?php echo e($item->item_social_facebook); ?>"
@@ -155,33 +180,28 @@
                         class="fab fa-youtube"></i></a>
             <?php endif; ?>
             <?php if($item->item_social_tiktok): ?>
-                    <a href="<?php echo e($item->item_social_tiktok); ?>"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-tiktok"></i></a>
-                <?php endif; ?>
+                <a href="<?php echo e($item->item_social_tiktok); ?>"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-tiktok"></i></a>
+            <?php endif; ?>
             <?php if($item->item_social_pinterest): ?>
-                    <a href="<?php echo e($item->item_social_pinterest); ?>"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-pinterest"></i></a>
-                <?php endif; ?>
+                <a href="<?php echo e($item->item_social_pinterest); ?>"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-pinterest"></i></a>
+            <?php endif; ?>
             <?php if($item->item_social_telegram): ?>
-                    <a href="tel:<?php echo e($item->item_social_telegram); ?>"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-telegram"></i></a>
-                <?php endif; ?>
-            <?php if($item->item_social_youtube): ?>
-                    <a href="<?php echo e($item->item_social_youtube); ?>"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-youtube"></i></a>
-                <?php endif; ?>
+                <a href="tel:<?php echo e($item->item_social_telegram); ?>"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-telegram"></i></a>
+            <?php endif; ?>
             <?php if($item->item_social_snapchat): ?>
-                    <a href="<?php echo e($item->item_social_snapchat); ?>"
-                       class="categories__items__list__item__info__footer__contacts__item"><i
-                            class="fab fa-snapchat"></i></a>
-                <?php endif; ?>
+                <a href="<?php echo e($item->item_social_snapchat); ?>"
+                   class="categories__items__list__item__info__footer__contacts__item"><i
+                        class="fab fa-snapchat"></i></a>
+            <?php endif; ?>
 
 
-           
+            
         </div>
     </div>
 </div>

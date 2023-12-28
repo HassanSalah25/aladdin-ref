@@ -5,10 +5,12 @@
 
         .date {
             background: linear-gradient(#b269ff, #000000e3);
+            position: absolute;
+            top: 0px;
             color: white;
             padding: 0.8em;
-            height: 100%;
-            margin-right: -243px;
+            right: 5%;
+
             span {
                 display: block;
                 text-align: center;
@@ -76,8 +78,8 @@
                             <div class="swiper-slide">
                                 <div class="category-slide__item">
                                     <img style="height:300px"
-                                        src="{{ empty($gallery->item_image_gallery_name) ? Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name) : Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name) }}"
-                                        alt="category slider" class="img-fluid"/>
+                                         src="{{ empty($gallery->item_image_gallery_name) ? Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name) : Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name) }}"
+                                         alt="category slider" class="img-fluid"/>
                                 </div>
                             </div>
                         @endforeach
@@ -95,33 +97,33 @@
         </div>
     </section>
 
-{{--    <section class="mt-xl mb-xl activites position-relative">
-        <div class="container">
-            <div class="activites__items d-flex align-items-center flex-wrap gap-4">
-                <div class="activites__title-item d-flex align-items-center justify-content-center text-center">
-                    <h3 class="activites__title-item__title m-0 fw-bold">
-                        {{ __('frontend.item.branches') }}
-                    </h3>
-                </div>
-                @if($item->user?->items->count() > 0)
-                    @foreach($item->user->items as $paid_items_key => $single_item)
-                        @if($single_item->id != $item->id)
-                            <!-- item  -->
-                            <div class="activites__item text-center">
-                                <a href="{{ route('page.item', [
-                            'category_slug' => $single_item->category->parent?->category_slug ?? $single_item->category->category_slug ,
-                            'sub_category_slug' => $single_item->category->category_slug,
-                            'state_slug' => $single_item->state->state_slug,
-                            'item_slug' => $single_item->item_slug
-                        ]) }}" class="h5 mb-0 primary-dark-color">{{ $single_item->item_title }}</a>
-                            </div>
-                        @endif
-                    @endforeach
-                @endif
+    {{--    <section class="mt-xl mb-xl activites position-relative">
+            <div class="container">
+                <div class="activites__items d-flex align-items-center flex-wrap gap-4">
+                    <div class="activites__title-item d-flex align-items-center justify-content-center text-center">
+                        <h3 class="activites__title-item__title m-0 fw-bold">
+                            {{ __('frontend.item.branches') }}
+                        </h3>
+                    </div>
+                    @if($item->user?->items->count() > 0)
+                        @foreach($item->user->items as $paid_items_key => $single_item)
+                            @if($single_item->id != $item->id)
+                                <!-- item  -->
+                                <div class="activites__item text-center">
+                                    <a href="{{ route('page.item', [
+                                'category_slug' => $single_item->category->parent?->category_slug ?? $single_item->category->category_slug ,
+                                'sub_category_slug' => $single_item->category->category_slug,
+                                'state_slug' => $single_item->state->state_slug,
+                                'item_slug' => $single_item->item_slug
+                            ]) }}" class="h5 mb-0 primary-dark-color">{{ $single_item->item_title }}</a>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endif
 
+                </div>
             </div>
-        </div>
-    </section>--}}
+        </section>--}}
 
 
     <section class="pt pb profile overflow-hidden">
@@ -130,13 +132,20 @@
 
                 <!-- details  -->
                 <div class="profile__details d-flex flex-wrap flex-lg-nowrap gap-4">
-                  <div >
+                    <div style="position: relative;">
+                        @if($item->user?->items->count() > 1)
+                            <div class="date">
+                                <a href="{{route('page.branches',$item->user)}}" style="color: white">
+                                    <span class="month">{{ __('frontend.item.branches') }}    </span>
+                                    <span class="day">{{$item->user->items->count()}}</span>
+                                </a>
+                            </div>
+                        @endif
+                        <img
+                            src=" {{ empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image) }}"
+                            alt="profile" class="img-fluid profile__details__img"/>
 
-                      <img
-                          src=" {{ empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image) }}"
-                          alt="profile" class="img-fluid profile__details__img"/>
-
-                  </div>
+                    </div>
                     <div class="flex-fill">
                         <!-- head  -->
                         <div class="d-flex flex-wrap align-items-center mb-base gap-5 profile__details__head">
@@ -183,17 +192,25 @@
                         <!-- categories  -->
                         <p class="mb-base gray-color profile__details__desc__categories">
                             <b class="dark-color">التصنيفات: </b>
-                            {{$item->category->category_name}}
+                            <a class="item_category mb-2"
+                               @if($item->category->parent)
+                                   href="{{route('page.category',['parent_category_slug'=> $item->category->parent?->category_slug,'category_slug'=>$item->category->category_slug])}}"
+                               @else
+                                   href="{{route('page.sub_categories',['category_slug'=>$item->category->category_slug])}}"
+                                @endif
+                            >
+                                {{$item->category->category_name}}
+                            </a>
                         </p>
 
                         <!-- contacts  -->
                         <div class="d-flex flex-wrap align-items-center justify-content-start gap-4">
                             @if($item->item_phone)
                                 <a href="tel:{{ $item->item_phone}}"
-                               class="btn my-btn btn-primary profile__details__contact-btn">
-                                <i class="las la-phone"></i>
-                                <span>الهاتف</span>
-                            </a>
+                                   class="btn my-btn btn-primary profile__details__contact-btn">
+                                    <i class="las la-phone"></i>
+                                    <span>الهاتف</span>
+                                </a>
                             @endif
                             @if(!empty($item->itemPhones))
                                 @foreach($item->itemPhones as $phone)
@@ -205,11 +222,14 @@
                                 @endforeach
 
                             @endif
-                            <a class="btn my-btn btn-primary profile__details__contact-btn"
-                               data-bs-toggle="modal" data-bs-target="#mapModal">
-                                <i class="las la-map-marker"></i>
-                                <span>الموقع</span>
-                            </a>
+
+                            @if($item->item_lat != 0 && $item->item_lng != 0)
+                                <a class="btn my-btn btn-primary profile__details__contact-btn"
+                                   data-bs-toggle="modal" data-bs-target="#mapModal">
+                                    <i class="las la-map-marker"></i>
+                                    <span>الموقع</span>
+                                </a>
+                            @endif
                             @if($item->item_social_whatsapp)
                                 <a target="_blank" href="https://wa.me/+020{{ $item->item_social_whatsapp}}"
                                    class="btn my-btn btn-primary btn-p profile__details__contact-btn">
@@ -222,6 +242,11 @@
                                 <a href="{{ $item->item_website}}"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="las la-globe-europe"></i></a>
+                            @endif
+                            @if($item->item_social_email)
+                                <a href="mailto:{{ $item->item_social_email }}"
+                                   class="categories__items__list__item__info__footer__contacts__item"><i
+                                        class="fa fa-envelope"></i></a>
                             @endif
                             @if($item->item_social_facebook)
                                 <a href="{{ $item->item_social_facebook}}"
@@ -248,11 +273,11 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-linkedin"></i></a>
                             @endif
-                           {{-- @if($item->item_social_whatsapp)
-                                <a href="tel:{{ $item->item_social_whatsapp}}"
-                                   class="categories__items__list__item__info__footer__contacts__item"><i
-                                        class="fab fa-whatsapp"></i></a>
-                            @endif--}}
+                            {{-- @if($item->item_social_whatsapp)
+                                 <a href="tel:{{ $item->item_social_whatsapp}}"
+                                    class="categories__items__list__item__info__footer__contacts__item"><i
+                                         class="fab fa-whatsapp"></i></a>
+                             @endif--}}
                             @if($item->item_social_tiktok)
                                 <a href="{{ $item->item_social_tiktok}}"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -268,11 +293,11 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-telegram"></i></a>
                             @endif
-                            @if($item->item_social_youtube)
+                            {{--@if($item->item_social_youtube)
                                 <a href="{{ $item->item_social_youtube}}"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-youtube"></i></a>
-                            @endif
+                            @endif--}}
                             @if($item->item_social_snapchat)
                                 <a href="{{ $item->item_social_snapchat}}"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -298,16 +323,7 @@
                         </div>
                     </div>
                 </div>
-                @if($item->user?->items->count() > 1)
 
-                    <div class="date">
-                        <a href="{{route('page.branches',$item->user)}}" style="color: white">
-                            <span class="month">{{ __('frontend.item.branches') }}    </span>
-                            <span class="day">{{$item->user->items->count()}}</span>
-                        </a>
-                    </div>
-
-                @endif
                 <!-- other  -->
                 @if(!$item->item_image)
                     <div class="profile__other text-center">
@@ -317,11 +333,11 @@
                                الشكل وليس المحتوى) ويُستخدم في صناعات المطابع
                            </p> -->
                         <div class="d-flex flex-column align-items-center gap-3">
-                            <button  data-bs-toggle="modal" data-bs-target="#idenityModal"
+                            <button data-bs-toggle="modal" data-bs-target="#idenityModal"
                                     class="btn btn-primary my-btn">طلب
                                 اثبات ملكيه
                             </button>
-                            <button  data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
+                            <button data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
                                 الإبلاغ عن بيانات غير صحيحة ​
                             </button>
                         </div>

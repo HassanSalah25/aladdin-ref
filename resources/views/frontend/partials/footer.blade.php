@@ -53,14 +53,14 @@
         </div>
         <div class='row'>
             <div class="auth__inner__form__auth-list d-flex align-items-center justify-content-center gap-3">
-                <a href="https://www.facebook.com/profile.php?id=61550153913279 "><img width="30" height="30" src="{{asset('facebook.png')}}"></a>
-                <a href="https://www.instagram.com/aladdin__eg/"><img width="30" height="30" src="{{asset('instagram.png')}}"></a>
-                <a href="https://www.pinterest.com/aladdindirectory/"><img width="30" height="30" src="{{asset('pinterest.png')}}"></a>
-                <a href="https://www.tiktok.com/@aladdin__eg"><img width="30" height="30" src="{{asset('tik-tok.png')}}"></a>
-                <a href="https://twitter.com/Aladdin__eg"><img width="30" height="30" src="{{asset('twitter.png')}}"></a>
-                <a href="https://www.youtube.com/channel/UCbajMblORHZOQZmE38vfWDw"><img width="30" height="30" src="{{asset('youtube (1).png')}}"></a>
-                <a href="https://vimeo.com/user205850709"><img width="30" height="30" src="{{asset('vimeo.png')}}"></a>
-                <a href="https://www.behance.net/aladdineg"><img width="30" height="30" src="{{asset('behance.png')}}"></a>
+                <a href="https://www.facebook.com/profile.php?id=61550153913279 "><img alt="facebook" width="30" height="30" src="{{asset('facebook.png')}}"></a>
+                <a href="https://www.instagram.com/aladdin__eg/"><img alt="instagram" width="30" height="30" src="{{asset('instagram.png')}}"></a>
+                <a href="https://www.pinterest.com/aladdindirectory/"><img alt="pinterest" width="30" height="30" src="{{asset('pinterest.png')}}"></a>
+                <a href="https://www.tiktok.com/@aladdin__eg"><img alt="tik" width="30" height="30" src="{{asset('tik-tok.png')}}"></a>
+                <a href="https://twitter.com/Aladdin__eg"><img alt="twitter" width="30" height="30" src="{{asset('twitter.png')}}"></a>
+                <a href="https://www.youtube.com/channel/UCbajMblORHZOQZmE38vfWDw"><img alt="youtube " width="30" height="30" src="{{asset('youtube (1).png')}}"></a>
+                <a href="https://vimeo.com/user205850709"><img alt="vimeo" width="30" height="30" src="{{asset('vimeo.png')}}"></a>
+                <a href="https://www.behance.net/aladdineg"><img alt="behance" width="30" height="30" src="{{asset('behance.png')}}"></a>
             </div>
 
         </div>

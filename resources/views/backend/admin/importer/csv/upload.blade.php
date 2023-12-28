@@ -80,7 +80,10 @@
                         <div class="row form-group">
                             <div class="col-md-6 col-12">
                                 <label for="import_csv_data_file" class="text-black">{{ __('importer_csv.choose-csv-file') }}</label>
-                                <input id="import_csv_data_file" type="file" class="form-control @error('import_csv_data_file') is-invalid @enderror" name="import_csv_data_file">
+                                <input id="import_csv_data_file" type="file"
+                                       class="form-control @error('import_csv_data_file') is-invalid @enderror"
+                                       multiple="multiple"
+                                       name="import_csv_data_file[]">
                                 <small class="form-text text-muted">
                                     {{ __('importer_csv.choose-csv-file-help') }}
                                 </small>

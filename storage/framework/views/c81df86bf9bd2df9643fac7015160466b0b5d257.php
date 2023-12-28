@@ -25,7 +25,20 @@
             </nav>
         </div>
     </div>
+    <h1 class="mx-5">
+        <?php echo e($state->state_name); ?>
 
+    </h1>
+    <form action="<?php echo e(route('page.cities',$state->state_slug)); ?>" class="row justify-content-center my-5">
+        <div class="search">
+            <input type="text" name="search_keyword"
+                   class="searchTerm" placeholder="البحث ب اسم المدينة؟"
+                   value="<?php echo e(request('search_keyword')); ?>">
+            <button type="submit" class="searchButton">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </form>
     <section class="pt pb d-flex provinces provinces-list position-relative">
         <div class="container">
             <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">

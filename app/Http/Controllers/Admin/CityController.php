@@ -42,11 +42,14 @@ class CityController extends Controller
         if($state_id)
         {
             $state = State::findOrFail($state_id);
-            $all_cities = $state->cities()->orderBy('city_name')->paginate(10);
+            $all_cities = $state->cities()->orderBy('city_name','asc')
+                ->orderBy('city_name','desc')
+                ->paginate(10);
         }
         else
         {
-            $all_cities = City::orderBy('city_name')->paginate(10);
+            $all_cities = City::orderBy('city_name','asc')
+                ->paginate(10);
         }
 
         $all_states = collect();
@@ -87,7 +90,9 @@ class CityController extends Controller
 
         foreach($all_countries as $key => $country)
         {
-            $states = $country->states()->orderBy('state_name')->get();
+            $states = $country->states()
+                ->where('locale',app()->getLocale())
+                ->orderBy('state_name')->get();
             $all_states = $all_states->merge($states);
         }
 

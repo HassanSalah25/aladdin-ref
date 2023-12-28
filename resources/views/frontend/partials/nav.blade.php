@@ -81,7 +81,7 @@
                             </select>
                         </div>
                         <div id="search-by-id" class="autocomplete search-by" style="height: 44px;">
-                            <img class="search-img lazyloaded" data-src="" alt=""
+                            <img class="search-img lazyloaded" data-src="" alt="search"
                                  src="{{asset('assets/icons8-search-50.png')}}" style="width: 8%;">
                             <input autocomplete="off" name="search_query" type="text" value="{{request('search_query')}}"
                                    placeholder="{{ __('frontend.search.item') }}"
@@ -93,8 +93,8 @@
                         </div>
                         <div id="inWhat-id" class="autocomplete dropdown inWhat"
                              style=" height: 66px;width: 273px; padding: 10px 0px;">
-                            <img class="city-img lazyloaded" width="50" height="50"
-                                 data-src="{{asset('assets/icons8-building-100.png')}}" alt=""
+                            <img class="city-img lazyloaded" width="50" height="50" alt="building"
+                                 data-src="{{asset('assets/icons8-building-100.png')}}"
                                  src="{{asset('assets/icons8-building-100.png')}}">
                             <input autocomplete="off" name="search_city_state"
                                    class="btn btn-default autocomplete search-query-where where_original_top select-search"
@@ -120,61 +120,39 @@
 
             <div id="category-redirect-id" class="col-xs-12 category-redirect" style="display: none;">
                 <div>
-                    <a href="/ar/condensed-category/%D9%85%D8%B7%D8%A7%D8%B9%D9%85">
 <span>
-<img class=" lazyloaded"
-     data-src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/restaurant_icon.png" alt=""
-     src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/restaurant_icon.png">
 </span>
                         <span>مطاعم</span>
                     </a>
                 </div>
                 <div>
-                    <a href="/ar/condensed-category/%D9%88%D8%AC%D8%A8%D8%A7%D8%AA%20%D8%B3%D8%B1%D9%8A%D8%B9%D8%A9">
 <span>
-<img class=" lazyloaded"
-     data-src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/fastfood_icon.png" alt=""
-     src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/fastfood_icon.png">
 </span>
                         <span>وجبات سريعة</span>
                     </a>
                 </div>
                 <div>
-                    <a href="/ar/condensed-category/%D9%83%D8%A7%D9%81%D9%8A%D9%87%D8%A7%D8%AA">
 <span>
-<img class=" lazyloaded"
-     data-src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/cafe_icon.png" alt=""
-     src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/cafe_icon.png">
 </span>
                         <span>كافيهات</span>
                     </a>
                 </div>
                 <div>
-                    <a href="/ar/condensed-category/%D9%85%D8%AE%D8%A7%D8%A8%D8%B2%20%D9%88%D8%AD%D9%84%D9%88%D9%8A%D8%A7%D8%AA">
+
 <span>
-<img class=" lazyloaded"
-     data-src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/bakeries_icon.png" alt=""
-     src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/bakeries_icon.png">
 </span>
                         <span>مخابز وحلويات</span>
                     </a>
                 </div>
                 <div>
-                    <a href="/ar/condensed-category/%D8%A3%D9%85%D8%A7%D9%83%D9%86%20%D9%84%D9%84%D8%B3%D9%87%D8%B1">
 <span>
-<img class=" lazyloaded"
-     data-src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/night_spots_icon.png" alt=""
-     src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/night_spots_icon.png">
 </span>
                         <span>أماكن للسهر</span>
                     </a>
                 </div>
                 <div>
-                    <a href="/ar/condensed-category/%D9%81%D9%86%D8%A7%D8%AF%D9%82">
 <span>
-<img class=" lazyloaded"
-     data-src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/hotel_icon.png" alt=""
-     src="https://cdn.yellowpages.com.eg/static/webservice/mobile_app/small_icons/hotel_icon.png">
+
 </span>
                         <span>فنادق</span>
                     </a>
@@ -182,9 +160,6 @@
                 <div>
                     <a href="/ar/related-categories">
 <span>
-<img class="header-more lazyloaded"
-     data-src="//cdn.yellowpages.com.eg/static/v2022/img/images_new/new_design/More.png?120" alt=""
-     src="//cdn.yellowpages.com.eg/static/v2022/img/images_new/new_design/More.png?120">
 </span>
                         <span>المزيد</span>
                     </a>

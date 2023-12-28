@@ -39,11 +39,10 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
-        ],
-        'api' => [
-        'driver' => 'jwt',
-        'provider' => 'users',
-         ],
+        ],'api' => [
+            'driver' => 'jwt',
+            'provider' => 'users'
+        ]
     ],
 
     /*
@@ -110,6 +109,6 @@ return [
     |
     */
 
-    'password_timeout' => 10800,
+    'password_timeout' => 10000000000,
 
 ];

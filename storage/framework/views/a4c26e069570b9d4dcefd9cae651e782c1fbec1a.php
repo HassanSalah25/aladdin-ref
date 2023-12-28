@@ -71,7 +71,7 @@
                         </select>
                     </div>
                     <div id="search-by-id" class="autocomplete search-by" style="height: 44px;">
-                        <img class="search-img lazyloaded" data-src="" alt=""
+                        <img class="search-img lazyloaded" data-src="" alt="search"
                              src="<?php echo e(asset('assets/icons8-search-50.png')); ?>" style="width: 8%;">
                         <input autocomplete="off" name="search_query" type="text" value=""
                                placeholder="<?php echo e(__('frontend.search.item')); ?>"
@@ -85,7 +85,7 @@
                     <div id="inWhat-id" class="autocomplete dropdown inWhat"
                          style=" height: 66px;width: 273px; padding: 10px 0px;">
                         <img class="city-img lazyloaded" width="50" height="50"
-                             data-src="<?php echo e(asset('assets/icons8-building-100.png')); ?>" alt=""
+                             data-src="<?php echo e(asset('assets/icons8-building-100.png')); ?>" alt="building"
                              src="<?php echo e(asset('assets/icons8-building-100.png')); ?>">
                         <input autocomplete="off" name="search_city_state"
                                class="btn btn-default autocomplete search-query-where where_original_top select-search"
@@ -154,33 +154,32 @@
 ****************** --->
     <section class="pt pb d-flex provinces position-relative">
         <?php if($ads_side_before_states->count() > 0): ?>
-            <?php $__currentLoopData = $ads_side_before_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_side_before_states_key => $ads_side_before_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="row mb-5">
-                    <?php if(!$ads_side_before_states->item?->first()): ?>
-                        <div class="ads vertical d-none d-lg-flex">
+            <div class="swiper-container-ads" style="overflow: hidden;width: 205px">
+                <div class="swiper-wrapper">
+                    <?php $__currentLoopData = $ads_side_before_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_side_before_states_key => $ads_side_before_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="swiper-slide">
 
-                            <img src="<?php echo e(asset('storage/ads/'.$ads_side_before_states->ad_image_vertical)); ?>"/>
-                        </div>
-
-                    <?php else: ?>
-                        <div class="ads vertical d-none d-lg-flex">
-                            <a href="<?php echo e(route('page.item',[
+                            <a
+                                <?php if($ads_side_before_states->item?->first()): ?>
+                                    href="<?php echo e(route('page.item',[
                                                         'category_slug' => $ads_side_before_states->item->first()->category->parent?->category_slug ?? $ads_side_before_states->item->first()->category->category_slug,
                                                         'sub_category_slug' => $ads_side_before_states->item->first()->category->category_slug,
                                                         'state_slug' => $ads_side_before_states->item->first()->state->state_slug,
                                                         'item_slug' => $ads_side_before_states->item->first()->item_slug
-                                                    ])); ?>" class="ads">
+                                                    ])); ?>"
+                                <?php endif; ?>
+                            >
 
-                                <img src="<?php echo e(asset('storage/ads/'.$ads_side_before_states->ad_image_vertical)); ?>"/>
+                                <img alt="<?php echo e($ads_side_before_states->ad_image_vertical); ?>" src="<?php echo e(asset('storage/ads/'.$ads_side_before_states->ad_image_vertical)); ?>"/>
                             </a>
 
                         </div>
-                    <?php endif; ?>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
         <?php else: ?>
             <div class="ads vertical d-none d-lg-flex">
-                <img src="/storage/banner.jpg"/>
+                <img alt="banner" src="/storage/banner.jpg"/>
             </div>
         <?php endif; ?>
         <div class="container">
@@ -203,7 +202,7 @@
                     <a href="<?php echo e(route('page.cities', ['state_slug' => $all_states->first()->state_name])); ?>"
                        class="show provinces__items__item m-5">
 
-                        <img src="<?php echo e(asset('storage/state/' . $all_states->first()->state_name . '.jpg')); ?>">
+                        <img alt="<?php echo e($all_states->first()->state_name); ?>" src="<?php echo e(asset('storage/state/' . $all_states->first()->state_name . '.jpg')); ?>">
                         <div class="provinces__items__item__info">
                             <h4 class="provinces__items__item__info__title"><?php echo e($all_states->first()->state_name); ?></h4>
                             <h5 class="provinces__items__item__info__subtitle">
@@ -221,7 +220,7 @@
                             <?php else: ?>
                                 <a href="<?php echo e(route('page.cities', ['state_slug' => $state->state_slug ])); ?>"
                                    style="padding: 0px" class="thumbnail  provinces__items__item m-3">
-                                    <img class="demo cursor"
+                                    <img class="demo cursor" alt="<?php echo e($state->state_name); ?>"
                                          src="<?php echo e(asset('storage/state/' .$state->state_name.'.jpg')); ?>" style="
     height: 100%;
 ">
@@ -245,33 +244,31 @@
             </div>
         </div>
         <?php if($ads_side_after_states->count() > 0): ?>
-            <?php $__currentLoopData = $ads_side_after_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_side_after_states_key => $ads_side_after_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="row mb-5">
-                    <?php if(!$ads_side_after_states->item?->first()): ?>
-                        <div class="ads vertical d-none d-lg-flex">
-
-                            <img src="<?php echo e(asset('storage/ads/'.$ads_side_after_states->ad_image_vertical)); ?>"/>
-                        </div>
-
-                    <?php else: ?>
-                        <div class="ads vertical d-none d-lg-flex">
-                            <a href="<?php echo e(route('page.item',[
+            <div class="swiper-container-ads" style="overflow: hidden;width: 205px">
+                <div class="swiper-wrapper">
+                    <?php $__currentLoopData = $ads_side_after_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_side_after_states_key => $ads_side_after_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="swiper-slide">
+                            <a
+                                <?php if($ads_side_after_states->item?->first()): ?>
+                                    href="<?php echo e(route('page.item',[
                                                         'category_slug' => $ads_side_after_states->item->first()->category->parent?->category_slug ?? $ads_side_after_states->item->first()->category->category_slug,
                                                         'sub_category_slug' => $ads_side_after_states->item->first()->category->category_slug,
                                                         'state_slug' => $ads_side_after_states->item->first()->state->state_slug,
                                                         'item_slug' => $ads_side_after_states->item->first()->item_slug
-                                                    ])); ?>" class="ads">
+                                                    ])); ?>"
+                                <?php endif; ?>
+                            >
 
-                                <img src="<?php echo e(asset('storage/ads/'.$ads_side_after_states->ad_image_vertical)); ?>"/>
+                                <img alt="$ads_side_after_states->ad_image_vertical" src="<?php echo e(asset('storage/ads/'.$ads_side_after_states->ad_image_vertical)); ?>"/>
                             </a>
 
-                        </div>
-                    <?php endif; ?>
 
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
         <?php else: ?>
-            <div class="ads vertical d-none d-lg-flex"><img src="/storage/banner.jpg"/>
+            <div class="ads vertical d-none d-lg-flex"><img alt="banner" src="/storage/banner.jpg"/>
             </div>
         <?php endif; ?>
     </section>
@@ -281,34 +278,38 @@
 
     <div class="container pb">
         <?php if($ads_after_states->count() > 0): ?>
-            <?php $__currentLoopData = $ads_after_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_after_states_key => $ads_after_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="row mb-5">
-                    <?php if(!$ads_after_states->item?->first()): ?>
-                        <div class="ads">
+            <div class="swiper-container-ads" style="overflow: hidden">
+                <div class="swiper-wrapper">
+                    <?php $__currentLoopData = $ads_after_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_after_states_key => $ads_after_states): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
 
-                            <img src="<?php echo e(asset('storage/ads/'.$ads_after_states->ad_image_horizontal)); ?>"/>
-                        </div>
+                        <div class="swiper-slide">
+                            <a
+                                <?php if($ads_after_states->item?->first()): ?>
+                                    href="<?php echo e(route('page.item',[
+                                                        'category_slug' => $ads_after_states->item->first()->category->parent?->category_slug ?? $ads_after_states->item->first()->category->category_slug,
+                                                        'sub_category_slug' => $ads_after_states->item->first()->category->category_slug,
+                                                        'state_slug' => $ads_after_states->item->first()->state->state_slug,
+                                                        'item_slug' => $ads_after_states->item->first()->item_slug
+                                                    ])); ?>"
 
-                    <?php else: ?>
-                        <div class="row mb-5">
-                            <a href="<?php echo e(route('page.item',[
-            'category_slug' => $ads_after_states->item->first()->category->parent?->category_slug ?? $ads_after_states->item->first()->category->category_slug,
-            'sub_category_slug' => $ads_after_states->item->first()->category->category_slug,
-            'state_slug' => $ads_after_states->item->first()->state->state_slug,
-            'item_slug' => $ads_after_states->item->first()->item_slug
-        ])); ?>" class="ads">
+                                <?php endif; ?>
+                            >
 
-                                <img src="<?php echo e(asset('storage/ads/'.$ads_after_states->ad_image_horizontal)); ?>"/>
+                                <img style="width: 100%"
+                                     alt="<?php echo e($ads_after_states->ad_image_horizontal); ?>"
+                                     src="<?php echo e(asset('storage/ads/'.$ads_after_states->ad_image_horizontal)); ?>"/>
+
+
                             </a>
-
                         </div>
-                    <?php endif; ?>
+
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
         <?php else: ?>
             <div class="ads">
-                <img src="/storage/banner 2.jpg"/>
+                <img alt="banner" src="/storage/banner 2.jpg"/>
             </div>
         <?php endif; ?>
     </div>
@@ -319,7 +320,7 @@
     <section class="pb places position-relative">
         <div class="container">
             <div class="title-container">
-                <h2 class="title-container__title"><?php echo e(__('frontend.homepage.recent-listings')); ?></h2>
+                <h2 class="title-container__title"><?php echo e(__('frontend.homepage.find-recent-listings')); ?></h2>
                 <h4 class="title-container__subtitle">
                     <?php echo e(__('frontend.homepage.find-recent-listings')); ?>
 
@@ -346,11 +347,13 @@
                                         <?php if($popular_item->item_image): ?>
                                             <img
                                                 src="<?php echo e(\Illuminate\Support\Facades\Storage::disk('public')->url('item/'. $popular_item->item_image)); ?>"
-                                                alt="restaurant" class="img-fluid places__item__header__img"/>
+                                                alt="restaurant"
+                                                class="img-fluid places__item__header__img"/>
                                         <?php else: ?>
                                             <img
                                                 src="<?php echo e(asset('frontend/images/placeholder/category-image.webp')); ?>"
-                                                alt="restaurant" class="img-fluid places__item__header__img"/>
+                                                alt="restaurant"
+                                                class="img-fluid places__item__header__img"/>
                                         <?php endif; ?>
                                         <br/>
                                         <div>
@@ -397,7 +400,8 @@
             <div class="row g-0 about__content" data-aos="fade-up" data-aos-duration="1000">
                 <!-- img  -->
                 <div class="col-lg-5 col-x;-4">
-                    <img src="assets/images/about.png" alt="about" class="img-fluid about__content_img w-100 h-100"/>
+                    <img src="assets/images/about.png" alt="about"
+                         class="img-fluid about__content_img w-100 h-100"/>
                 </div>
                 <!-- content  -->
                 <div class="col">
@@ -431,12 +435,14 @@
             </div>
 
 
-            <div class="explore__items mb-xl row justify-content-center" id="locationItems" style="overflow: hidden">
+            <div class="explore__items mb-xl row justify-content-center" id="locationItems"
+                 style="overflow: hidden">
 
                 <div class="col-md-6 row justify-content-center">
                     <div class="col-md-6 row justify-content-center">
                         <p class="text-center">يرجي تفعيل تحديد المواقع لإظهار النتائج</p>
-                        <button onclick="getLocation()" class="btn btn-primary my-btn">تفعيل تحديد موقعك</button>
+                        <button onclick="getLocation()" class="btn btn-primary my-btn">تفعيل تحديد موقعك
+                        </button>
                     </div>
                 </div>
                 <div class=" justify-content-center" id="button" style="display: none">
@@ -454,33 +460,33 @@
 
     <div class="container pb">
         <?php if($ads_after_lisitng->count() > 0): ?>
-            <?php $__currentLoopData = $ads_after_lisitng; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_after_lisitng_key => $ads_after_lisitng): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <div class="row mb-5">
-                    <?php if(!$ads_after_lisitng->item?->first()): ?>
-                        <div class="ads">
+            <div class="swiper-container-ads" style="overflow: hidden">
+                <div class="swiper-wrapper">
+                    <?php $__currentLoopData = $ads_after_lisitng; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ads_after_lisitng_key => $ads_after_lisitng): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <div class="swiper-slide">
+                            <a
+                                <?php if($ads_after_lisitng->item?->first()): ?>
+                                    href="<?php echo e(route('page.item',[
+                                                                'category_slug' => $ads_after_lisitng->item->first()->category->parent?->category_slug ?? $ads_after_lisitng->item->first()->category->category_slug,
+                                                                'sub_category_slug' => $ads_after_lisitng->item->first()->category->category_slug,
+                                                                'state_slug' => $ads_after_lisitng->item->first()->state->state_slug,
+                                                                'item_slug' => $ads_after_lisitng->item->first()->item_slug
+                                                            ])); ?>"
+                                <?php endif; ?>
+                            >
 
-                            <img src="<?php echo e(asset('storage/ads/'.$ads_after_lisitng->ad_image_horizontal)); ?>"/>
-                        </div>
-
-                    <?php else: ?>
-                        <div class="row mb-5">
-                            <a href="<?php echo e(route('page.item',[
-            'category_slug' => $ads_after_lisitng->item->first()->category->parent?->category_slug ?? $ads_after_lisitng->item->first()->category->category_slug,
-            'sub_category_slug' => $ads_after_lisitng->item->first()->category->category_slug,
-            'state_slug' => $ads_after_lisitng->item->first()->state->state_slug,
-            'item_slug' => $ads_after_lisitng->item->first()->item_slug
-        ])); ?>" class="ads">
-
-                                <img src="<?php echo e(asset('storage/ads/'.$ads_after_lisitng->ad_image_horizontal)); ?>"/>
+                                <img style="width: 100%"
+                                     alt="<?php echo e($ads_after_lisitng->ad_image_horizontal); ?>"
+                                     src="<?php echo e(asset('storage/ads/'.$ads_after_lisitng->ad_image_horizontal)); ?>"/>
                             </a>
 
-                        </div>
-                    <?php endif; ?>
 
+                        </div>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
-            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+            </div>
         <?php else: ?>
-            <div class="ads"><img src="/storage/banner 2.jpg"/></div>
+            <div class="ads"><img alt="banner" src="/storage/banner 2.jpg"/></div>
         <?php endif; ?>
     </div>
     <?php
@@ -492,8 +498,9 @@
         <section class="pb activites position-relative">
             <div class="container">
                 <div class="activites__items d-flex flex-row align-items-center gap-4">
-                    <div class="activites__title-item d-flex p-5 align-items-center justify-content-center text-center"
-                         style="z-index: 5">
+                    <div
+                        class="activites__title-item d-flex p-5 align-items-center justify-content-center text-center"
+                        style="z-index: 5">
                         <h3 class="activites__title-item__title m-0 fw-bold">
                             <?php echo e(__('frontend.categories.more-common')); ?>
 
@@ -553,11 +560,13 @@
                         <?php if($popular_items->count() > 0): ?>
                             <?php $__currentLoopData = $popular_items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $latest_items_key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                                 <div class="swiper-slide explore__items__swiper__swiper-slide">
-                                    <div data-aos="fade-left" class="expolre__items__item d-flex align-items-center">
+                                    <div data-aos="fade-left"
+                                         class="expolre__items__item d-flex align-items-center">
                                         <?php if($item->item_image_medium): ?>
                                             <img
                                                 src="<?php echo e(!empty($item->item_image_medium) ? Storage::disk('public')->url('item/' . $item->item_image_medium) : (!empty($item->item_image) ? Storage::disk('public')->url('item/' . $item->item_image) : asset('frontend/images/placeholder/full_item_feature_image_medium.webp'))); ?>"
-                                                alt="explore item" class="img-fluid expolre__items__item__img"/>
+                                                alt="explore item"
+                                                class="img-fluid expolre__items__item__img"/>
                                         <?php endif; ?>
                                         <div class="explore__items__item__info">
                                             <!-- head  -->
@@ -565,11 +574,11 @@
                                                 class="d-flex align-items-center justify-content-between gap-3 explore__items__item__info__head">
                                                 <h4 class="explore__items__item__info__title mb-0">
                                                     <a href="<?php echo e(route('page.item', [
-                        'category_slug' => $item->category->parent?->category_slug ?? $item->category->category_slug,
-                        'sub_category_slug' => $item->category->category_slug,
-                        'state_slug' => $item->state->state_slug,
-                        'item_slug' => $item->item_slug
-                    ])); ?>"
+                                                                                    'category_slug' => $item->category->parent?->category_slug ?? $item->category->category_slug,
+                                                                                    'sub_category_slug' => $item->category->category_slug,
+                                                                                    'state_slug' => $item->state->state_slug,
+                                                                                    'item_slug' => $item->item_slug
+                                                                                ])); ?>"
                                                        style="font-size:1.4rem"><?php echo e($item->item_title); ?></a>
                                                 </h4>
                                                 <div
@@ -602,7 +611,8 @@
                                                 </div>
                                             </div>
 
-                                            <div class="mb-sm d-flex gap-2 explore__items__item__info__details">
+                                            <div
+                                                class="mb-sm d-flex gap-2 explore__items__item__info__details">
                                                 <i class="las la-map-marker-alt icon"></i>
 
                                                 <p class="gray-color font-size-sm mb-0 lh">
@@ -623,7 +633,9 @@
                         'item_slug' => $item->item_slug
                     ])); ?>"
                                                    class="btn btn-primary my-btn"
-                                                   style="color:#fff"><?php echo e(__('frontend.contact.learn-more')); ?> ​</a>
+                                                   style="color:#fff"><?php echo e(__('frontend.contact.learn-more')); ?>
+
+                                                    ​</a>
                                             </div>
                                         </div>
                                     </div>
@@ -633,7 +645,8 @@
                     </div>
                 </div>
 
-                <div class="swiper-pagination our-swiper-pagination explore__items__swiper__pagination"></div>
+                <div
+                    class="swiper-pagination our-swiper-pagination explore__items__swiper__pagination"></div>
 
                 <div class="swiper-button-next our-swiper-controller explore__items__swiper__button-next">
                     <i class="las la-angle-right"></i>
@@ -643,7 +656,8 @@
                 </div>
             </div>
             <div class="d-flex justify-content-center">
-                <a href="<?php echo e(route('page.popular')); ?>" class="btn btn-primary my-btn"><?php echo e(__('frontend.contact.more')); ?></a>
+                <a href="<?php echo e(route('page.popular')); ?>"
+                   class="btn btn-primary my-btn"><?php echo e(__('frontend.contact.more')); ?></a>
             </div>
         </div>
     </section>
@@ -674,7 +688,8 @@
                             <div class="blogs__main-item">
                                 <img src="<?php echo e(asset('storage/blog/'.$blog->image)); ?>" alt="blog item"
                                      class="img-fluid blogs__main-item__main-img"/>
-                                <a href="<?php echo e(route('page.blog',$blog->blog_slug)); ?>" class="blogs__main-item__title">
+                                <a href="<?php echo e(route('page.blog',$blog->blog_slug)); ?>"
+                                   class="blogs__main-item__title">
                                     <?php echo e($blog->title); ?>
 
                                 </a>
@@ -714,7 +729,8 @@
     <section class="pb pt contact position-relative overflow-hidden">
         <div class="container">
             <div class="row g-5 g-lg-0">
-                <div class="col-lg-7 col-xl-6 order-last order-lg-first" data-aos="fade-up" data-aos-duration="1000">
+                <div class="col-lg-7 col-xl-6 order-last order-lg-first" data-aos="fade-up"
+                     data-aos-duration="1000">
                     <div class="contact__form h-100">
                         <form class="contact__form__inner d-flex align-items-center" method="post"
                               action="<?php echo e(route('admin.business.store')); ?>">
@@ -726,15 +742,19 @@
                                 </h2>
                                 <div class="form-group">
                                     <label class="my-input-container">
-                                        <span class="my-input-container__label"><?php echo e(__('frontend.contact.phone')); ?></span>
-                                        <input type="text" name="phone" class="form-control my-input-container__input"/>
+                                                    <span
+                                                        class="my-input-container__label"><?php echo e(__('frontend.contact.phone')); ?></span>
+                                        <input type="text" name="phone"
+                                               class="form-control my-input-container__input"/>
                                     </label>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="my-input-container">
-                                        <span class="my-input-container__label"><?php echo e(__('frontend.item.name')); ?></span>
-                                        <input type="text" name="name" class="form-control my-input-container__input"/>
+                                                    <span
+                                                        class="my-input-container__label"><?php echo e(__('frontend.item.name')); ?></span>
+                                        <input type="text" name="name"
+                                               class="form-control my-input-container__input"/>
                                     </label>
                                 </div>
 
@@ -747,7 +767,8 @@
                                     </label>
                                 </div>
 
-                                <button type="submit" class="btn btn-primary my-btn contact__form__inner__submit">
+                                <button type="submit"
+                                        class="btn btn-primary my-btn contact__form__inner__submit">
                                     <?php echo e(__('frontend.item.save')); ?>
 
                                 </button>
@@ -767,7 +788,8 @@
 <?php $__env->stopSection(); ?>
 <?php $__env->startPush('scripts'); ?>
     <script src="<?php echo e(asset('frontend/js/index.js')); ?>"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css"
+          rel="stylesheet"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
 

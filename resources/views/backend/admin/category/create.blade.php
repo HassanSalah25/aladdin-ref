@@ -233,31 +233,31 @@
                                     <div class="col-md-6">
                                         <label for="pageTitle">{{__('backend.meta_title')}}</label>
                                         <input type="text" class="form-control"
-                                               id="pageTitle" name="meta_title[en]" value="">
+                                               id="pageTitle" name="meta_title" value="">
                                     </div>
 
 
                                     <div class="col-md-6">
                                         <label for="metaDescription">{{__('backend.meta_description')}}</label>
-                                        <textarea id="meta_description" name="meta_description[en]"
+                                        <textarea id="meta_description" name="meta_description"
                                                   rows="4" class="form-control"></textarea>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="metaKeywords">{{__('backend.meta_keywords')}}</label>
                                         <input type="text" id="meta_keywords"
-                                               name="meta_keywords[en]"  class="form-control">
+                                               name="meta_keywords"  class="form-control">
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="alt_image">{{__('backend.alt_image')}}</label>
                                         <input type="text" id="alt_image"
-                                               name="alt_image[en]"  class="form-control">
+                                               name="alt_image"  class="form-control">
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="canonical">{{__('backend.canonical')}}</label>
                                         <input type="url" id="canonical"
-                                               name="canonical[en]"  class="form-control">
+                                               name="canonical"  class="form-control">
                                     </div>
                                 </div>
                                 <div class="tab-pane fade show" id="nav-profile" role="tabpanel"
@@ -267,31 +267,31 @@
                                     <div class="col-md-6">
                                         <label for="pageTitle">{{__('backend.meta_title')}}</label>
                                         <input type="text" class="form-control"
-                                               id="meta_title" name="meta_title[ar]">
+                                               id="meta_title" name="meta_title">
                                     </div>
 
 
                                     <div class="col-md-6">
                                         <label for="metaDescription">{{__('backend.meta_description')}}</label>
-                                        <textarea id="meta_description" name="meta_description[ar]"
+                                        <textarea id="meta_description" name="meta_description"
                                                   rows="4" class="form-control"></textarea>
                                     </div>
                                     <div class="col-md-6">
                                         <label for="metaKeywords">{{__('backend.meta_keywords')}}</label>
                                         <input type="text" id="meta_keywords"
-                                               name="meta_keywords[ar]" class="form-control">
+                                               name="meta_keywords" class="form-control">
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="alt_image">{{__('backend.alt_image')}}</label>
                                         <input type="text" id="alt_image"
-                                               name="alt_image[ar]"  class="form-control">
+                                               name="alt_image"  class="form-control">
                                     </div>
 
                                     <div class="col-md-6">
                                         <label for="canonical">{{__('backend.canonical')}}</label>
                                         <input type="url" id="canonical"
-                                               name="canonical[ar]"  class="form-control">
+                                               name="canonical"  class="form-control">
                                     </div>
                                 </div>
                             </div>

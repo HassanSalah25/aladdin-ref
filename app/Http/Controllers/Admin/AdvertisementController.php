@@ -97,7 +97,6 @@ class AdvertisementController extends Controller
             'advertisement_position' => 'required|numeric|min:1|max:18'
         ]);
 
-
         $image1 = empty($request->image1) ? null : $request->image1;
 
         $image2 = empty($request->image2) ? null : $request->image2;
@@ -139,6 +138,7 @@ class AdvertisementController extends Controller
             $ad_image_obj2 = Image::make(base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $image2)))->stream('jpg', 100);
             Storage::disk('public')->put('ads/' . $ad_image_file_name2, $ad_image_obj2);
         }
+
         if($request->advertisement_place != 0){
             $advertisement = new Advertisement(array(
                 'advertisement_name' => $advertisement_name,

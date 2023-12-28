@@ -60,11 +60,13 @@
                         </div> -->
                 </div>
             </div>
-
-            <p class="fw-bold primary-color mt-lg mb-xl text-center">
+            <h1 class="fw-bold primary-color mt-lg mb-xl text-center">
+               {{$site_global_settings->setting_site_seo_categories_h1}}
+            </h1>
+            <p class="fw-bold h3 primary-color mt-lg mb-xl text-center">
                 البحث ب اسم المجال
             </p>
-            <form action="{{route('page.categories')}}" class="row justify-content-center my-5">
+            <form action="{{route('page.search_categories')}}" class="row justify-content-center my-5">
                 <div class="search">
                     <input type="text" name="search_keyword"
                            class="searchTerm" placeholder="البحث ب اسم المجال؟"

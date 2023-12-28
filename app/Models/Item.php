@@ -66,6 +66,7 @@ class Item extends Model implements ReviewRateable
     const ITEMS_SORT_BY_OLDEST_UPDATED = 6;
     const ITEMS_SORT_BY_NEARBY_FIRST = 7;
     const ITEMS_SORT_BY_MOST_RELEVANT = 8;
+    const ITEMS_SORT_BY_FEATURED = 9;
 
     const COUNT_PER_PAGE_10 = 10;
     const COUNT_PER_PAGE_25 = 25;
@@ -91,6 +92,7 @@ class Item extends Model implements ReviewRateable
      */
     protected $fillable = [
         'user_id',
+        'item_id',
         'category_id',
         'item_status',
         'item_featured',
@@ -1021,8 +1023,8 @@ class Item extends Model implements ReviewRateable
         return $this->belongsToMany(Advertisement::class,'item_advertisement','item_id','ad_id');
     }
 
-//    protected $dispatchesEvents = [
-//        'created' => IncrementItemCountEvent::class,
-//        'deleted' => DecrementItemCountEvent::class,
-//    ];
+    // protected $dispatchesEvents = [
+    //     'created' => IncrementItemCountEvent::class,
+    //     'deleted' => DecrementItemCountEvent::class,
+    // ];
 }

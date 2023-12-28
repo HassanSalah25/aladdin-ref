@@ -243,23 +243,31 @@ class DatabaseSeeder extends Seeder
         // }
         // fclose($file);
 
-           Item::chunk(500,function($items){
-             foreach($items as $item){
-                 /*   $category->update(['children_count' => $category->children?->count()]);
-                  $category->update(['items_count' => $category->items?->count()]);*/
+        //   Item::chunk(500,function($items){
+        //      foreach($items as $item){
+        //          /*   $category->update(['children_count' => $category->children?->count()]);
+        //           $category->update(['items_count' => $category->items?->count()]);*/
 
-                $baseSlug = $item->item_slug;
-                $count = 0;
-                 while (Item::where('item_slug', $baseSlug)->exists()) {
-                     if($count > 0){
-                         $slug = $baseSlug . '-' . $count;
-                         $item->item_slug = $slug;
-                         $item->save();
-                     }
-                     $count++;
-                 }
-             }
-           });
+        //         $baseSlug = $item->item_slug;
+        //         $count = 0;
+        //          while (Item::where('item_slug', $baseSlug)->exists()) {
+        //              if($count > 0){
+        //                  $slug = $baseSlug . '-' . $count;
+        //                  $item->item_slug = $slug;
+        //                  $item->save();
+        //              }
+        //              $count++;
+        //          }
+        //      }
+        //   });
+         Category::chunk(100,function($categories){
+            foreach($categories as $category){
+                if($category->children)
+                    $category->update([
+                        'children_count' => $category->children->count(),
+                    ]);
+            }
+        });
 
 
 

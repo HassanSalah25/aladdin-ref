@@ -3,34 +3,99 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ImportCsvData;
 use App\Models\Item;
 use App\Models\ItemEN;
 use App\Services\DataServices;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class UploadDataController extends Controller
 {
+
+    public function normalize_arabic()
+    {
+        Item::orderBy('id', 'asc')
+            ->where('locale', 'ar')
+            ->chunk(100, function ($items) {
+                foreach ($items as $item) {
+                    $word = $this->unifyArabicCharacters($item->item_title);
+                    $item->update(['item_title' => $word]);
+                }
+            });
+        return 0;
+    }
+
+    public function normalize_arabic_category()
+    {
+        Category::orderBy('id', 'asc')
+            ->where('locale', 'ar')
+            ->chunk(100, function ($categories) {
+                foreach ($categories as $category) {
+                    $word = $this->unifyArabicCharacters($category->category_name);
+                    $category->update(['category_name' => $word]);
+                }
+            });
+        return 0;
+    }
+
+    public function update_counts()
+    {
+        Category::chunk(100,function($categories){
+            foreach($categories as $category){
+                if($category->children->count() > 0)
+                    $category->update([
+                        'children_count' => $category->children->count(),
+                    ]);
+                else{
+                    $category->update([
+                        'items_count' => $category->items->count(),
+                    ]);
+                }
+            }
+        });
+        return 0;
+    }
+
+    function unifyArabicCharacters($input)
+    {
+        $arabicEquivalence = [
+            'ا' => 'ا', // Aleph
+            'أ' => 'ا', // Alef with Hamza
+            'إ' => 'ا', // Alef with Hamza Below
+            'آ' => 'ا', // Alef with Maddah
+            'ى' => 'ي', // Alef with Yaa Above
+            'هـ' => 'ه', // Ha with Ta Marbuta
+            'ة' => 'ه', // Treat تاء مربوطة (Ta Marbuta) as Ha
+        ];
+
+
+        // Replace Arabic variations with unified representations
+        $unifiedInput = strtr($input, $arabicEquivalence);
+
+        return $unifiedInput;
+    }
+
     public function exec_action(Request $request)
     {
         $data_service = new DataServices('ar');
 
-        $arr = $data_service->run('جيم',1,2);
+        $arr = $data_service->run('جيم', 1, 2);
         dd($arr);
     }
 
     public function delete_dublicates(Request $request)
     {
-        $duplicateItems = Item::select('Category', 'Business Name', 'Address')
+        $duplicateItems = Item::select('item_title', 'item_address')
             ->selectRaw('COUNT(*) as count')
-            ->groupBy('Category', 'Business Name', 'Address')
+            ->groupBy('item_title', 'item_address')
             ->havingRaw('COUNT(*) > 1')
             ->get();
 
 // Loop through the duplicate records and delete all but one record in each group
         foreach ($duplicateItems->skip(1) as $duplicateItem) {
-            Item::where('Category', $duplicateItem->Category)
-                ->where('Business Name', $duplicateItem['Business Name'])
-                ->where('Address', $duplicateItem->Address)
+            Item::where('item_title', $duplicateItem->item_title)
+                ->where('item_address', $duplicateItem->item_address)
                 ->orderBy('id', 'DESC') // You can use any appropriate column for ordering
                 ->skip(1) // Skip the first record (keep one, delete the rest)
                 ->delete();
@@ -51,6 +116,60 @@ class UploadDataController extends Controller
             $item->update(['City' => trim($item->City)]);
 
         }
+    }
+
+    public function update_company_id()
+    {
+        $files = scandir(storage_path('app/importer/'));
+
+        $files = array_diff($files, array('.', '..'));
+
+        // prepare for file name
+        foreach ($files as $file) {
+            // Read a CSV file
+            $handle = fopen(storage_path('app/importer/') . $file, "r");
+
+            // Optionally, you can keep the number of the line where
+            // the loop its currently iterating over
+            $lineNumber = 0;
+            // Read the CSV file
+            while ((($raw_string = fgets($handle)) !== false)) {
+                $data = str_getcsv($raw_string);
+                if (!empty($data[0])) {
+                    // Increase the current line
+                    $lineNumber++;
+
+                    if ($lineNumber == 1) {
+                        continue;
+                    }
+
+                    if (isset($data[2])) {
+                        try {
+                            $info = explode(',', $data[2]);
+                        } catch (Exception $e) {
+                            dd($data);
+                        }
+                        $info = array_reverse($info);
+                        // Extract the values from each row
+                        $item_title = $this->unifyArabicCharacters($data[1]) ?? null; // Replace with the appropriate column index
+                        $address = $data[2] ?? null;
+                        $company_id = $data[3] ?? null; // Replace with the appropriate column index
+                        $item = Item::where('item_title', $item_title)
+                            ->where('item_address', $address)->first();
+                        if ($item) {
+                            $item->update([
+                                'item_id' => $company_id
+                            ]);
+                        }
+                    }
+                }
+            }
+            fclose($handle);
+
+            // Delete the file at the end of the loop
+            unlink(storage_path('app/importer/') . $file);
+        }
+        return 0;
     }
 
 
@@ -155,7 +274,7 @@ class UploadDataController extends Controller
 
         $data_service = new DataServices('ar');
 
-        $arr = $data_service->run($request->category_name,$request->from_page,$request->to_page);
+        $arr = $data_service->run($request->category_name, $request->from_page, $request->to_page);
 
         foreach ($arr as $data) {
             $item = Item::create([
@@ -176,7 +295,7 @@ class UploadDataController extends Controller
             if ($item->categories_details == null)
                 Category::create(['category_name' => $item->Category]);
         }
-        return redirect()->back()->with('success', 'تعدد البيانات المحصول عليها ' . $arr->count() . 'وغدد الصفحات هو ' . $arr->count()/20) ;
+        return redirect()->back()->with('success', 'تعدد البيانات المحصول عليها ' . $arr->count() . 'وغدد الصفحات هو ' . $arr->count() / 20);
     }
 
 
@@ -184,13 +303,13 @@ class UploadDataController extends Controller
     {
 
         $data_service = new DataServices('ar');
-        $items = Item::where('Category','جيم')->orderBy('id', 'DESC')->first();
+        $items = Item::where('Category', 'جيم')->orderBy('id', 'DESC')->first();
 
-            if($items->company_id){
+        if ($items->company_id) {
 
-                $arr = $data_service->get_phones($items->company_id);
-                $items->update(['Phone'=>$arr[0]]);
-            }
+            $arr = $data_service->get_phones($items->company_id);
+            $items->update(['Phone' => $arr[0]]);
+        }
 
 
     }

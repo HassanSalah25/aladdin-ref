@@ -10,6 +10,8 @@
         {!! $site_global_settings->setting_site_header !!}
     @endif
     {!! SEO::generate() !!}
+
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -43,6 +45,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"/>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Cairo' rel='stylesheet'>
 
     <!-- my css  -->
     <link rel="stylesheet" href="{{ asset('frontend/css/style.css') }}"/>
@@ -191,6 +194,7 @@
     });
 
 </script>
+
 <script>
     $('.select2-search__field').on('input', function () {
 
@@ -315,7 +319,11 @@
     toastr.success('{{ \Session::get('success') }}')
     document.querySelector(".popup-container").style.display = "none";
     @endif
+
 </script>
+@if($site_global_settings->setting_site_footer_enabled == \App\Models\Setting::SITE_FOOTER_ENABLED)
+    {!! $site_global_settings->setting_site_footer !!}
+@endif
 </body>
 
 </html>

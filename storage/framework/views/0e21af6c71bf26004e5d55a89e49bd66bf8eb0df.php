@@ -4,10 +4,12 @@
 
         .date {
             background: linear-gradient(#b269ff, #000000e3);
+            position: absolute;
+            top: 0px;
             color: white;
             padding: 0.8em;
-            height: 100%;
-            margin-right: -243px;
+            right: 5%;
+
             span {
                 display: block;
                 text-align: center;
@@ -77,8 +79,8 @@
                             <div class="swiper-slide">
                                 <div class="category-slide__item">
                                     <img style="height:300px"
-                                        src="<?php echo e(empty($gallery->item_image_gallery_name) ? Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name) : Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name)); ?>"
-                                        alt="category slider" class="img-fluid"/>
+                                         src="<?php echo e(empty($gallery->item_image_gallery_name) ? Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name) : Storage::disk('public')->url('item/gallery/' . $gallery->item_image_gallery_name)); ?>"
+                                         alt="category slider" class="img-fluid"/>
                                 </div>
                             </div>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
@@ -96,7 +98,7 @@
         </div>
     </section>
 
-
+    
 
 
     <section class="pt pb profile overflow-hidden">
@@ -105,13 +107,20 @@
 
                 <!-- details  -->
                 <div class="profile__details d-flex flex-wrap flex-lg-nowrap gap-4">
-                  <div >
+                    <div style="position: relative;">
+                        <?php if($item->user?->items->count() > 1): ?>
+                            <div class="date">
+                                <a href="<?php echo e(route('page.branches',$item->user)); ?>" style="color: white">
+                                    <span class="month"><?php echo e(__('frontend.item.branches')); ?>    </span>
+                                    <span class="day"><?php echo e($item->user->items->count()); ?></span>
+                                </a>
+                            </div>
+                        <?php endif; ?>
+                        <img
+                            src=" <?php echo e(empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image)); ?>"
+                            alt="profile" class="img-fluid profile__details__img"/>
 
-                      <img
-                          src=" <?php echo e(empty($item->item_image) ? asset('frontend/images/placeholder/full_item_feature_image.webp') : Storage::disk('public')->url('item/' . $item->item_image)); ?>"
-                          alt="profile" class="img-fluid profile__details__img"/>
-
-                  </div>
+                    </div>
                     <div class="flex-fill">
                         <!-- head  -->
                         <div class="d-flex flex-wrap align-items-center mb-base gap-5 profile__details__head">
@@ -159,18 +168,26 @@
                         <!-- categories  -->
                         <p class="mb-base gray-color profile__details__desc__categories">
                             <b class="dark-color">التصنيفات: </b>
-                            <?php echo e($item->category->category_name); ?>
+                            <a class="item_category mb-2"
+                               <?php if($item->category->parent): ?>
+                                   href="<?php echo e(route('page.category',['parent_category_slug'=> $item->category->parent?->category_slug,'category_slug'=>$item->category->category_slug])); ?>"
+                               <?php else: ?>
+                                   href="<?php echo e(route('page.sub_categories',['category_slug'=>$item->category->category_slug])); ?>"
+                                <?php endif; ?>
+                            >
+                                <?php echo e($item->category->category_name); ?>
 
+                            </a>
                         </p>
 
                         <!-- contacts  -->
                         <div class="d-flex flex-wrap align-items-center justify-content-start gap-4">
                             <?php if($item->item_phone): ?>
                                 <a href="tel:<?php echo e($item->item_phone); ?>"
-                               class="btn my-btn btn-primary profile__details__contact-btn">
-                                <i class="las la-phone"></i>
-                                <span>الهاتف</span>
-                            </a>
+                                   class="btn my-btn btn-primary profile__details__contact-btn">
+                                    <i class="las la-phone"></i>
+                                    <span>الهاتف</span>
+                                </a>
                             <?php endif; ?>
                             <?php if(!empty($item->itemPhones)): ?>
                                 <?php $__currentLoopData = $item->itemPhones; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $phone): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
@@ -182,11 +199,14 @@
                                 <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
 
                             <?php endif; ?>
-                            <a class="btn my-btn btn-primary profile__details__contact-btn"
-                               data-bs-toggle="modal" data-bs-target="#mapModal">
-                                <i class="las la-map-marker"></i>
-                                <span>الموقع</span>
-                            </a>
+
+                            <?php if($item->item_lat != 0 && $item->item_lng != 0): ?>
+                                <a class="btn my-btn btn-primary profile__details__contact-btn"
+                                   data-bs-toggle="modal" data-bs-target="#mapModal">
+                                    <i class="las la-map-marker"></i>
+                                    <span>الموقع</span>
+                                </a>
+                            <?php endif; ?>
                             <?php if($item->item_social_whatsapp): ?>
                                 <a target="_blank" href="https://wa.me/+020<?php echo e($item->item_social_whatsapp); ?>"
                                    class="btn my-btn btn-primary btn-p profile__details__contact-btn">
@@ -199,6 +219,11 @@
                                 <a href="<?php echo e($item->item_website); ?>"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="las la-globe-europe"></i></a>
+                            <?php endif; ?>
+                            <?php if($item->item_social_email): ?>
+                                <a href="mailto:<?php echo e($item->item_social_email); ?>"
+                                   class="categories__items__list__item__info__footer__contacts__item"><i
+                                        class="fa fa-envelope"></i></a>
                             <?php endif; ?>
                             <?php if($item->item_social_facebook): ?>
                                 <a href="<?php echo e($item->item_social_facebook); ?>"
@@ -225,7 +250,7 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-linkedin"></i></a>
                             <?php endif; ?>
-                           
+                            
                             <?php if($item->item_social_tiktok): ?>
                                 <a href="<?php echo e($item->item_social_tiktok); ?>"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -241,11 +266,7 @@
                                    class="categories__items__list__item__info__footer__contacts__item"><i
                                         class="fab fa-telegram"></i></a>
                             <?php endif; ?>
-                            <?php if($item->item_social_youtube): ?>
-                                <a href="<?php echo e($item->item_social_youtube); ?>"
-                                   class="categories__items__list__item__info__footer__contacts__item"><i
-                                        class="fab fa-youtube"></i></a>
-                            <?php endif; ?>
+                            
                             <?php if($item->item_social_snapchat): ?>
                                 <a href="<?php echo e($item->item_social_snapchat); ?>"
                                    class="categories__items__list__item__info__footer__contacts__item"><i
@@ -271,16 +292,7 @@
                         </div>
                     </div>
                 </div>
-                <?php if($item->user?->items->count() > 1): ?>
 
-                    <div class="date">
-                        <a href="<?php echo e(route('page.branches',$item->user)); ?>" style="color: white">
-                            <span class="month"><?php echo e(__('frontend.item.branches')); ?>    </span>
-                            <span class="day"><?php echo e($item->user->items->count()); ?></span>
-                        </a>
-                    </div>
-
-                <?php endif; ?>
                 <!-- other  -->
                 <?php if(!$item->item_image): ?>
                     <div class="profile__other text-center">
@@ -290,11 +302,11 @@
                                الشكل وليس المحتوى) ويُستخدم في صناعات المطابع
                            </p> -->
                         <div class="d-flex flex-column align-items-center gap-3">
-                            <button  data-bs-toggle="modal" data-bs-target="#idenityModal"
+                            <button data-bs-toggle="modal" data-bs-target="#idenityModal"
                                     class="btn btn-primary my-btn">طلب
                                 اثبات ملكيه
                             </button>
-                            <button  data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
+                            <button data-bs-toggle="modal" data-bs-target="#reportModal" class="btn btn-primary my-btn">
                                 الإبلاغ عن بيانات غير صحيحة ​
                             </button>
                         </div>

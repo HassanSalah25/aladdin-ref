@@ -178,6 +178,31 @@ class SettingController extends Controller
         $settings->setting_site_seo_home_keywords = $request->setting_site_seo_home_keywords;
         $settings->setting_site_seo_home_description = $request->setting_site_seo_home_description;
 
+        $settings->setting_site_seo_categories_title = $request->setting_site_seo_categories_title;
+        $settings->setting_site_seo_categories_h1 = $request->setting_site_seo_categories_h1;
+        $settings->setting_site_seo_categories_keywords = $request->setting_site_seo_categories_keywords;
+        $settings->setting_site_seo_categories_description = $request->setting_site_seo_categories_description;
+
+        $settings->setting_site_seo_about_title = $request->setting_site_seo_about_title;
+        $settings->setting_site_seo_about_h1 = $request->setting_site_seo_about_h1;
+        $settings->setting_site_seo_about_description = $request->setting_site_seo_about_description;
+        $settings->setting_site_seo_about_keywords = $request->setting_site_seo_about_keywords;
+
+        $settings->setting_site_seo_states_title = $request->setting_site_seo_states_title;
+        $settings->setting_site_seo_states_h1 = $request->setting_site_seo_states_h1;
+        $settings->setting_site_seo_states_keywords = $request->setting_site_seo_states_keywords;
+        $settings->setting_site_seo_states_description = $request->setting_site_seo_states_description;
+
+        $settings->setting_site_seo_cities_title = $request->setting_site_seo_cities_title;
+        $settings->setting_site_seo_cities_h1 = $request->setting_site_seo_cities_h1;
+        $settings->setting_site_seo_cities_keywords = $request->setting_site_seo_cities_keywords;
+        $settings->setting_site_seo_cities_description = $request->setting_site_seo_cities_description;
+
+        $settings->setting_site_seo_blogs_title = $request->setting_site_seo_blogs_title;
+        $settings->setting_site_seo_blogs_h1 = $request->setting_site_seo_blogs_h1;
+        $settings->setting_site_seo_blogs_keywords = $request->setting_site_seo_blogs_keywords;
+        $settings->setting_site_seo_blogs_description = $request->setting_site_seo_blogs_description;
+
         // google analytics
         $settings->setting_site_google_analytic_enabled = $request->setting_site_google_analytic_enabled == Setting::TRACKING_ON ? Setting::TRACKING_ON : Setting::TRACKING_OFF;
         $settings->setting_site_google_analytic_tracking_id = $request->setting_site_google_analytic_tracking_id;

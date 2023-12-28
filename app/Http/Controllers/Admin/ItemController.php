@@ -130,7 +130,7 @@ class ItemController extends Controller
         }
         else
         {
-            $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
+            $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_FEATURED : $request->filter_sort_by;
         }
 
         // filter rows per page
@@ -203,6 +203,10 @@ class ItemController extends Controller
         elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
         {
             $items_query->orderBy('items.item_average_rating', 'ASC');
+        }
+        elseif($filter_sort_by == Item::ITEMS_SORT_BY_FEATURED)
+        {
+            $items_query->orderBy('items.item_featured', 'DESC');
         }
         /**
          * End build query
@@ -420,7 +424,7 @@ class ItemController extends Controller
         if($item_type == Item::ITEM_TYPE_REGULAR)
         {
 ////            // validate country_id
-            $select_country = Country::find($request->country_id);
+            $select_country = Country::find($request->country_id??1);
 ////            if(!$select_country)
 ////            {
 ////                throw ValidationException::withMessages(
@@ -430,7 +434,7 @@ class ItemController extends Controller
 ////            }
 ////
 ////            // validate state_id
-            $select_state = State::find($request->state_id);
+            $select_state = State::find($request->state_id??89);
 ////            if(!$select_state)
 ////            {
 ////                throw ValidationException::withMessages(
@@ -439,7 +443,7 @@ class ItemController extends Controller
 ////                    ]);
 ////            }
 ////            // validate city_id
-            $select_city = City::find($request->city_id);
+            $select_city = City::find($request->city_id??1923);
 ////            if(!$select_city)
 ////            {
 ////                throw ValidationException::withMessages(
@@ -606,9 +610,9 @@ class ItemController extends Controller
             'item_image_blur' => $item_feature_image_name_blur,
             'item_address' => $item_address,
             'item_address_hide' => $item_address_hide,
-            'city_id' => $city_id,
-            'state_id' => $state_id,
-            'country_id' => $country_id,
+            'city_id' => $city_id ?? 1923,
+            'state_id' => $state_id ?? 89,
+            'country_id' => $country_id ?? 1,
             'item_postal_code' => $item_postal_code,
             'item_lat' => $item_lat,
             'item_lng' => $item_lng,
@@ -631,6 +635,7 @@ class ItemController extends Controller
             "canonical" => $request->canonical,
         ));
 
+        $new_item->save();
         if($item_phones)
         {
             foreach ($item_phones as $item_phone)
@@ -642,8 +647,6 @@ class ItemController extends Controller
                     ]);
             }
         }
-        $new_item->save();
-
         $new_item->allCategories()->sync($select_categories);
         // start to upload image galleries
         $image_gallary = $request->image_gallery;
@@ -1236,9 +1239,9 @@ class ItemController extends Controller
 
         $item->item_address = $item_address;
         $item->item_address_hide = $item_address_hide;
-        $item->city_id = $city_id;
-        $item->state_id = $state_id;
-        $item->country_id = $country_id;
+        $item->city_id = $city_id ?? 1923;
+        $item->state_id = $state_id ?? 89;
+        $item->country_id = $country_id ?? 1;
         $item->item_postal_code = $item_postal_code;
         $item->item_lat = $item_lat;
         $item->item_lng = $item_lng;

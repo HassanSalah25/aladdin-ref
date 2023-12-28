@@ -435,8 +435,28 @@
 
                             </div>
 
-                            <div class="tab-pane fade" id="seo" role="tabpanel" aria-labelledby="seo-tab">
-                                <div class="row form-group">
+                            <div class="tab-pane tab-content fade" id="seo" role="tabpanel" aria-labelledby="seo-tab">
+                                <ul class="nav nav-tabs" id="seoTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">{{ __('backend.setting.home') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="about-tab" data-toggle="tab" href="#about" role="tab" aria-controls="about" aria-selected="true">{{ __('backend.setting.about') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="categories-tab" data-toggle="tab" href="#categories" role="tab" aria-controls="categories" aria-selected="true">{{ __('backend.setting.categories') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="states-tab" data-toggle="tab" href="#states" role="tab" aria-controls="states" aria-selected="true">{{ __('backend.setting.states') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="cities-tab" data-toggle="tab" href="#cities" role="tab" aria-controls="cities" aria-selected="true">{{ __('backend.setting.cities') }}</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="blogs-tab" data-toggle="tab" href="#blogs" role="tab" aria-controls="blogs" aria-selected="true">{{ __('backend.setting.blogs') }}</a>
+                                    </li>
+                                </ul>
+                                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" >
 
                                     <div class="col-md-6">
                                         <label class="text-black" for="setting_site_seo_home_title">{{ __('backend.setting.homepage-title') }}</label>
@@ -460,20 +480,290 @@
                                         </span>
                                         @enderror
                                     </div>
+                                    <div class="row form-group">
 
+                                        <div class="col-md-12">
+                                            <label class="text-black" for="setting_site_seo_home_description">{{ __('backend.setting.homepage-description') }}</label>
+                                            <textarea rows="5" class="form-control @error('setting_site_seo_home_description') is-invalid @enderror" name="setting_site_seo_home_description">{{ old('setting_site_seo_home_description') ? old('setting_site_seo_home_description') : $settings->setting_site_seo_home_description }}</textarea>
+                                            @error('setting_site_seo_home_description')
+                                            <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row form-group">
-
-                                    <div class="col-md-12">
-                                        <label class="text-black" for="setting_site_seo_home_description">{{ __('backend.setting.homepage-description') }}</label>
-                                        <textarea rows="5" class="form-control @error('setting_site_seo_home_description') is-invalid @enderror" name="setting_site_seo_home_description">{{ old('setting_site_seo_home_description') ? old('setting_site_seo_home_description') : $settings->setting_site_seo_home_description }}</textarea>
-                                        @error('setting_site_seo_home_description')
+                                <div class="tab-pane fade" id="categories" role="tabpanel" aria-labelledby="categories-tab" >
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_categories_title">{{ __('backend.setting.categories-title') }}</label>
+                                        <input id="setting_site_seo_categories_title" type="text" class="form-control @error('setting_site_seo_categories_title') is-invalid @enderror"
+                                               name="setting_site_seo_categories_title"
+                                               value="{{ old('setting_site_seo_categories_title') ? old('setting_site_seo_categories_title') : $settings->setting_site_seo_categories_title }}">
+                                        @error('setting_site_seo_categories_title')
                                         <span class="invalid-tooltip">
                                             <strong>{{ $message }}</strong>
                                         </span>
                                         @enderror
                                     </div>
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_categories_keywords">{{ __('backend.setting.categories-keywords') }}</label>
+                                        <input id="setting_site_seo_categories_keywords" type="text"
+                                               class="form-control @error('setting_site_seo_categories_keywords') is-invalid @enderror"
+                                               name="setting_site_seo_categories_keywords"
+                                               value="{{ old('setting_site_seo_categories_keywords') ? old('setting_site_seo_categories_keywords') : $settings->setting_site_seo_categories_keywords }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_home_keywords')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_categories_h1">{{ __('backend.setting.categories-h1') }}</label>
+                                        <input id="setting_site_seo_categories_h1" type="text"
+                                               class="form-control @error('setting_site_seo_categories_h1') is-invalid @enderror"
+                                               name="setting_site_seo_categories_h1"
+                                               value="{{ old('setting_site_seo_categories_h1') ? old('setting_site_seo_categories_h1') : $settings->setting_site_seo_categories_h1 }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_categories_h1')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-md-12">
+                                            <label class="text-black" for="setting_site_seo_categories_description">{{ __('backend.setting.categories-description') }}</label>
+                                            <textarea rows="5"
+                                                      class="form-control @error('setting_site_seo_categories_description') is-invalid @enderror"
+                                                      name="setting_site_seo_categories_description">{{ old('setting_site_seo_categories_description') ? old('setting_site_seo_categories_description') : $settings->setting_site_seo_categories_description }}</textarea>
+                                            @error('setting_site_seo_categories_description')
+                                            <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                            @enderror
+                                        </div>
+                                    </div>
                                 </div>
+                                <div class="tab-pane fade" id="about" role="tabpanel" aria-labelledby="about-tab" >
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_about_title">{{ __('backend.setting.about-title') }}</label>
+                                        <input id="setting_site_seo_about_title" type="text" class="form-control @error('setting_site_seo_about_title') is-invalid @enderror"
+                                               name="setting_site_seo_about_title"
+                                               value="{{ old('setting_site_seo_about_title') ? old('setting_site_seo_about_title') : $settings->setting_site_seo_about_title }}">
+                                        @error('setting_site_seo_about_title')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_about_keywords">{{ __('backend.setting.about-keywords') }}</label>
+                                        <input id="setting_site_seo_about_keywords" type="text"
+                                               class="form-control @error('setting_site_seo_about_keywords') is-invalid @enderror"
+                                               name="setting_site_seo_about_keywords"
+                                               value="{{ old('setting_site_seo_about_keywords') ? old('setting_site_seo_about_keywords') : $settings->setting_site_seo_about_keywords }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_about_keywords')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_about_h1">{{ __('backend.setting.about-h1') }}</label>
+                                        <input id="setting_site_seo_about_h1" type="text"
+                                               class="form-control @error('setting_site_seo_about_h1') is-invalid @enderror"
+                                               name="setting_site_seo_about_h1"
+                                               value="{{ old('setting_site_seo_about_h1') ? old('setting_site_seo_about_h1') : $settings->setting_site_seo_about_h1 }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_about_h1')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="row form-group">
+                                        <div class="col-md-12">
+                                            <label class="text-black" for="setting_site_seo_about_description">{{ __('backend.setting.about-description') }}</label>
+                                            <textarea rows="5"
+                                                      class="form-control @error('setting_site_seo_about_description') is-invalid @enderror"
+                                                      name="setting_site_seo_about_description">{{ old('setting_site_seo_about_description') ? old('setting_site_seo_about_description') : $settings->setting_site_seo_about_description }}</textarea>
+                                            @error('setting_site_seo_about_description')
+                                            <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-pane fade" id="states" role="tabpanel" aria-labelledby="states-tab" >
+
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_states_title">{{ __('backend.setting.states-title') }}</label>
+                                        <input id="setting_site_seo_states_title" type="text" class="form-control @error('setting_site_seo_states_title') is-invalid @enderror" name="setting_site_seo_states_title" value="{{ old('setting_site_seo_states_title') ? old('setting_site_seo_states_title') : $settings->setting_site_seo_states_title }}">
+                                        @error('setting_site_seo_states_title')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_states_keywords">{{ __('backend.setting.states-keywords') }}</label>
+                                        <input id="setting_site_seo_states_keywords" type="text" class="form-control @error('setting_site_seo_states_keywords') is-invalid @enderror" name="setting_site_seo_states_keywords" value="{{ old('setting_site_seo_states_keywords') ? old('setting_site_seo_states_keywords') : $settings->setting_site_seo_states_keywords }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_states_keywords')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_states_h1">{{ __('backend.setting.states-h1') }}</label>
+                                        <input id="setting_site_seo_states_h1" type="text"
+                                               class="form-control @error('setting_site_seo_states_h1') is-invalid @enderror"
+                                               name="setting_site_seo_states_h1"
+                                               value="{{ old('setting_site_seo_states_h1') ? old('setting_site_seo_states_h1') : $settings->setting_site_seo_states_h1 }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_states_h1')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="row form-group">
+
+                                        <div class="col-md-12">
+                                            <label class="text-black" for="setting_site_seo_states_description">{{ __('backend.setting.states-description') }}</label>
+                                            <textarea rows="5" class="form-control @error('setting_site_seo_states_description') is-invalid @enderror" name="setting_site_seo_states_description">{{ old('setting_site_seo_states_description') ? old('setting_site_seo_states_description') : $settings->setting_site_seo_states_description }}</textarea>
+                                            @error('setting_site_seo_states_description')
+                                            <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="tab-pane fade" id="cities" role="tabpanel" aria-labelledby="cities-tab" >
+
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_cities_title">{{ __('backend.setting.cities-title') }}</label>
+                                        <input id="setting_site_seo_cities_title" type="text" class="form-control @error('setting_site_seo_cities_title') is-invalid @enderror" name="setting_site_seo_cities_title" value="{{ old('setting_site_seo_cities_title') ? old('setting_site_seo_cities_title') : $settings->setting_site_seo_cities_title }}">
+                                        @error('setting_site_seo_cities_title')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_cities_keywords">{{ __('backend.setting.cities-keywords') }}</label>
+                                        <input id="setting_site_seo_cities_keywords" type="text" class="form-control @error('setting_site_seo_cities_keywords') is-invalid @enderror" name="setting_site_seo_cities_keywords" value="{{ old('setting_site_seo_cities_keywords') ? old('setting_site_seo_cities_keywords') : $settings->setting_site_seo_cities_keywords }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_cities_keywords')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_cities_h1">{{ __('backend.setting.cities-h1') }}</label>
+                                        <input id="setting_site_seo_cities_h1" type="text"
+                                               class="form-control @error('setting_site_seo_cities_h1') is-invalid @enderror"
+                                               name="setting_site_seo_cities_h1"
+                                               value="{{ old('setting_site_seo_cities_h1') ? old('setting_site_seo_cities_h1') : $settings->setting_site_seo_cities_h1 }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_cities_h1')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="row form-group">
+
+                                        <div class="col-md-12">
+                                            <label class="text-black" for="setting_site_seo_cities_description">{{ __('backend.setting.cities-description') }}</label>
+                                            <textarea rows="5" class="form-control @error('setting_site_seo_cities_description') is-invalid @enderror" name="setting_site_seo_cities_description">{{ old('setting_site_seo_cities_description') ? old('setting_site_seo_cities_description') : $settings->setting_site_seo_cities_description }}</textarea>
+                                            @error('setting_site_seo_cities_description')
+                                            <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade" id="blogs" role="tabpanel" aria-labelledby="blogs-tab" >
+
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_blogs_title">{{ __('backend.setting.blogs-title') }}</label>
+                                        <input id="setting_site_seo_blogs_title" type="text" class="form-control @error('setting_site_seo_blogs_title') is-invalid @enderror" name="setting_site_seo_blogs_title" value="{{ old('setting_site_seo_blogs_title') ? old('setting_site_seo_blogs_title') : $settings->setting_site_seo_blogs_title }}">
+                                        @error('setting_site_seo_blogs_title')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_blogs_keywords">{{ __('backend.setting.blogs-keywords') }}</label>
+                                        <input id="setting_site_seo_blogs_keywords" type="text" class="form-control @error('setting_site_seo_blogs_keywords') is-invalid @enderror" name="setting_site_seo_blogs_keywords" value="{{ old('setting_site_seo_blogs_keywords') ? old('setting_site_seo_blogs_keywords') : $settings->setting_site_seo_blogs_keywords }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_blogs_keywords')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="text-black" for="setting_site_seo_blogs_h1">{{ __('backend.setting.blogs-h1') }}</label>
+                                        <input id="setting_site_seo_blogs_h1" type="text"
+                                               class="form-control @error('setting_site_seo_blogs_h1') is-invalid @enderror"
+                                               name="setting_site_seo_blogs_h1"
+                                               value="{{ old('setting_site_seo_blogs_h1') ? old('setting_site_seo_blogs_h1') : $settings->setting_site_seo_blogs_h1 }}">
+                                        <small class="form-text text-muted">
+                                            Separate by comma
+                                        </small>
+                                        @error('setting_site_seo_blogs_h1')
+                                        <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="row form-group">
+
+                                        <div class="col-md-12">
+                                            <label class="text-black" for="setting_site_seo_blogs_description">{{ __('backend.setting.blogs-description') }}</label>
+                                            <textarea rows="5" class="form-control @error('setting_site_seo_blogs_description') is-invalid @enderror" name="setting_site_seo_blogs_description">{{ old('setting_site_seo_blogs_description') ? old('setting_site_seo_blogs_description') : $settings->setting_site_seo_blogs_description }}</textarea>
+                                            @error('setting_site_seo_blogs_description')
+                                            <span class="invalid-tooltip">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                </div>
+
                             </div>
 
                             <div class="tab-pane fade" id="google-analytics" role="tabpanel" aria-labelledby="google-analytics-tab">

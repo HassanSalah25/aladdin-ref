@@ -1,4 +1,15 @@
 <?php return array (
+  'activitylog' => 
+  array (
+    'enabled' => true,
+    'delete_records_older_than_days' => 365,
+    'default_log_name' => 'default',
+    'default_auth_driver' => NULL,
+    'subject_returns_soft_deleted_models' => false,
+    'activity_model' => 'Spatie\\Activitylog\\Models\\Activity',
+    'table_name' => 'activity_log',
+    'database_connection' => NULL,
+  ),
   'app' => 
   array (
     'name' => 'alaadin',
@@ -7,7 +18,7 @@
     'url' => '',
     'asset_url' => NULL,
     'timezone' => 'UTC',
-    'locale' => 'en',
+    'locale' => 'ar',
     'fallback_locale' => 'en',
     'faker_locale' => 'en_US',
     'key' => 'base64:3sSuCvSsmMCDk3f8H3yUkk33MRmNkDcNnw12aWyZE2c=',
@@ -36,13 +47,13 @@
       19 => 'Illuminate\\Translation\\TranslationServiceProvider',
       20 => 'Illuminate\\Validation\\ValidationServiceProvider',
       21 => 'Illuminate\\View\\ViewServiceProvider',
-      22 => 'Tymon\\JWTAuth\\Providers\\LaravelServiceProvider',
-      23 => 'Codebyray\\ReviewRateable\\ReviewRateableServiceProvider',
-      24 => 'App\\Providers\\AppServiceProvider',
-      25 => 'App\\Providers\\AuthServiceProvider',
-      26 => 'App\\Providers\\EventServiceProvider',
-      27 => 'App\\Providers\\RouteServiceProvider',
-      28 => 'App\\Providers\\CanvasServiceProvider',
+      22 => 'Codebyray\\ReviewRateable\\ReviewRateableServiceProvider',
+      23 => 'App\\Providers\\AppServiceProvider',
+      24 => 'App\\Providers\\AuthServiceProvider',
+      25 => 'App\\Providers\\EventServiceProvider',
+      26 => 'App\\Providers\\RouteServiceProvider',
+      27 => 'App\\Providers\\CanvasServiceProvider',
+      28 => 'Barryvdh\\Debugbar\\ServiceProvider',
     ),
     'aliases' => 
     array (
@@ -84,6 +95,7 @@
       'URL' => 'Illuminate\\Support\\Facades\\URL',
       'Validator' => 'Illuminate\\Support\\Facades\\Validator',
       'View' => 'Illuminate\\Support\\Facades\\View',
+      'Debugbar' => 'Barryvdh\\Debugbar\\Facade',
     ),
   ),
   'auth' => 
@@ -139,7 +151,7 @@
         'throttle' => 60,
       ),
     ),
-    'password_timeout' => 10800,
+    'password_timeout' => 10000000000,
   ),
   'broadcasting' => 
   array (
@@ -327,7 +339,7 @@
         'collation' => 'utf8mb4_unicode_ci',
         'prefix' => '',
         'prefix_indexes' => true,
-        'strict' => true,
+        'strict' => false,
         'engine' => NULL,
         'options' => 
         array (
@@ -389,6 +401,112 @@
       ),
     ),
   ),
+  'debugbar' => 
+  array (
+    'enabled' => NULL,
+    'except' => 
+    array (
+      0 => 'telescope*',
+      1 => 'horizon*',
+    ),
+    'storage' => 
+    array (
+      'enabled' => true,
+      'driver' => 'file',
+      'path' => '/home/hassan/Downloads/refactore aladdin/storage/debugbar',
+      'connection' => NULL,
+      'provider' => '',
+      'hostname' => '127.0.0.1',
+      'port' => 2304,
+    ),
+    'editor' => 'phpstorm',
+    'remote_sites_path' => '',
+    'local_sites_path' => '',
+    'include_vendors' => true,
+    'capture_ajax' => true,
+    'add_ajax_timing' => false,
+    'error_handler' => false,
+    'clockwork' => false,
+    'collectors' => 
+    array (
+      'phpinfo' => true,
+      'messages' => true,
+      'time' => true,
+      'memory' => true,
+      'exceptions' => true,
+      'log' => true,
+      'db' => true,
+      'views' => true,
+      'route' => true,
+      'auth' => false,
+      'gate' => true,
+      'session' => true,
+      'symfony_request' => true,
+      'mail' => true,
+      'laravel' => false,
+      'events' => false,
+      'default_request' => false,
+      'logs' => false,
+      'files' => false,
+      'config' => false,
+      'cache' => false,
+      'models' => true,
+      'livewire' => true,
+    ),
+    'options' => 
+    array (
+      'auth' => 
+      array (
+        'show_name' => true,
+      ),
+      'db' => 
+      array (
+        'with_params' => true,
+        'backtrace' => true,
+        'backtrace_exclude_paths' => 
+        array (
+        ),
+        'timeline' => false,
+        'duration_background' => true,
+        'explain' => 
+        array (
+          'enabled' => false,
+          'types' => 
+          array (
+            0 => 'SELECT',
+          ),
+        ),
+        'hints' => false,
+        'show_copy' => false,
+      ),
+      'mail' => 
+      array (
+        'full_log' => false,
+      ),
+      'views' => 
+      array (
+        'timeline' => false,
+        'data' => false,
+      ),
+      'route' => 
+      array (
+        'label' => true,
+      ),
+      'logs' => 
+      array (
+        'file' => NULL,
+      ),
+      'cache' => 
+      array (
+        'values' => true,
+      ),
+    ),
+    'inject' => true,
+    'route_prefix' => '_debugbar',
+    'route_domain' => NULL,
+    'theme' => 'auto',
+    'debug_backtrace_limit' => 50,
+  ),
   'filesystems' => 
   array (
     'default' => 'local',
@@ -402,7 +520,7 @@
       'public' => 
       array (
         'driver' => 'local',
-        'root' => '/home/hassan/Downloads/refactore aladdin/storage/app/public',
+        'root' => '/home/hassan/Downloads/refactore aladdin/public/storage',
         'url' => '/storage',
         'visibility' => 'public',
       ),
@@ -959,6 +1077,33 @@
       'encrypt_cookies' => 'App\\Http\\Middleware\\EncryptCookies',
     ),
   ),
+  'scout' => 
+  array (
+    'driver' => NULL,
+    'prefix' => '',
+    'queue' => false,
+    'after_commit' => false,
+    'chunk' => 
+    array (
+      'searchable' => 500,
+      'unsearchable' => 500,
+    ),
+    'soft_delete' => false,
+    'identify' => false,
+    'algolia' => 
+    array (
+      'id' => '',
+      'secret' => '',
+    ),
+    'meilisearch' => 
+    array (
+      'host' => 'http://localhost:7700',
+      'key' => NULL,
+      'index-settings' => 
+      array (
+      ),
+    ),
+  ),
   'services' => 
   array (
     'mailgun' => 
@@ -1000,6 +1145,33 @@
     'http_only' => true,
     'same_site' => 'lax',
   ),
+  'sitemap' => 
+  array (
+    'use_cache' => false,
+    'cache_key' => 'laravel-sitemap.',
+    'cache_duration' => 3600,
+    'escaping' => true,
+    'use_limit_size' => false,
+    'max_size' => NULL,
+    'use_styles' => true,
+    'styles_location' => '/vendor/sitemap/styles/',
+    'use_gzip' => false,
+    'guzzle_options' => 
+    array (
+      'cookies' => true,
+      'connect_timeout' => 10,
+      'timeout' => 10,
+      'allow_redirects' => false,
+    ),
+    'execute_javascript' => false,
+    'chrome_binary_path' => NULL,
+    'crawl_profile' => 'Spatie\\Sitemap\\Crawler\\Profile',
+  ),
+  'translatable' => 
+  array (
+    'fallback_locale' => NULL,
+    'fallback_any' => false,
+  ),
   'translation' => 
   array (
     'driver' => 'database',
@@ -1038,112 +1210,6 @@
       0 => '/home/hassan/Downloads/refactore aladdin/resources/views',
     ),
     'compiled' => '/home/hassan/Downloads/refactore aladdin/storage/framework/views',
-  ),
-  'debugbar' => 
-  array (
-    'enabled' => NULL,
-    'except' => 
-    array (
-      0 => 'telescope*',
-      1 => 'horizon*',
-    ),
-    'storage' => 
-    array (
-      'enabled' => true,
-      'driver' => 'file',
-      'path' => '/home/hassan/Downloads/refactore aladdin/storage/debugbar',
-      'connection' => NULL,
-      'provider' => '',
-      'hostname' => '127.0.0.1',
-      'port' => 2304,
-    ),
-    'editor' => 'phpstorm',
-    'remote_sites_path' => '',
-    'local_sites_path' => '',
-    'include_vendors' => true,
-    'capture_ajax' => true,
-    'add_ajax_timing' => false,
-    'error_handler' => false,
-    'clockwork' => false,
-    'collectors' => 
-    array (
-      'phpinfo' => true,
-      'messages' => true,
-      'time' => true,
-      'memory' => true,
-      'exceptions' => true,
-      'log' => true,
-      'db' => true,
-      'views' => true,
-      'route' => true,
-      'auth' => false,
-      'gate' => true,
-      'session' => true,
-      'symfony_request' => true,
-      'mail' => true,
-      'laravel' => false,
-      'events' => false,
-      'default_request' => false,
-      'logs' => false,
-      'files' => false,
-      'config' => false,
-      'cache' => false,
-      'models' => true,
-      'livewire' => true,
-    ),
-    'options' => 
-    array (
-      'auth' => 
-      array (
-        'show_name' => true,
-      ),
-      'db' => 
-      array (
-        'with_params' => true,
-        'backtrace' => true,
-        'backtrace_exclude_paths' => 
-        array (
-        ),
-        'timeline' => false,
-        'duration_background' => true,
-        'explain' => 
-        array (
-          'enabled' => false,
-          'types' => 
-          array (
-            0 => 'SELECT',
-          ),
-        ),
-        'hints' => false,
-        'show_copy' => false,
-      ),
-      'mail' => 
-      array (
-        'full_log' => false,
-      ),
-      'views' => 
-      array (
-        'timeline' => false,
-        'data' => false,
-      ),
-      'route' => 
-      array (
-        'label' => true,
-      ),
-      'logs' => 
-      array (
-        'file' => NULL,
-      ),
-      'cache' => 
-      array (
-        'values' => true,
-      ),
-    ),
-    'inject' => true,
-    'route_prefix' => '_debugbar',
-    'route_domain' => NULL,
-    'theme' => 'auto',
-    'debug_backtrace_limit' => 50,
   ),
   'recaptcha' => 
   array (
@@ -1225,33 +1291,6 @@
   array (
     'driver' => 'gd',
   ),
-  'scout' => 
-  array (
-    'driver' => 'algolia',
-    'prefix' => '',
-    'queue' => false,
-    'after_commit' => false,
-    'chunk' => 
-    array (
-      'searchable' => 500,
-      'unsearchable' => 500,
-    ),
-    'soft_delete' => false,
-    'identify' => false,
-    'algolia' => 
-    array (
-      'id' => '',
-      'secret' => '',
-    ),
-    'meilisearch' => 
-    array (
-      'host' => 'http://localhost:7700',
-      'key' => NULL,
-      'index-settings' => 
-      array (
-      ),
-    ),
-  ),
   'comments' => 
   array (
     'model' => 'Laravelista\\Comments\\Comment',
@@ -1269,17 +1308,6 @@
     'soft_deletes' => false,
     'load_migrations' => true,
   ),
-  'activitylog' => 
-  array (
-    'enabled' => true,
-    'delete_records_older_than_days' => 365,
-    'default_log_name' => 'default',
-    'default_auth_driver' => NULL,
-    'subject_returns_soft_deleted_models' => false,
-    'activity_model' => 'Spatie\\Activitylog\\Models\\Activity',
-    'table_name' => 'activity_log',
-    'database_connection' => NULL,
-  ),
   'honeypot' => 
   array (
     'name_field_name' => 'my_name',
@@ -1290,11 +1318,6 @@
     'respond_to_spam_with' => 'Spatie\\Honeypot\\SpamResponder\\BlankPageResponder',
     'honeypot_fields_required_for_all_forms' => false,
     'enabled' => true,
-  ),
-  'translatable' => 
-  array (
-    'fallback_locale' => NULL,
-    'fallback_any' => false,
   ),
   'paypal' => 
   array (
@@ -1395,17 +1418,5 @@
     array (
       0 => 'App\\Nova',
     ),
-  ),
-  'sitemap' => 
-  array (
-    'use_cache' => false,
-    'cache_key' => 'laravel-sitemap.',
-    'cache_duration' => 3600,
-    'escaping' => true,
-    'use_limit_size' => false,
-    'max_size' => NULL,
-    'use_styles' => true,
-    'styles_location' => '/vendor/sitemap/styles/',
-    'use_gzip' => false,
   ),
 );

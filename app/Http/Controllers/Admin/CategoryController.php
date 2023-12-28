@@ -290,7 +290,6 @@ class CategoryController extends Controller
         /**
          * End save category header background image
          */
-
         $category = new Category();
 
         $category->category_name = $category_name;
