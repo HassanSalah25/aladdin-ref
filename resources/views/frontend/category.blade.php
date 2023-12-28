@@ -31,18 +31,18 @@
             </nav>
         </div>
     </div>
-            <section class="category-swiper d-flex align-items-center m-1" style="min-height: 5rem;">
-                <div class="container">
-                    <div class="swiper category-swiper__inner">
-                        <div class="swiper-wrapper">
+    <section class="category-swiper d-flex align-items-center m-1" style="min-height: 5rem;">
+        <div class="container">
+            <div class="swiper category-swiper__inner">
+                <div class="swiper-wrapper">
 
-                            @if($ads_before_content->count() > 0)
-                                @foreach($ads_before_content as $ad)
+                    @if($ads_before_content->count() > 0)
+                        @foreach($ads_before_content as $ad)
                             <div class="swiper-slide">
                                 <a
                                     class="category-slide__item  d-flex justify-content-center"
                                     @if($ad->item?->first())
-                                       href="{{route('page.item',[
+                                        href="{{route('page.item',[
                                                     'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                     'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                     'state_slug' => $ad->item->first()->state->state_slug,
@@ -52,20 +52,20 @@
 
                                 >
 
-                                        <img style="width: 100%" src="{{asset('storage/ads/'.$ad->ad_image_horizontal)}}"/>
-                                    </a>
+                                    <img style="width: 100%" src="{{asset('storage/ads/'.$ad->ad_image_horizontal)}}"/>
+                                </a>
 
                             </div>
 
-                                @endforeach
-                            @else
-                                <div class="ads categories__items__list__item__ads">ads</div>
-                            @endif
-                        </div>
-                     </div>
+                        @endforeach
+                    @else
+                        <div class="ads categories__items__list__item__ads">ads</div>
+                    @endif
                 </div>
+            </div>
+        </div>
 
-            </section>
+    </section>
 
 
 
@@ -75,17 +75,17 @@
         <div class="container">
 
             @if($children_categories->count() > 0)f
-                <div class="row">
-                    <div class="col-md-8 " style="margin:auto;margin-top: -5rem;">
+            <div class="row">
+                <div class="col-md-8 " style="margin:auto;margin-top: -5rem;">
 
-                        <div class="overlap-category ">
+                    <div class="overlap-category ">
 
-                            <div class="row align-items-stretch no-gutters">
-                                @foreach( $children_categories as $categories_key => $category )
-                                    <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2">
-                                        @if($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_ICON)
-                                            <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
-                                               class="popular-category h-100">
+                        <div class="row align-items-stretch no-gutters">
+                            @foreach( $children_categories as $categories_key => $category )
+                                <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2">
+                                    @if($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_ICON)
+                                        <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
+                                           class="popular-category h-100">
                                 <span class="icon">
                                     <span>
                                         @if($category->category_icon)
@@ -96,11 +96,11 @@
                                     </span>
                                 </span>
 
-                                                <span class="caption d-block">{{ $category->category_name }}</span>
-                                            </a>
-                                        @elseif($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_IMAGE)
-                                            <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
-                                               class="popular-category h-100 image-category">
+                                            <span class="caption d-block">{{ $category->category_name }}</span>
+                                        </a>
+                                    @elseif($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_IMAGE)
+                                        <a href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
+                                           class="popular-category h-100 image-category">
                                 <span class="icon image-category-span">
                                     <span>
                                         @if($category->category_image)
@@ -113,230 +113,234 @@
                                         @endif
                                     </span>
                                 </span>
-                                                <span
-                                                    class="caption d-block image-category-caption">{{ $category->category_name }}</span>
-                                            </a>
-                                        @endif
+                                            <span
+                                                class="caption d-block image-category-caption">{{ $category->category_name }}</span>
+                                        </a>
+                                    @endif
 
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+
+                </div>
+                @endif
+                <section class=" mb-xl activites position-relative">
+                    <div class="container">
+                        <h1>{{$category->category_description}}</h1>
+                    </div>
+                </section>
+                <!-- Start Filter -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <!-- start filters  -->
+                        <div class="cateogries__filters">
+                            <button type="button"
+                                    class="categories__filters__toggle-btn d-sm-none border-0 p-0 bg-transparent">
+                                <i class="las la-angle-right"></i>
+                            </button>
+                            <h3 class="fw-bold dark-color mb-md">{{ __('theme_alaadin.filter-filter-by') }}</h3>
+                            <form method="GET"
+                                  action="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
+                                  id="filter_form">
+
+                                <!-- filters  -->
+                                <div class="row" style="line-height: 4rem;">
+                                    <div class="col-12 col-md-12 pl-0">
+                                        <label for="filter_state">{{ __('theme_alaadin.filter-state') }}</label>
+                                        <select
+                                            class="selectpicker form-control @error('filter_state') is-invalid @enderror"
+                                            name="filter_state" id="filter_state" data-live-search="true">
+                                            <option
+                                                value="" {{ empty($filter_state) ? 'selected' : '' }}>{{ __('prefer_country.all-state') }}</option>
+                                            @foreach($all_states as $all_states_key => $state)
+                                                <option
+                                                    value="{{ $state->id }}" {{ $filter_state == $state->id ? 'selected' : '' }}>{{ $state->state_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('filter_state')
+                                        <span class="invalid-tooltip">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                        @enderror
                                     </div>
-                                @endforeach
+                                    <div class="col-12 col-md-12 pl-0">
+                                        <label for="filter_city">{{ __('theme_alaadin.filter-city') }}</label>
+                                        <select
+                                            class="selectpicker form-control @error('filter_city') is-invalid @enderror"
+                                            name="filter_city" id="filter_city" data-live-search="true">
+                                            <option
+                                                value="" {{ empty($filter_city) ? 'selected' : '' }}>{{ __('prefer_country.all-city') }}</option>
+                                            @foreach($all_cities as $all_cities_key => $city)
+                                                <option
+                                                    value="{{ $city->id }}" {{ $filter_city == $city->id ? 'selected' : '' }}>{{ $city->city_name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('filter_city')
+                                        <span class="invalid-tooltip">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12 col-md-12 pl-0">
+                                        <label for="sort_by">{{ __('theme_alaadin.filter-sort-by') }}</label>
+                                        <select
+                                            class="selectpicker form-control @error('filter_sort_by') is-invalid @enderror"
+                                            name="filter_sort_by" id="filter_sort_by">
+                                            <option
+                                                value="{{ \App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED ? 'selected' : '' }}>{{ __('listings_filter.sort-by-newest') }}</option>
+                                            <option
+                                                value="{{ \App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED ? 'selected' : '' }}>{{ __('listings_filter.sort-by-oldest') }}</option>
+                                            <option
+                                                value="{{ \App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING ? 'selected' : '' }}>{{ __('listings_filter.sort-by-highest') }}</option>
+                                            <option
+                                                value="{{ \App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING ? 'selected' : '' }}>{{ __('listings_filter.sort-by-lowest') }}</option>
+                                            <option
+                                                value="{{ \App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST ? 'selected' : '' }}>{{ __('theme_alaadin.filter-sort-by-nearby-first') }}</option>
+                                        </select>
+                                        @error('filter_sort_by')
+                                        <span class="invalid-tooltip">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                        @enderror
+                                    </div>
+
+                                </div>
+                                <hr>
+
+
+                                @if($children_categories->count() > 0)
+
+                                    <div class="row">
+
+                                        @foreach($children_categories as $children_categories_key => $children_category)
+                                            <div class="col-6 col-sm-6 col-md-6">
+                                                <div class=" filter_category_div">
+                                                    <input
+                                                        {{ in_array($children_category->id, $filter_categories) ? 'checked' : '' }} name="filter_categories[]"
+                                                        class="form-check-input" type="checkbox"
+                                                        value="{{ $children_category->id }}"
+                                                        id="filter_categories_{{ $children_category->id }}">
+                                                    <label class="form-check-label"
+                                                           for="filter_categories_{{ $children_category->id }}">
+                                                        {{ $children_category->category_name }}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            @error('filter_categories')
+                                            <span class="invalid-tooltip">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                            @enderror
+                                        @endforeach
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <a href="javascript:;"
+                                               class="show_more text-sm">{{ __('listings_filter.show-more') }}</a>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                @endif
+
+                                <div class="row">
+                                    <div class="col-12 text-right">
+                                        <a class="btn btn-sm btn-outline-primary rounded"
+                                           href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}">
+                                            {{ __('theme_alaadin.filter-link-reset-all') }}
+                                        </a>
+                                        <a class="btn btn-sm btn-primary text-white rounded"
+                                           id="filter_form_submit">
+                                            {{ __('theme_alaadin.filter-button-filter-results') }}
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <!-- items  -->
+                        <div class="cateogires__items flex-fill">
+                            <!-- start order-area  -->
+                            <div
+                                class="categories__orders d-flex justify-content-between align-content-center gap-4"
+                                style="z-index: 3">
+                                <div class="d-flex align-items-center gap-4">
+                                    <button type="button"
+                                            class="categories__orders__toggle-filter-btn bg-transparent p-0 border-0 d-xl-none">
+                                        <i class="las la-filter"></i>
+                                    </button>
+
+                                </div>
+                                <button class="btn btn-primary my-btn categories__orders__map-btn" type="button">
+                                    <span><i class="las la-map-marker-alt"></i></span>
+                                    <span>الخريطة</span>
+                                </button>
+                            </div>
+                            <!-- start items  -->
+                            <div class="categories__items__list">
+                                <!-- start map  -->
+                                <div id="mapid-box"
+                                     class="categories__items__list__item categories__items__list__item-map">
+                                </div>
+
+                                @if($free_items->count() > 0)
+                                    @foreach($free_items as $free_items_key => $item)
+                                        <!-- <div class="col-lg-6"> -->
+                                        @if($item->item_featured == 1)
+                                            @include('frontend.partials.reverse-free-item-inline')
+                                        @else
+                                            @include('frontend.partials.free-item-inline')
+                                        @endif
+                                        <!-- </div> -->
+                                    @endforeach
+                                @endif
+
+                            </div>
+                            <div class="pagination center-block row justify-content-center w-100"
+                                 style="width: auto;margin-top:2rem">
+                                {{ $pagination->appends(request()->query())->links() }}
                             </div>
                         </div>
 
                     </div>
-                    @endif
-                    <section class=" mb-xl activites position-relative">
-                        <div class="container">
-                            <h1>{{$category->category_description}}</h1>
-                        </div>
-                    </section>
-                    <!-- Start Filter -->
-                    <div class="row">
-                        <div class="col-md-3">
-                            <!-- start filters  -->
-                            <div class="cateogries__filters">
-                                <button type="button"
-                                        class="categories__filters__toggle-btn d-sm-none border-0 p-0 bg-transparent">
-                                    <i class="las la-angle-right"></i>
-                                </button>
-                                <h3 class="fw-bold dark-color mb-md">{{ __('theme_alaadin.filter-filter-by') }}</h3>
-                                <form method="GET"
-                                      action="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}"
-                                      id="filter_form">
+                    @if($ads_after_content)
 
-                                    <!-- filters  -->
-                                    <div class="row" style="line-height: 4rem;">
-                                        <div class="col-12 col-md-12 pl-0">
-                                            <label for="filter_state">{{ __('theme_alaadin.filter-state') }}</label>
-                                            <select
-                                                class="selectpicker form-control @error('filter_state') is-invalid @enderror"
-                                                name="filter_state" id="filter_state" data-live-search="true">
-                                                <option
-                                                    value="" {{ empty($filter_state) ? 'selected' : '' }}>{{ __('prefer_country.all-state') }}</option>
-                                                @foreach($all_states as $all_states_key => $state)
-                                                    <option
-                                                        value="{{ $state->id }}" {{ $filter_state == $state->id ? 'selected' : '' }}>{{ $state->state_name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('filter_state')
-                                            <span class="invalid-tooltip">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12 col-md-12 pl-0">
-                                            <label for="filter_city">{{ __('theme_alaadin.filter-city') }}</label>
-                                            <select
-                                                class="selectpicker form-control @error('filter_city') is-invalid @enderror"
-                                                name="filter_city" id="filter_city" data-live-search="true">
-                                                <option
-                                                    value="" {{ empty($filter_city) ? 'selected' : '' }}>{{ __('prefer_country.all-city') }}</option>
-                                                @foreach($all_cities as $all_cities_key => $city)
-                                                    <option
-                                                        value="{{ $city->id }}" {{ $filter_city == $city->id ? 'selected' : '' }}>{{ $city->city_name }}</option>
-                                                @endforeach
-                                            </select>
-                                            @error('filter_city')
-                                            <span class="invalid-tooltip">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                            @enderror
-                                        </div>
-                                        <div class="col-12 col-md-12 pl-0">
-                                            <label for="sort_by">{{ __('theme_alaadin.filter-sort-by') }}</label>
-                                            <select
-                                                class="selectpicker form-control @error('filter_sort_by') is-invalid @enderror"
-                                                name="filter_sort_by" id="filter_sort_by">
-                                                <option
-                                                    value="{{ \App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED ? 'selected' : '' }}>{{ __('listings_filter.sort-by-newest') }}</option>
-                                                <option
-                                                    value="{{ \App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED ? 'selected' : '' }}>{{ __('listings_filter.sort-by-oldest') }}</option>
-                                                <option
-                                                    value="{{ \App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING ? 'selected' : '' }}>{{ __('listings_filter.sort-by-highest') }}</option>
-                                                <option
-                                                    value="{{ \App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING ? 'selected' : '' }}>{{ __('listings_filter.sort-by-lowest') }}</option>
-                                                <option
-                                                    value="{{ \App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST }}" {{ $filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST ? 'selected' : '' }}>{{ __('theme_alaadin.filter-sort-by-nearby-first') }}</option>
-                                            </select>
-                                            @error('filter_sort_by')
-                                            <span class="invalid-tooltip">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                            @enderror
-                                        </div>
-
-                                    </div>
-                                    <hr>
-
-
-                                    @if($children_categories->count() > 0)
-
-                                        <div class="row">
-
-                                            @foreach($children_categories as $children_categories_key => $children_category)
-                                                <div class="col-6 col-sm-6 col-md-6">
-                                                    <div class=" filter_category_div">
-                                                        <input
-                                                            {{ in_array($children_category->id, $filter_categories) ? 'checked' : '' }} name="filter_categories[]"
-                                                            class="form-check-input" type="checkbox"
-                                                            value="{{ $children_category->id }}"
-                                                            id="filter_categories_{{ $children_category->id }}">
-                                                        <label class="form-check-label"
-                                                               for="filter_categories_{{ $children_category->id }}">
-                                                            {{ $children_category->category_name }}
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                @error('filter_categories')
-                                                <span class="invalid-tooltip">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                                @enderror
-                                            @endforeach
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12 text-center">
-                                                <a href="javascript:;"
-                                                   class="show_more text-sm">{{ __('listings_filter.show-more') }}</a>
-                                            </div>
-                                        </div>
-                                        <hr>
-
-                                    @endif
-
-                                    <div class="row">
-                                        <div class="col-12 text-right">
-                                            <a class="btn btn-sm btn-outline-primary rounded"
-                                               href="{{ route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug]) }}">
-                                                {{ __('theme_alaadin.filter-link-reset-all') }}
-                                            </a>
-                                            <a class="btn btn-sm btn-primary text-white rounded"
-                                               id="filter_form_submit">
-                                                {{ __('theme_alaadin.filter-button-filter-results') }}
-                                            </a>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-md-9">
-                            <!-- items  -->
-                            <div class="cateogires__items flex-fill">
-                                <!-- start order-area  -->
-                                <div
-                                    class="categories__orders d-flex justify-content-between align-content-center gap-4"
-                                    style="z-index: 3">
-                                    <div class="d-flex align-items-center gap-4">
-                                        <button type="button"
-                                                class="categories__orders__toggle-filter-btn bg-transparent p-0 border-0 d-xl-none">
-                                            <i class="las la-filter"></i>
-                                        </button>
-
-                                    </div>
-                                    <button class="btn btn-primary my-btn categories__orders__map-btn" type="button">
-                                        <span><i class="las la-map-marker-alt"></i></span>
-                                        <span>الخريطة</span>
-                                    </button>
-                                </div>
-                                <!-- start items  -->
-                                <div class="categories__items__list">
-                                    <!-- start map  -->
-                                    <div id="mapid-box"
-                                         class="categories__items__list__item categories__items__list__item-map">
-                                    </div>
-
-                                    @if($free_items->count() > 0)
-                                        @foreach($free_items as $free_items_key => $item)
-                                            <!-- <div class="col-lg-6"> -->
-                                            @include('frontend.partials.free-item-inline')
-                                            <!-- </div> -->
-                                        @endforeach
-                                    @endif
-
-                                </div>
-                                <div class="pagination center-block row justify-content-center w-100"
-                                     style="width: auto;margin-top:2rem">
-                                    {{ $pagination->appends(request()->query())->links() }}
-                                </div>
-                            </div>
-
-                        </div>
-                        @if($ads_after_content)
-
-                                <section class="category-swiper mb-3" style="min-height: 5rem;">
-                                    <div class="container">
-                                        <div class="swiper category-swiper__inner">
-                                            <div class="swiper-wrapper">
-                                                @foreach($ads_after_content as $ad)
-                                                <div class="swiper-slide">
-                                                    <a
-                                                        class="category-slide__item d-flex justify-content-center"
-                                                        @if($ad->item?->first())
+                        <section class="category-swiper mb-3" style="min-height: 5rem;">
+                            <div class="container">
+                                <div class="swiper category-swiper__inner">
+                                    <div class="swiper-wrapper">
+                                        @foreach($ads_after_content as $ad)
+                                            <div class="swiper-slide">
+                                                <a
+                                                    class="category-slide__item d-flex justify-content-center"
+                                                    @if($ad->item?->first())
                                                         href="{{route('page.item',[
                                                             'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                             'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                             'state_slug' => $ad->item->first()->state->state_slug,
                                                             'item_slug' => $ad->item->first()->item_slug
                                                         ])}}"
-                                                        @endif
-                                                    >
-                                                    </a>
-
-                                                </div>
-                                                @endforeach
+                                                    @endif
+                                                >
+                                                </a>
 
                                             </div>
-                                               </div>
+                                        @endforeach
+
                                     </div>
-                                </section>
-                        @else
-                            <div class="ads categories__items__list__item__ads mb-3">ads</div>
-                        @endif
-                        <!-- <div class="col-lg-6">
+                                </div>
+                            </div>
+                        </section>
+                    @else
+                        <div class="ads categories__items__list__item__ads mb-3">ads</div>
+                    @endif
+                    <!-- <div class="col-lg-6">
                     <div class="categories__items__list__item sticky-top" id="mapid-box"></div>
                 </div> -->
-                    </div>
                 </div>
+            </div>
 
         </div>
 

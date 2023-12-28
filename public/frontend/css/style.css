@@ -322,6 +322,7 @@ a:hover {
     color: var(--white);
 }
 
+
 .pt {
     padding-top: 70px;
 }
@@ -788,7 +789,7 @@ a:hover {
 
 .ads {
     border-radius: 16px;
-    height: 119px;
+    height: 145px;
     width: 100%;
     text-align: center;
     font-size: 108px;
@@ -799,8 +800,18 @@ a:hover {
     color: var(--white);
     line-height: 42px;
     font-family: var(--font-1);
+    animation: colorToggle 0.7s infinite alternate;
+    background-color: #1d0e30 ;
 }
-
+/* Keyframe animation for color toggle */
+@keyframes colorToggle {
+    0% {
+        background-color: #1d0e30;
+    }
+    100% {
+        background-color: #542e7c; /* Change to the second color */
+    }
+}
 .ads.vertical {
     max-height: 886px;
     height: auto;
@@ -1291,4 +1302,11 @@ a:hover {
     color: #fff;
     cursor: pointer;
     font-size: 20px;
+}
+
+
+{
+
+    color: var(--primary) !important;
+    background-color: white;
 }

@@ -128,7 +128,7 @@ sliceContent(".hotels__items__item h4 a", 30);
 
 sliceContent(".activites__item h6", 17);
 
-sliceContent(".recent_categories__item", 80);
+sliceContent(".recent_categories__item", 150);
 
 sliceContent(".explore__items__item__info__title a", 30);
 

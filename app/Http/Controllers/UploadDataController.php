@@ -118,7 +118,7 @@ class UploadDataController extends Controller
         }
     }
 
-    public function update_company_id()
+        public function update_company_id()
     {
         $files = scandir(storage_path('app/importer/'));
 

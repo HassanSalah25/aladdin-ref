@@ -29,18 +29,18 @@
             </nav>
         </div>
     </div>
-            <section class="category-swiper d-flex align-items-center m-1" style="min-height: 5rem;">
-                <div class="container">
-                    <div class="swiper category-swiper__inner">
-                        <div class="swiper-wrapper">
+    <section class="category-swiper d-flex align-items-center m-1" style="min-height: 5rem;">
+        <div class="container">
+            <div class="swiper category-swiper__inner">
+                <div class="swiper-wrapper">
 
-                            <?php if($ads_before_content->count() > 0): ?>
-                                <?php $__currentLoopData = $ads_before_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php if($ads_before_content->count() > 0): ?>
+                        <?php $__currentLoopData = $ads_before_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <div class="swiper-slide">
                                 <a
                                     class="category-slide__item  d-flex justify-content-center"
                                     <?php if($ad->item?->first()): ?>
-                                       href="<?php echo e(route('page.item',[
+                                        href="<?php echo e(route('page.item',[
                                                     'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                     'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                     'state_slug' => $ad->item->first()->state->state_slug,
@@ -50,20 +50,20 @@
 
                                 >
 
-                                        <img style="width: 100%" src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"/>
-                                    </a>
+                                    <img style="width: 100%" src="<?php echo e(asset('storage/ads/'.$ad->ad_image_horizontal)); ?>"/>
+                                </a>
 
                             </div>
 
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                            <?php else: ?>
-                                <div class="ads categories__items__list__item__ads">ads</div>
-                            <?php endif; ?>
-                        </div>
-                     </div>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <?php else: ?>
+                        <div class="ads categories__items__list__item__ads">ads</div>
+                    <?php endif; ?>
                 </div>
+            </div>
+        </div>
 
-            </section>
+    </section>
 
 
 
@@ -73,17 +73,17 @@
         <div class="container">
 
             <?php if($children_categories->count() > 0): ?>f
-                <div class="row">
-                    <div class="col-md-8 " style="margin:auto;margin-top: -5rem;">
+            <div class="row">
+                <div class="col-md-8 " style="margin:auto;margin-top: -5rem;">
 
-                        <div class="overlap-category ">
+                    <div class="overlap-category ">
 
-                            <div class="row align-items-stretch no-gutters">
-                                <?php $__currentLoopData = $children_categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $categories_key => $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                    <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2">
-                                        <?php if($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_ICON): ?>
-                                            <a href="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>"
-                                               class="popular-category h-100">
+                        <div class="row align-items-stretch no-gutters">
+                            <?php $__currentLoopData = $children_categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $categories_key => $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                <div class="col-sm-6 col-md-4 mb-4 mb-lg-0 col-lg-2">
+                                    <?php if($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_ICON): ?>
+                                        <a href="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>"
+                                           class="popular-category h-100">
                                 <span class="icon">
                                     <span>
                                         <?php if($category->category_icon): ?>
@@ -94,11 +94,11 @@
                                     </span>
                                 </span>
 
-                                                <span class="caption d-block"><?php echo e($category->category_name); ?></span>
-                                            </a>
-                                        <?php elseif($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_IMAGE): ?>
-                                            <a href="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>"
-                                               class="popular-category h-100 image-category">
+                                            <span class="caption d-block"><?php echo e($category->category_name); ?></span>
+                                        </a>
+                                    <?php elseif($category->category_thumbnail_type == \App\Models\Category::CATEGORY_THUMBNAIL_TYPE_IMAGE): ?>
+                                        <a href="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>"
+                                           class="popular-category h-100 image-category">
                                 <span class="icon image-category-span">
                                     <span>
                                         <?php if($category->category_image): ?>
@@ -111,283 +111,287 @@
                                         <?php endif; ?>
                                     </span>
                                 </span>
-                                                <span
-                                                    class="caption d-block image-category-caption"><?php echo e($category->category_name); ?></span>
-                                            </a>
-                                        <?php endif; ?>
+                                            <span
+                                                class="caption d-block image-category-caption"><?php echo e($category->category_name); ?></span>
+                                        </a>
+                                    <?php endif; ?>
 
+                                </div>
+                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        </div>
+                    </div>
+
+                </div>
+                <?php endif; ?>
+                <section class=" mb-xl activites position-relative">
+                    <div class="container">
+                        <h1><?php echo e($category->category_description); ?></h1>
+                    </div>
+                </section>
+                <!-- Start Filter -->
+                <div class="row">
+                    <div class="col-md-3">
+                        <!-- start filters  -->
+                        <div class="cateogries__filters">
+                            <button type="button"
+                                    class="categories__filters__toggle-btn d-sm-none border-0 p-0 bg-transparent">
+                                <i class="las la-angle-right"></i>
+                            </button>
+                            <h3 class="fw-bold dark-color mb-md"><?php echo e(__('theme_alaadin.filter-filter-by')); ?></h3>
+                            <form method="GET"
+                                  action="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>"
+                                  id="filter_form">
+
+                                <!-- filters  -->
+                                <div class="row" style="line-height: 4rem;">
+                                    <div class="col-12 col-md-12 pl-0">
+                                        <label for="filter_state"><?php echo e(__('theme_alaadin.filter-state')); ?></label>
+                                        <select
+                                            class="selectpicker form-control <?php $__errorArgs = ['filter_state'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            name="filter_state" id="filter_state" data-live-search="true">
+                                            <option
+                                                value="" <?php echo e(empty($filter_state) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-state')); ?></option>
+                                            <?php $__currentLoopData = $all_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_states_key => $state): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option
+                                                    value="<?php echo e($state->id); ?>" <?php echo e($filter_state == $state->id ? 'selected' : ''); ?>><?php echo e($state->state_name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                        <?php $__errorArgs = ['filter_state'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <span class="invalid-tooltip">
+                                        <strong><?php echo e($message); ?></strong>
+                                    </span>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
                                     </div>
-                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    <div class="col-12 col-md-12 pl-0">
+                                        <label for="filter_city"><?php echo e(__('theme_alaadin.filter-city')); ?></label>
+                                        <select
+                                            class="selectpicker form-control <?php $__errorArgs = ['filter_city'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            name="filter_city" id="filter_city" data-live-search="true">
+                                            <option
+                                                value="" <?php echo e(empty($filter_city) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-city')); ?></option>
+                                            <?php $__currentLoopData = $all_cities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_cities_key => $city): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                                <option
+                                                    value="<?php echo e($city->id); ?>" <?php echo e($filter_city == $city->id ? 'selected' : ''); ?>><?php echo e($city->city_name); ?></option>
+                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        </select>
+                                        <?php $__errorArgs = ['filter_city'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <span class="invalid-tooltip">
+                                        <strong><?php echo e($message); ?></strong>
+                                    </span>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
+                                    <div class="col-12 col-md-12 pl-0">
+                                        <label for="sort_by"><?php echo e(__('theme_alaadin.filter-sort-by')); ?></label>
+                                        <select
+                                            class="selectpicker form-control <?php $__errorArgs = ['filter_sort_by'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>"
+                                            name="filter_sort_by" id="filter_sort_by">
+                                            <option
+                                                value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-newest')); ?></option>
+                                            <option
+                                                value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-oldest')); ?></option>
+                                            <option
+                                                value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-highest')); ?></option>
+                                            <option
+                                                value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-lowest')); ?></option>
+                                            <option
+                                                value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST ? 'selected' : ''); ?>><?php echo e(__('theme_alaadin.filter-sort-by-nearby-first')); ?></option>
+                                        </select>
+                                        <?php $__errorArgs = ['filter_sort_by'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                        <span class="invalid-tooltip">
+                                        <strong><?php echo e($message); ?></strong>
+                                    </span>
+                                        <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                    </div>
+
+                                </div>
+                                <hr>
+
+
+                                <?php if($children_categories->count() > 0): ?>
+
+                                    <div class="row">
+
+                                        <?php $__currentLoopData = $children_categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $children_categories_key => $children_category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <div class="col-6 col-sm-6 col-md-6">
+                                                <div class=" filter_category_div">
+                                                    <input
+                                                        <?php echo e(in_array($children_category->id, $filter_categories) ? 'checked' : ''); ?> name="filter_categories[]"
+                                                        class="form-check-input" type="checkbox"
+                                                        value="<?php echo e($children_category->id); ?>"
+                                                        id="filter_categories_<?php echo e($children_category->id); ?>">
+                                                    <label class="form-check-label"
+                                                           for="filter_categories_<?php echo e($children_category->id); ?>">
+                                                        <?php echo e($children_category->category_name); ?>
+
+                                                    </label>
+                                                </div>
+                                            </div>
+                                            <?php $__errorArgs = ['filter_categories'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                                            <span class="invalid-tooltip">
+                                    <strong><?php echo e($message); ?></strong>
+                                </span>
+                                            <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <a href="javascript:;"
+                                               class="show_more text-sm"><?php echo e(__('listings_filter.show-more')); ?></a>
+                                        </div>
+                                    </div>
+                                    <hr>
+
+                                <?php endif; ?>
+
+                                <div class="row">
+                                    <div class="col-12 text-right">
+                                        <a class="btn btn-sm btn-outline-primary rounded"
+                                           href="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>">
+                                            <?php echo e(__('theme_alaadin.filter-link-reset-all')); ?>
+
+                                        </a>
+                                        <a class="btn btn-sm btn-primary text-white rounded"
+                                           id="filter_form_submit">
+                                            <?php echo e(__('theme_alaadin.filter-button-filter-results')); ?>
+
+                                        </a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <!-- items  -->
+                        <div class="cateogires__items flex-fill">
+                            <!-- start order-area  -->
+                            <div
+                                class="categories__orders d-flex justify-content-between align-content-center gap-4"
+                                style="z-index: 3">
+                                <div class="d-flex align-items-center gap-4">
+                                    <button type="button"
+                                            class="categories__orders__toggle-filter-btn bg-transparent p-0 border-0 d-xl-none">
+                                        <i class="las la-filter"></i>
+                                    </button>
+
+                                </div>
+                                <button class="btn btn-primary my-btn categories__orders__map-btn" type="button">
+                                    <span><i class="las la-map-marker-alt"></i></span>
+                                    <span>الخريطة</span>
+                                </button>
+                            </div>
+                            <!-- start items  -->
+                            <div class="categories__items__list">
+                                <!-- start map  -->
+                                <div id="mapid-box"
+                                     class="categories__items__list__item categories__items__list__item-map">
+                                </div>
+
+                                <?php if($free_items->count() > 0): ?>
+                                    <?php $__currentLoopData = $free_items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $free_items_key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                        <!-- <div class="col-lg-6"> -->
+                                        <?php if($item->item_featured == 1): ?>
+                                            <?php echo $__env->make('frontend.partials.reverse-free-item-inline', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        <?php else: ?>
+                                            <?php echo $__env->make('frontend.partials.free-item-inline', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+                                        <?php endif; ?>
+                                        <!-- </div> -->
+                                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                <?php endif; ?>
+
+                            </div>
+                            <div class="pagination center-block row justify-content-center w-100"
+                                 style="width: auto;margin-top:2rem">
+                                <?php echo e($pagination->appends(request()->query())->links()); ?>
+
                             </div>
                         </div>
 
                     </div>
-                    <?php endif; ?>
-                    <section class=" mb-xl activites position-relative">
-                        <div class="container">
-                            <h1><?php echo e($category->category_description); ?></h1>
-                        </div>
-                    </section>
-                    <!-- Start Filter -->
-                    <div class="row">
-                        <div class="col-md-3">
-                            <!-- start filters  -->
-                            <div class="cateogries__filters">
-                                <button type="button"
-                                        class="categories__filters__toggle-btn d-sm-none border-0 p-0 bg-transparent">
-                                    <i class="las la-angle-right"></i>
-                                </button>
-                                <h3 class="fw-bold dark-color mb-md"><?php echo e(__('theme_alaadin.filter-filter-by')); ?></h3>
-                                <form method="GET"
-                                      action="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>"
-                                      id="filter_form">
+                    <?php if($ads_after_content): ?>
 
-                                    <!-- filters  -->
-                                    <div class="row" style="line-height: 4rem;">
-                                        <div class="col-12 col-md-12 pl-0">
-                                            <label for="filter_state"><?php echo e(__('theme_alaadin.filter-state')); ?></label>
-                                            <select
-                                                class="selectpicker form-control <?php $__errorArgs = ['filter_state'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                                name="filter_state" id="filter_state" data-live-search="true">
-                                                <option
-                                                    value="" <?php echo e(empty($filter_state) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-state')); ?></option>
-                                                <?php $__currentLoopData = $all_states; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_states_key => $state): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($state->id); ?>" <?php echo e($filter_state == $state->id ? 'selected' : ''); ?>><?php echo e($state->state_name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                            <?php $__errorArgs = ['filter_state'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                            <span class="invalid-tooltip">
-                                        <strong><?php echo e($message); ?></strong>
-                                    </span>
-                                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                        </div>
-                                        <div class="col-12 col-md-12 pl-0">
-                                            <label for="filter_city"><?php echo e(__('theme_alaadin.filter-city')); ?></label>
-                                            <select
-                                                class="selectpicker form-control <?php $__errorArgs = ['filter_city'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                                name="filter_city" id="filter_city" data-live-search="true">
-                                                <option
-                                                    value="" <?php echo e(empty($filter_city) ? 'selected' : ''); ?>><?php echo e(__('prefer_country.all-city')); ?></option>
-                                                <?php $__currentLoopData = $all_cities; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all_cities_key => $city): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                    <option
-                                                        value="<?php echo e($city->id); ?>" <?php echo e($filter_city == $city->id ? 'selected' : ''); ?>><?php echo e($city->city_name); ?></option>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                            </select>
-                                            <?php $__errorArgs = ['filter_city'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                            <span class="invalid-tooltip">
-                                        <strong><?php echo e($message); ?></strong>
-                                    </span>
-                                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                        </div>
-                                        <div class="col-12 col-md-12 pl-0">
-                                            <label for="sort_by"><?php echo e(__('theme_alaadin.filter-sort-by')); ?></label>
-                                            <select
-                                                class="selectpicker form-control <?php $__errorArgs = ['filter_sort_by'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?> is-invalid <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>"
-                                                name="filter_sort_by" id="filter_sort_by">
-                                                <option
-                                                    value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEWEST_CREATED ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-newest')); ?></option>
-                                                <option
-                                                    value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_OLDEST_CREATED ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-oldest')); ?></option>
-                                                <option
-                                                    value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_HIGHEST_RATING ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-highest')); ?></option>
-                                                <option
-                                                    value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_LOWEST_RATING ? 'selected' : ''); ?>><?php echo e(__('listings_filter.sort-by-lowest')); ?></option>
-                                                <option
-                                                    value="<?php echo e(\App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST); ?>" <?php echo e($filter_sort_by == \App\Models\Item::ITEMS_SORT_BY_NEARBY_FIRST ? 'selected' : ''); ?>><?php echo e(__('theme_alaadin.filter-sort-by-nearby-first')); ?></option>
-                                            </select>
-                                            <?php $__errorArgs = ['filter_sort_by'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                            <span class="invalid-tooltip">
-                                        <strong><?php echo e($message); ?></strong>
-                                    </span>
-                                            <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                        </div>
-
-                                    </div>
-                                    <hr>
-
-
-                                    <?php if($children_categories->count() > 0): ?>
-
-                                        <div class="row">
-
-                                            <?php $__currentLoopData = $children_categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $children_categories_key => $children_category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <div class="col-6 col-sm-6 col-md-6">
-                                                    <div class=" filter_category_div">
-                                                        <input
-                                                            <?php echo e(in_array($children_category->id, $filter_categories) ? 'checked' : ''); ?> name="filter_categories[]"
-                                                            class="form-check-input" type="checkbox"
-                                                            value="<?php echo e($children_category->id); ?>"
-                                                            id="filter_categories_<?php echo e($children_category->id); ?>">
-                                                        <label class="form-check-label"
-                                                               for="filter_categories_<?php echo e($children_category->id); ?>">
-                                                            <?php echo e($children_category->category_name); ?>
-
-                                                        </label>
-                                                    </div>
-                                                </div>
-                                                <?php $__errorArgs = ['filter_categories'];
-$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
-if ($__bag->has($__errorArgs[0])) :
-if (isset($message)) { $__messageOriginal = $message; }
-$message = $__bag->first($__errorArgs[0]); ?>
-                                                <span class="invalid-tooltip">
-                                    <strong><?php echo e($message); ?></strong>
-                                </span>
-                                                <?php unset($message);
-if (isset($__messageOriginal)) { $message = $__messageOriginal; }
-endif;
-unset($__errorArgs, $__bag); ?>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-12 text-center">
-                                                <a href="javascript:;"
-                                                   class="show_more text-sm"><?php echo e(__('listings_filter.show-more')); ?></a>
-                                            </div>
-                                        </div>
-                                        <hr>
-
-                                    <?php endif; ?>
-
-                                    <div class="row">
-                                        <div class="col-12 text-right">
-                                            <a class="btn btn-sm btn-outline-primary rounded"
-                                               href="<?php echo e(route('page.category', ['parent_category_slug'=> $category->parent->category_slug,'category_slug'=>$category->category_slug])); ?>">
-                                                <?php echo e(__('theme_alaadin.filter-link-reset-all')); ?>
-
-                                            </a>
-                                            <a class="btn btn-sm btn-primary text-white rounded"
-                                               id="filter_form_submit">
-                                                <?php echo e(__('theme_alaadin.filter-button-filter-results')); ?>
-
-                                            </a>
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </div>
-                        <div class="col-md-9">
-                            <!-- items  -->
-                            <div class="cateogires__items flex-fill">
-                                <!-- start order-area  -->
-                                <div
-                                    class="categories__orders d-flex justify-content-between align-content-center gap-4"
-                                    style="z-index: 3">
-                                    <div class="d-flex align-items-center gap-4">
-                                        <button type="button"
-                                                class="categories__orders__toggle-filter-btn bg-transparent p-0 border-0 d-xl-none">
-                                            <i class="las la-filter"></i>
-                                        </button>
-
-                                    </div>
-                                    <button class="btn btn-primary my-btn categories__orders__map-btn" type="button">
-                                        <span><i class="las la-map-marker-alt"></i></span>
-                                        <span>الخريطة</span>
-                                    </button>
-                                </div>
-                                <!-- start items  -->
-                                <div class="categories__items__list">
-                                    <!-- start map  -->
-                                    <div id="mapid-box"
-                                         class="categories__items__list__item categories__items__list__item-map">
-                                    </div>
-
-                                    <?php if($free_items->count() > 0): ?>
-                                        <?php $__currentLoopData = $free_items; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $free_items_key => $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <!-- <div class="col-lg-6"> -->
-                                            <?php echo $__env->make('frontend.partials.free-item-inline', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
-                                            <!-- </div> -->
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                    <?php endif; ?>
-
-                                </div>
-                                <div class="pagination center-block row justify-content-center w-100"
-                                     style="width: auto;margin-top:2rem">
-                                    <?php echo e($pagination->appends(request()->query())->links()); ?>
-
-                                </div>
-                            </div>
-
-                        </div>
-                        <?php if($ads_after_content): ?>
-
-                                <section class="category-swiper mb-3" style="min-height: 5rem;">
-                                    <div class="container">
-                                        <div class="swiper category-swiper__inner">
-                                            <div class="swiper-wrapper">
-                                                <?php $__currentLoopData = $ads_after_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <div class="swiper-slide">
-                                                    <a
-                                                        class="category-slide__item d-flex justify-content-center"
-                                                        <?php if($ad->item?->first()): ?>
+                        <section class="category-swiper mb-3" style="min-height: 5rem;">
+                            <div class="container">
+                                <div class="swiper category-swiper__inner">
+                                    <div class="swiper-wrapper">
+                                        <?php $__currentLoopData = $ads_after_content; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $ad): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                            <div class="swiper-slide">
+                                                <a
+                                                    class="category-slide__item d-flex justify-content-center"
+                                                    <?php if($ad->item?->first()): ?>
                                                         href="<?php echo e(route('page.item',[
                                                             'category_slug' => $ad->item->first()->category->parent?->category_slug ?? $ad->item->first()->category->category_slug,
                                                             'sub_category_slug' => $ad->item->first()->category->category_slug,
                                                             'state_slug' => $ad->item->first()->state->state_slug,
                                                             'item_slug' => $ad->item->first()->item_slug
                                                         ])); ?>"
-                                                        <?php endif; ?>
-                                                    >
-                                                    </a>
-
-                                                </div>
-                                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                    <?php endif; ?>
+                                                >
+                                                </a>
 
                                             </div>
-                                               </div>
+                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+
                                     </div>
-                                </section>
-                        <?php else: ?>
-                            <div class="ads categories__items__list__item__ads mb-3">ads</div>
-                        <?php endif; ?>
-                        <!-- <div class="col-lg-6">
+                                </div>
+                            </div>
+                        </section>
+                    <?php else: ?>
+                        <div class="ads categories__items__list__item__ads mb-3">ads</div>
+                    <?php endif; ?>
+                    <!-- <div class="col-lg-6">
                     <div class="categories__items__list__item sticky-top" id="mapid-box"></div>
                 </div> -->
-                    </div>
                 </div>
+            </div>
 
         </div>
 
