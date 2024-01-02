@@ -22,8 +22,16 @@ class State extends Model
      * @var array
      */
     protected $fillable = [
-        'country_id', 'state_name', 'state_abbr', 'state_slug', 'state_country_abbr',
-        'state_image', 'state_image_tiny', 'state_image_small', 'state_image_medium', 'state_image_blur',
+        'country_id',
+        'state_name',
+        'state_abbr',
+        'state_slug',
+        'state_country_abbr',
+        'state_image',
+        'state_image_tiny',
+        'state_image_small',
+        'state_image_medium',
+        'state_image_blur',
         'meta_description', 'meta_title', 'meta_keywords', 'canonical', 'alt_image'
     ];
 

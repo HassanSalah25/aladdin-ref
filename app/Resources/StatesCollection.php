@@ -10,8 +10,17 @@ class StatesCollection extends JsonResource
 {
     public function toArray($request)
     {
-         if($this->states_details)
-         $this->states_details->state_image = asset('storage/state/'.$this->states_details->state_image);
-        return $this->states_details;
+        return [
+            'country_id' => $this->country_id ?? '',
+            'state_name' => $this->state_name ?? '',
+            'state_abbr' => $this->state_abbr ?? '',
+            'state_slug' => $this->state_slug ?? '',
+            'state_country_abbr' => $this->state_country_abbr ?? '',
+            'state_image' => asset('storage/' . $this->state_image) ?? '',
+            'state_image_tiny' => asset('storage/' . $this->state_image_tiny) ?? '',
+            'state_image_small' => asset('storage/' . $this->state_image_small) ?? '',
+            'state_image_medium' => asset('storage/' . $this->state_image_medium) ?? '',
+            'state_image_blur' => asset('storage/' . $this->state_image_blur) ?? '',
+        ];
     }
 }

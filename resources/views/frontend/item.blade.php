@@ -150,7 +150,9 @@
                         <!-- head  -->
                         <div class="d-flex flex-wrap align-items-center mb-base gap-5 profile__details__head">
                             <h4 class="dark-color fw-bold m-0 profile__details__title">
-                                {{ $item->item_title }}
+                                <h1 class="h4">
+                                    {{ $item->item_title }}
+                                </h1>
                                 <span>
                                 <i class="las la-star icon"></i>
                                 <span>{{ number_format($item_average_rating, 1) }}</span>

@@ -123,7 +123,7 @@
                             <div class="form-group col-md-4 m-3">
                                 <label>{{__('blog.blog-name')}}</label>
                                 <input class="form-control" type="text" name="name[ar]"
-                                       value="{{$blog->getTranslation('meta_keyword','ar')}}">
+                                       value="{{$blog->getTranslation('title','ar')}}">
                             </div>
                             <div class="form-group col-md-12 m-3">
                                 <label>{{__('blog.blog-content')}}</label>

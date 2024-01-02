@@ -368,7 +368,7 @@ class PagesController extends Controller
          * Start SEO
          */
         SEOMeta::setTitle(__('seo.frontend.search', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setDescription(' ');
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
         OpenGraph::setTitle(__('seo.frontend.search', ['site_name' => 'علاء الدين']));
@@ -1001,7 +1001,7 @@ class PagesController extends Controller
          * Start SEO
          */
         SEOMeta::setTitle(__('seo.frontend.contact', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setDescription(' ');
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
         OpenGraph::setTitle('صفحة من نحن - تطبيق علاء الدين');
@@ -1815,7 +1815,7 @@ class PagesController extends Controller
              * Start SEO
              */
             SEOMeta::setTitle($category->category_name . ' of ' . $state->state_name . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
-            SEOMeta::setDescription('');
+            SEOMeta::setDescription(' ');
             SEOMeta::setCanonical(request()->fullUrl()                                                                          );
             SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
             /**
@@ -2110,7 +2110,7 @@ class PagesController extends Controller
                      * Start SEO
                      */
                     SEOMeta::setTitle($category->category_name . ' of ' . $state->state_name . ', ' . $city->city_name . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
-                    SEOMeta::setDescription('');
+                    SEOMeta::setDescription(' ');
                     SEOMeta::setCanonical(request()->fullUrl()                                                                          );
                     SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
                     /**
@@ -2391,9 +2391,9 @@ class PagesController extends Controller
              * Start SEO
              */
             if (!$state->meta_title)
-                SEOMeta::setTitle($state->state_name);
+                SEOMeta::setTitle($state->state_name,false);
             else
-                SEOMeta::setTitle($state->meta_title);
+                SEOMeta::setTitle($state->meta_title,false);
             SEOMeta::setDescription($state->meta_description??$state->state_name);
             SEOMeta::addKeyword($state->meta_keywords??$state->state_name);
             SEOMeta::setCanonical(request()->fullUrl());
@@ -3198,16 +3198,16 @@ class PagesController extends Controller
              * Start SEO
              */
             if (!$item->meta_title)
-                SEOMeta::setTitle($item->item_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
+                SEOMeta::setTitle($item->item_title,false);
             else
-                SEOMeta::setTitle($item->meta_title);
+                SEOMeta::setTitle($item->meta_title,false);
             SEOMeta::setDescription($item->meta_description);
             SEOMeta::setCanonical($item->canonical ?? request()->fullUrl()                                                                          );
             SEOMeta::addKeyword($item->meta_keywords ?? $settings->setting_site_seo_home_keywords);
 
             // OpenGraph
             OpenGraph::setTitle($item->item_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name),false);
-            OpenGraph::setDescription($item->item_description);
+            OpenGraph::setDescription(' ');
             OpenGraph::setUrl(request()->fullUrl()                                                                          );
             if (empty($item->item_image)) {
                 OpenGraph::addImage(asset('frontend/images/placeholder/full_item_feature_image.webp'));
@@ -4197,7 +4197,7 @@ class PagesController extends Controller
              * Start SEO
              */
             SEOMeta::setTitle(__('seo.frontend.blog-tag', ['tag_name' => $tag->name, 'site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-            SEOMeta::setDescription('');
+            SEOMeta::setDescription(' ');
             SEOMeta::setCanonical(request()->fullUrl()                                                                          );
             SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
             /**
@@ -4301,7 +4301,7 @@ class PagesController extends Controller
              * Start SEO
              */
             SEOMeta::setTitle(__('seo.frontend.blog-topic', ['topic_name' => $topic->name, 'site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-            SEOMeta::setDescription('');
+            SEOMeta::setDescription(' ');
             SEOMeta::setCanonical(request()->fullUrl()                                                                          );
             SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
             /**
@@ -4805,7 +4805,7 @@ class PagesController extends Controller
          * Start SEO
          */
         SEOMeta::setTitle(__('theme_alaadin.pricing.seo.pricing', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setDescription(' ');
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
         /**
@@ -4877,7 +4877,7 @@ class PagesController extends Controller
          * Start SEO
          */
         SEOMeta::setTitle(__('seo.frontend.terms-service', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setDescription(' ');
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
         /**
@@ -4913,7 +4913,7 @@ class PagesController extends Controller
          * Start SEO
          */
         SEOMeta::setTitle(__('seo.frontend.privacy-policy', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
+        SEOMeta::setDescription(' ');
         SEOMeta::setCanonical(request()->fullUrl()                                                                          );
         SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
         /**

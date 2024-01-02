@@ -119,6 +119,7 @@
         Route::get('/delete_duplicates', [UploadDataController::class,'delete_dublicates'])->name('page.delete_duplicates');
         Route::get('/update_counts', [UploadDataController::class,'update_counts'])->name('page.update_counts');
         Route::get('/update_company_id', [UploadDataController::class,'update_company_id'])->name('page.update_company_id');
+        Route::get('/update_title_desc', [UploadDataController::class,'update_title_desc'])->name('page.update_title_desc');
 
     //    Route::get('/listing/{item_slug}', [PagesController::class,'item'])->name('page.item');
         Route::get('/listing/{category_slug}/{sub_category_slug}/{state_slug}/{item_slug}', [PagesController::class,'item'])->name('page.item');

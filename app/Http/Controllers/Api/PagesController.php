@@ -1,34 +1,49 @@
 <?php
 
 namespace App\Http\Controllers\Api;
+
 use App\Http\Controllers\Controller;
 use App\Models\Advertisement;
-// use App\BlogPost;
+use App\Models\Blog;
 use App\Models\Category;
 use App\Models\Country;
-// use App\Customization;
 use App\Models\Faq;
 use App\Models\Item;
 use App\Models\ItemHour;
+use App\Models\Setting;
+use App\Models\State;
+use App\Models\Subscription;
+use App\Models\Theme;
+use App\Resources\BlogsCollection;
+use App\Resources\CategoriesCollection;
+use App\Resources\ItemsCollection;
+use App\Resources\StatesCollection;
+use Artesaos\SEOTools\Facades\OpenGraph;
+use Artesaos\SEOTools\Facades\SEOMeta;
+use Artesaos\SEOTools\Facades\TwitterCard;
+use DateTime;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
+use Spatie\OpeningHours\OpeningHours;
+
+// use App\BlogPost;
+
+// use App\Customization;
+
 // use App\ItemImageGallery;
 // use App\ItemLead;
-use App\Models\ItemSection;
+
 // use App\Mail\Notification;
 // use App\Plan;
 // use App\Product;
 // use App\ProductImageGallery;
-use App\Models\Setting;
-use App\Models\State;
-use App\Models\Subscription;
-use App\Models\Testimonial;
-use App\Models\Theme;
+
 // use App\User;
-use Artesaos\SEOTools\Facades\OpenGraph;
-use Artesaos\SEOTools\Facades\TwitterCard;
-use DateTime;
+
 // use Illuminate\Http\JsonResponse;
 // use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
+
 // use Illuminate\Http\Response;
 // use Illuminate\Support\Facades\DB;
 // use Illuminate\Support\Facades\Auth;
@@ -36,11 +51,6 @@ use Illuminate\Http\Request;
 // use Illuminate\Support\Facades\Log;
 // use Illuminate\Support\Facades\Mail;
 // use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
-use Artesaos\SEOTools\Facades\SEOMeta;
-
-use Spatie\OpeningHours\OpeningHours;
 
 class PagesController extends Controller
 {
@@ -49,122 +59,34 @@ class PagesController extends Controller
 
         $settings = app('site_global_settings');
         $site_prefer_country_id = app('site_prefer_country_id');
-
-        /**
-         * Start SEO
-         */
-        SEOMeta::setTitle($settings->setting_site_seo_home_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
-        SEOMeta::setDescription($settings->setting_site_seo_home_description);
-        SEOMeta::setCanonical(URL::current());
-        SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
-
-        // OpenGraph
-        OpenGraph::setTitle($settings->setting_site_seo_home_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
-        OpenGraph::setDescription($settings->setting_site_seo_home_description);
-        OpenGraph::setUrl(URL::current());
-        if(empty($settings->setting_site_logo))
-        {
-            OpenGraph::addImage(asset('favicon-96x96.ico'));
-        }
-        else
-        {
-            OpenGraph::addImage(Storage::disk('public')->url('setting/' . $settings->setting_site_logo));
-        }
-
-        // Twitter
-        TwitterCard::setTitle($settings->setting_site_seo_home_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
-        /**
-         * End SEO
-         */
-
-        $subscription_obj = new Subscription();
-
         /**
          * first 6 categories order by total listings
          */
-        $active_user_ids = $subscription_obj->getActiveUserIds();
-        $categories = Category::select('id','category_name','category_slug','category_icon','category_image')->withCount(['allItems' => function ($query) use ($active_user_ids, $site_prefer_country_id) {
-            $query->whereIn('items.user_id', $active_user_ids)
-                ->where('items.item_status', Item::ITEM_PUBLISHED)
-                ->where(function ($query) use ($site_prefer_country_id) {
-                    $query->where('items.country_id', $site_prefer_country_id)
-                        ->orWhereNull('items.country_id');
-                });
-            }])
-            ->where('category_parent_id', null)
-            ->orderBy('all_items_count', 'desc')->take(6)->get()->map(function ($category) {
-                $category->category_image = url('/storage/category/'.$category->category_image);
-                return $category;
-            });
-
-        /**
-         * get first latest 6 paid listings
-         */
-        // paid listing
-        $paid_items_query = Item::query();
-
-        // get paid users id array
-        $paid_user_ids = $subscription_obj->getPaidUserIds();
-
-// select('id','category_id','item_title','item_slug','item_status','item_description','item_image','item_address','item_address_hide','city_id','state_id','country_id','item_website','item_type','item_phone','item_lat','item_lng','item_categories_string','item_image_small','item_image_tiny','item_image_medium','item_average_rating','item_location_str')->
-        $paid_items_query->where("items.item_status", Item::ITEM_PUBLISHED)
-            ->where(function ($query) use ($site_prefer_country_id) {
-                $query->where('items.country_id', $site_prefer_country_id)
-                    ->orWhereNull('items.country_id');
-            })
-            ->where('items.item_featured', Item::ITEM_FEATURED)
-            ->where(function($query) use ($paid_user_ids) {
-
-                $query->whereIn('items.user_id', $paid_user_ids)
-                    ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
-            });
-
-        $paid_items_query->orderBy('items.created_at', 'DESC')->distinct('items.id');
-
-        $paid_items = $paid_items_query->with('state')
-            ->with('city')
-            // ->with('user')
-            ->take(6)
-            ->get()->map(function ($item) {
-                $item->item_image = url('/storage/item/'.$item->item_image);
-
-                return $item;
-            });
-
-        $paid_items = $paid_items->shuffle();
+        $categories = Category::whereNotNull('category_parent_id')
+            ->where('locale', $request->header('Accept-Language'))
+            ->orderBy('items_count', 'desc')->take(6)->get();
 
         /**
          * get nearest 9 popular items by device lat and lng
          */
-        if(!empty(session('user_device_location_lat', '')) && !empty(session('user_device_location_lng', '')))
-        {
+        if (!empty(session('user_device_location_lat', '')) && !empty(session('user_device_location_lng', ''))) {
             $latitude = session('user_device_location_lat', '');
             $longitude = session('user_device_location_lng', '');
-        }
-        else
-        {
+        } else {
             $latitude = $settings->setting_site_location_lat;
             $longitude = $settings->setting_site_location_lng;
         }
 
         $popular_items = Item::selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$latitude, $longitude, $latitude])
             ->where('country_id', $site_prefer_country_id)
+            ->where('locale', $request->header('Accept-Language'))
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->orderBy('distance')
             ->orderBy('created_at', 'DESC')
             ->with('state')
             ->with('city')
             // ->with('user')
-            ->take(9)->get()->map(function ($item) {
-                $item->item_image = url('/storage/item/'.$item->item_image);
-                $state = $item->state;
-                $state->state_image = url('/storage/state/'.$state->state_image);
-                $state->state_image_tiny = url('/storage/state/'.$state->state_image_tiny);
-                $state->state_image_small = url('/storage/state/'.$state->state_image_small);
-                $state->state_image_medium = url('/storage/state/'.$state->state_image_medium);
-                $state->state_image_blur = url('/storage/state/'.$state->state_image_blur);
-                return $item;
-            });
+            ->take(9)->get();
 
         $popular_items = $popular_items->shuffle();
 
@@ -172,6 +94,7 @@ class PagesController extends Controller
          * get first 6 latest items
          */
         $latest_items = Item::latest('created_at')
+            ->where('locale', $request->header('Accept-Language'))
             ->where(function ($query) use ($site_prefer_country_id) {
                 $query->where('items.country_id', $site_prefer_country_id)
                     ->orWhereNull('items.country_id');
@@ -179,47 +102,26 @@ class PagesController extends Controller
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->with('state')
             ->with('city')
-            // ->with('user')
             ->take(6)
-            ->get()->map(function ($item) {
-                $item->item_image = url('/storage/item/'.$item->item_image);
-                return $item;
-            });
-
-        /**
-         * testimonials
-         */
-        // $all_testimonials = Testimonial::latest('created_at')->get();
+            ->get();
 
         /**
          * get latest 3 blog posts
          */
-        // $recent_blog = \Canvas\Post::published()->orderByDesc('published_at')->take(3)->get();
+        $recent_blog = Blog::orderBy('id', 'desc')
+            ->take(3)->get();
 
-       $all_states = Country::find($site_prefer_country_id)
-            ->states()
-            ->orderBy('state_name')
+        $all_states = State::orderBy('state_name')
+            ->where('locale', $request->header('Accept-Language'))
             ->take(6)
-            ->get()->map(function ($state) {
-               $state->state_image = url('/storage/state/'.$state->state_image);
-               $state->state_image_tiny = url('/storage/state/'.$state->state_image_tiny);
-               $state->state_image_small = url('/storage/state/'.$state->state_image_small);
-               $state->state_image_medium = url('/storage/state/'.$state->state_image_medium);
-               $state->state_image_blur = url('/storage/state/'.$state->state_image_blur);
-               return $state;
-           });
-
-
+            ->get();
 
         return response()->json([
-            'all_states'=>$all_states,
-            'categories' => $categories,
-            'paid_items' => $paid_items,
-            'popular_items' => $popular_items,
-            'latest_items' => $latest_items,
-            // 'all_testimonials' => $all_testimonials,
-            // 'recent_blog' => $recent_blog,
-            'site_prefer_country_id' => $site_prefer_country_id
+            'all_states' => StatesCollection::collection($all_states),
+            'categories' => CategoriesCollection::collection($categories),
+            'popular_items' => ItemsCollection::collection($popular_items),
+            'latest_items' => ItemsCollection::collection($latest_items),
+            'recent_blog' => BlogsCollection::collection($recent_blog)
         ]);
     }
 
@@ -229,21 +131,10 @@ class PagesController extends Controller
         $site_prefer_country_id = app('site_prefer_country_id');
 
         /**
-         * Start SEO
-         */
-        SEOMeta::setTitle(__('seo.frontend.search', ['site_name' => empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name]));
-        SEOMeta::setDescription('');
-        SEOMeta::setCanonical(URL::current());
-        SEOMeta::addKeyword($settings->setting_site_seo_home_keywords);
-        /**
-         * End SEO
-         */
-
-        /**
          * Start filter
          */
         $search_query = empty($request->search_query) ? null : $request->search_query;
-        $search_values = !empty($search_query) ? preg_split('/\s+/', $search_query, -1, PREG_SPLIT_NO_EMPTY) : array();
+//        $search_values = !empty($search_query) ? preg_split('/\s+/', $search_query, -1, PREG_SPLIT_NO_EMPTY) : array();
 
         // categories
         $filter_categories = empty($request->filter_categories) ? array() : $request->filter_categories;
@@ -261,154 +152,66 @@ class PagesController extends Controller
         /**
          * Start paid search
          */
-        $paid_items_query = Item::query();
+        $items_query = Item::query()->where('locale', $request->header('Accept-Language'));
 
         // get paid users id array
         $subscription_obj = new Subscription();
         $paid_user_ids = $subscription_obj->getPaidUserIds();
 
-        if(count($item_ids) > 0)
-        {
-            $paid_items_query->whereIn('id', $item_ids);
+        if (count($item_ids) > 0) {
+            $items_query->whereIn('id', $item_ids);
         }
 
-        if(is_array($search_values) && count($search_values) > 0)
-        {
-            $paid_items_query->where(function ($query) use ($search_values) {
-                foreach($search_values as $search_values_key => $search_value)
-                {
-                    $query->where('items.item_title', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_location_str', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_categories_string', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_description', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_features_string', 'LIKE', "%".$search_value."%");
-                }
-            });
+        if ($search_query) {
+               $items_query->select('*')
+                    ->selectRaw("LOCATE('$search_query', item_title) as position")
+                    ->where('items.item_title', 'like', '%' . $search_query . '%')
+                    ->orderBy('position')->orderBy('item_title');
         }
 
-        $paid_items_query->where("items.item_status", Item::ITEM_PUBLISHED)
-            ->where(function ($query) use ($site_prefer_country_id) {
-                $query->where('items.country_id', $site_prefer_country_id)
-                    ->orWhereNull('items.country_id');
-            })
-            ->where('items.item_featured', Item::ITEM_FEATURED)
-            ->where(function($query) use ($paid_user_ids) {
-
-                $query->whereIn('items.user_id', $paid_user_ids)
-                    ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
-            });
+        $items_query->where("items.item_status", Item::ITEM_PUBLISHED)
+            ->orderBy('items.item_featured', 'DESC');
 
         // filter paid listings state
-        if(!empty($filter_state))
-        {
-            $paid_items_query->where('items.state_id', $filter_state);
+        if (!empty($filter_state)) {
+            $items_query->where('items.state_id', $filter_state);
         }
 
         // filter paid listings city
-        if(!empty($filter_city))
-        {
-            $paid_items_query->where('items.city_id', $filter_city);
-        }
-
-        $paid_items_query->orderBy('items.created_at', 'DESC')
-            ->distinct('items.id')
-            ->with('state')
-            ->with('city')
-            ->with('user');
-
-        $total_paid_items = $paid_items_query->count();
-        /**
-         * End paid search
-         */
-
-        /**
-         * Start free search
-         */
-        $free_items_query = Item::query();
-
-        // get free users id array
-        //$free_user_ids = $subscription_obj->getFreeUserIds();
-        $free_user_ids = $subscription_obj->getActiveUserIds();
-
-        if(count($item_ids) > 0)
-        {
-            $free_items_query->whereIn('id', $item_ids);
-        }
-
-        if(is_array($search_values) && count($search_values) > 0)
-        {
-            $free_items_query->where(function ($query) use ($search_values) {
-                foreach($search_values as $search_values_key => $search_value)
-                {
-                    $query->where('items.item_title', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_location_str', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_categories_string', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_description', 'LIKE', "%".$search_value."%")
-                        ->orWhere('items.item_features_string', 'LIKE', "%".$search_value."%");
-                }
-            });
-        }
-
-        $free_items_query->where("items.item_status", Item::ITEM_PUBLISHED)
-            ->where(function ($query) use ($site_prefer_country_id) {
-                $query->where('items.country_id', $site_prefer_country_id)
-                    ->orWhereNull('items.country_id');
-            })
-            ->where('items.item_featured', Item::ITEM_NOT_FEATURED)
-            ->where('items.item_featured_by_admin', Item::ITEM_NOT_FEATURED_BY_ADMIN)
-            ->whereIn('items.user_id', $free_user_ids);
-
-        // filter free listings state
-        if(!empty($filter_state))
-        {
-            $free_items_query->where('items.state_id', $filter_state);
-        }
-
-        // filter free listings city
-        if(!empty($filter_city))
-        {
-            $free_items_query->where('items.city_id', $filter_city);
+        if (!empty($filter_city)) {
+            $items_query->where('items.city_id', $filter_city);
         }
 
         /**
          * Start filter sort by for free listing
          */
         $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
-        if($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED)
-        {
-            $free_items_query->orderBy('items.created_at', 'DESC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED)
-        {
-            $free_items_query->orderBy('items.created_at', 'ASC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING)
-        {
-            $free_items_query->orderBy('items.item_average_rating', 'DESC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
-        {
-            $free_items_query->orderBy('items.item_average_rating', 'ASC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST)
-        {
-            $free_items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
+        if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
+            $items_query->orderBy('items.created_at', 'DESC');
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
+            $items_query->orderBy('items.created_at', 'ASC');
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
+            $items_query->orderBy('items.item_average_rating', 'DESC');
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING) {
+            $items_query->orderBy('items.item_average_rating', 'ASC');
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
+            $items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
                 ->where('items.item_type', Item::ITEM_TYPE_REGULAR)
                 ->orderBy('distance', 'ASC');
         }
-        /**
-         * End filter sort by for free listing
-         */
 
-        $free_items_query->distinct('items.id')
+        $items_query->orderBy('items.created_at', 'DESC')
+            ->distinct('items.id')
             ->with('state')
             ->with('city')
             ->with('user');
 
-        $total_free_items = $free_items_query->count();
+        $total_items = $items_query->count();
         /**
-         * End free search
+         * End paid search
          */
+
+
 
         $querystringArray = [
             'search_query' => $search_query,
@@ -418,22 +221,17 @@ class PagesController extends Controller
             'filter_city' => $filter_city,
         ];
 
-        if($total_free_items == 0 || $total_paid_items == 0)
-        {
+        if ($total_free_items == 0 || $total_paid_items == 0) {
             $paid_items = $paid_items_query->paginate(10);
             $free_items = $free_items_query->paginate(10);
 
-            if($total_free_items == 0)
-            {
+            if ($total_free_items == 0) {
                 $pagination = $paid_items->appends($querystringArray);
             }
-            if($total_paid_items == 0)
-            {
+            if ($total_paid_items == 0) {
                 $pagination = $free_items->appends($querystringArray);
             }
-        }
-        else
-        {
+        } else {
             $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
 
             $paid_items_per_page = ceil($total_paid_items / $num_of_pages) > 4 ? 4 : ceil($total_paid_items / $num_of_pages);
@@ -443,12 +241,9 @@ class PagesController extends Controller
             $paid_items = $paid_items_query->paginate($paid_items_per_page);
             $free_items = $free_items_query->paginate($free_items_per_page);
 
-            if(ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page))
-            {
+            if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
                 $pagination = $paid_items->appends($querystringArray);
-            }
-            else
-            {
+            } else {
                 $pagination = $free_items->appends($querystringArray);
             }
         }
@@ -464,18 +259,15 @@ class PagesController extends Controller
             'item_features_string',
         ];
 
-        $paid_items = $paid_items->sortByDesc(function($paid_collection, $paid_collection_key) use ($search_values, $props) {
+        $paid_items = $paid_items->sortByDesc(function ($paid_collection, $paid_collection_key) use ($search_values, $props) {
 
             // The bigger the weight, the higher the record
             $weight = 0;
             // Iterate through search terms
-            foreach($search_values as $search_values_key => $search_value)
-            {
+            foreach ($search_values as $search_values_key => $search_value) {
                 // Iterate through $props
-                foreach($props as $prop)
-                {
-                    if(stripos($paid_collection->$prop, $search_value) !== false)
-                    {
+                foreach ($props as $prop) {
+                    if (stripos($paid_collection->$prop, $search_value) !== false) {
                         $weight += 1; // Increase weight if the search term is found
                     }
 
@@ -484,18 +276,15 @@ class PagesController extends Controller
             return $weight;
         });
 
-        $free_items = $free_items->sortByDesc(function($free_collection, $free_collection_key) use ($search_values, $props) {
+        $free_items = $free_items->sortByDesc(function ($free_collection, $free_collection_key) use ($search_values, $props) {
 
             // The bigger the weight, the higher the record
             $weight = 0;
             // Iterate through search terms
-            foreach($search_values as $search_values_key => $search_value)
-            {
+            foreach ($search_values as $search_values_key => $search_value) {
                 // Iterate through $props
-                foreach($props as $prop)
-                {
-                    if(stripos($free_collection->$prop, $search_value) !== false)
-                    {
+                foreach ($props as $prop) {
+                    if (stripos($free_collection->$prop, $search_value) !== false) {
                         $weight += 1; // Increase weight if the search term is found
                     }
 
@@ -548,8 +337,7 @@ class PagesController extends Controller
             ->states()->orderBy('state_name')->get();
 
         $all_cities = collect([]);
-        if(!empty($filter_state))
-        {
+        if (!empty($filter_state)) {
             $state = State::find($filter_state);
             $all_cities = $state->cities()->orderBy('city_name')->get();
         }
@@ -617,14 +405,15 @@ class PagesController extends Controller
 
     public function states()
     {
-        $states = State::all()->map(function ($state) {
-            $state->state_image = url('/storage/state/'.$state->state_image);
-            $state->state_image_tiny = url('/storage/state/'.$state->state_image_tiny);
-            $state->state_image_small = url('/storage/state/'.$state->state_image_small);
-            $state->state_image_medium = url('/storage/state/'.$state->state_image_medium);
-            $state->state_image_blur = url('/storage/state/'.$state->state_image_blur);
-            return $state;
-        });
+//        $states = State::all()->map(function ($state) {
+//            $state->state_image = url('/storage/state/'.$state->state_image);
+//            $state->state_image_tiny = url('/storage/state/'.$state->state_image_tiny);
+//            $state->state_image_small = url('/storage/state/'.$state->state_image_small);
+//            $state->state_image_medium = url('/storage/state/'.$state->state_image_medium);
+//            $state->state_image_blur = url('/storage/state/'.$state->state_image_blur);
+//            return $state;
+//        });
+        $states = Item::query();
         return response()->json([
             'states' => $states
         ]);
@@ -645,8 +434,7 @@ class PagesController extends Controller
          * End SEO
          */
 
-        if($settings->setting_page_about_enable == Setting::ABOUT_PAGE_ENABLED)
-        {
+        if ($settings->setting_page_about_enable == Setting::ABOUT_PAGE_ENABLED) {
             $about = $settings->setting_page_about;
 
             /**
@@ -683,15 +471,13 @@ class PagesController extends Controller
              */
 
             // return response()->view($theme_view_path . 'about',
-                // compact('about', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
-                //         'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
-                //         'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
+            // compact('about', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
+            //         'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
+            //         'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
             return response()->json([
                 'about' => strip_tags($about)
             ]);
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -732,7 +518,7 @@ class PagesController extends Controller
         //     ->where('theme_id', $settings->setting_site_active_theme_id)->first()->customization_value;
 
         // $site_innerpage_header_paragraph_font_color = Customization::where('customization_key', Customization::SITE_INNERPAGE_HEADER_PARAGRAPH_FONT_COLOR)
-            // ->where('theme_id', $settings->setting_site_active_theme_id)->first()->customization_value;
+        // ->where('theme_id', $settings->setting_site_active_theme_id)->first()->customization_value;
         /**
          * End inner page header customization
          */
@@ -755,8 +541,8 @@ class PagesController extends Controller
          */
 
         return response()->json([
-                'all_faq' => strip_tags($all_faq)
-            ]);
+            'all_faq' => strip_tags($all_faq)
+        ]);
 
         // return response()->view($theme_view_path . 'contact',
         //     compact('all_faq', 'site_innerpage_header_background_type',
@@ -782,8 +568,7 @@ class PagesController extends Controller
         /**
          * Start initial SMTP settings
          */
-        if($settings->settings_site_smtp_enabled == Setting::SITE_SMTP_ENABLED)
-        {
+        if ($settings->settings_site_smtp_enabled == Setting::SITE_SMTP_ENABLED) {
             // config SMTP
             config_smtp(
                 $settings->settings_site_smtp_sender_name,
@@ -799,8 +584,7 @@ class PagesController extends Controller
          * End initial SMTP settings
          */
 
-        if(!empty($settings->setting_site_name))
-        {
+        if (!empty($settings->setting_site_name)) {
             // set up APP_NAME
             config([
                 'app.name' => $settings->setting_site_name,
@@ -817,7 +601,7 @@ class PagesController extends Controller
             __('email.contact.body.body-4'),
             $request->message,
         ];
-        if($request->validate($validation_array)){
+        if ($request->validate($validation_array)) {
             // to admin
             Mail::to($email_admin)->send(
                 new Notification(
@@ -827,7 +611,7 @@ class PagesController extends Controller
                     $email_notify_message
                 )
             );
-         return response()->json(['success' => 'Email sent successfully']);
+            return response()->json(['success' => 'Email sent successfully']);
         }
 
 
@@ -861,13 +645,12 @@ class PagesController extends Controller
                 });
         }])
             ->where('category_parent_id', null)
-            ->orderBy('all_items_count', 'desc')->get();
+            ->orderBy('items_count', 'desc')->get();
 
-            foreach($categories as $category)
-            {
-                $category->category_image = url('/storage/category/'.$category->category_image);
-                $category->category_header_background_image = url('/storage/category/'.$category->category_header_background_image);
-            }
+        foreach ($categories as $category) {
+            $category->category_image = url('/storage/category/' . $category->category_image);
+            $category->category_header_background_image = url('/storage/category/' . $category->category_header_background_image);
+        }
 
         /**
          * Do listing query
@@ -899,8 +682,7 @@ class PagesController extends Controller
         // get paid users id array
         $paid_user_ids = $subscription_obj->getPaidUserIds();
 
-        if(count($item_ids) > 0)
-        {
+        if (count($item_ids) > 0) {
             $paid_items_query->whereIn('id', $item_ids);
         }
 
@@ -910,21 +692,19 @@ class PagesController extends Controller
                     ->orWhereNull('items.country_id');
             })
             ->where('items.item_featured', Item::ITEM_FEATURED)
-            ->where(function($query) use ($paid_user_ids) {
+            ->where(function ($query) use ($paid_user_ids) {
 
                 $query->whereIn('items.user_id', $paid_user_ids)
                     ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
             });
 
         // filter paid listings state
-        if(!empty($filter_state))
-        {
+        if (!empty($filter_state)) {
             $paid_items_query->where('items.state_id', $filter_state);
         }
 
         // filter paid listings city
-        if(!empty($filter_city))
-        {
+        if (!empty($filter_city)) {
             $paid_items_query->where('items.city_id', $filter_city);
         }
 
@@ -944,8 +724,7 @@ class PagesController extends Controller
         //$free_user_ids = $subscription_obj->getActiveUserIds();
         $free_user_ids = $active_user_ids;
 
-        if(count($item_ids) > 0)
-        {
+        if (count($item_ids) > 0) {
             $free_items_query->whereIn('id', $item_ids);
         }
 
@@ -959,14 +738,12 @@ class PagesController extends Controller
             ->whereIn('items.user_id', $free_user_ids);
 
         // filter free listings state
-        if(!empty($filter_state))
-        {
+        if (!empty($filter_state)) {
             $free_items_query->where('items.state_id', $filter_state);
         }
 
         // filter free listings city
-        if(!empty($filter_city))
-        {
+        if (!empty($filter_city)) {
             $free_items_query->where('items.city_id', $filter_city);
         }
 
@@ -974,24 +751,15 @@ class PagesController extends Controller
          * Start filter sort by for free listing
          */
         $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
-        if($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED)
-        {
+        if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
             $free_items_query->orderBy('items.created_at', 'DESC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED)
-        {
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
             $free_items_query->orderBy('items.created_at', 'ASC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING)
-        {
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
             $free_items_query->orderBy('items.item_average_rating', 'DESC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
-        {
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING) {
             $free_items_query->orderBy('items.item_average_rating', 'ASC');
-        }
-        elseif($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST)
-        {
+        } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
             $free_items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
                 ->where('items.item_type', Item::ITEM_TYPE_REGULAR)
                 ->orderBy('distance', 'ASC');
@@ -1014,22 +782,17 @@ class PagesController extends Controller
             'filter_city' => $filter_city,
         ];
 
-        if($total_free_items == 0 || $total_paid_items == 0)
-        {
+        if ($total_free_items == 0 || $total_paid_items == 0) {
             $paid_items = $paid_items_query->paginate(10);
             $free_items = $free_items_query->paginate(10);
 
-            if($total_free_items == 0)
-            {
+            if ($total_free_items == 0) {
                 $pagination = $paid_items->appends($querystringArray);
             }
-            if($total_paid_items == 0)
-            {
+            if ($total_paid_items == 0) {
                 $pagination = $free_items->appends($querystringArray);
             }
-        }
-        else
-        {
+        } else {
             $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
 
             $paid_items_per_page = ceil($total_paid_items / $num_of_pages) > 4 ? 4 : ceil($total_paid_items / $num_of_pages);
@@ -1039,12 +802,9 @@ class PagesController extends Controller
             $paid_items = $paid_items_query->paginate($paid_items_per_page);
             $free_items = $free_items_query->paginate($free_items_per_page);
 
-            if(ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page))
-            {
+            if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
                 $pagination = $paid_items->appends($querystringArray);
-            }
-            else
-            {
+            } else {
                 $pagination = $free_items->appends($querystringArray);
             }
         }
@@ -1131,8 +891,7 @@ class PagesController extends Controller
             ->get();
 
         $all_cities = collect([]);
-        if(!empty($filter_state))
-        {
+        if (!empty($filter_state)) {
             $state = State::find($filter_state);
             $all_cities = $state->cities()->orderBy('city_name')->get();
         }
@@ -1181,9 +940,8 @@ class PagesController extends Controller
     {
         $category = Category::where('category_slug', $category_slug)->first();
 
-        $category->category_image = url('/storage/category/'.$category->category_image);
-        if($category)
-        {
+        $category->category_image = url('/storage/category/' . $category->category_image);
+        if ($category) {
             $settings = app('site_global_settings');
             $site_prefer_country_id = app('site_prefer_country_id');
 
@@ -1227,18 +985,14 @@ class PagesController extends Controller
             $filter_categories = empty($request->filter_categories) ? array() : $request->filter_categories;
             $category_obj = new Category();
 
-            if(count($filter_categories) > 0)
-            {
+            if (count($filter_categories) > 0) {
                 $item_ids = $category_obj->getItemIdsByCategoryIds($filter_categories);
-            }
-            else
-            {
+            } else {
                 // Get all child categories of this category
                 $all_child_categories = collect();
                 $all_child_categories_ids = array();
                 $category->allChildren($category, $all_child_categories);
-                foreach($all_child_categories as $key => $all_child_category)
-                {
+                foreach ($all_child_categories as $key => $all_child_category) {
                     $all_child_categories_ids[] = $all_child_category->id;
                 }
 
@@ -1264,21 +1018,19 @@ class PagesController extends Controller
                         ->orWhereNull('items.country_id');
                 })
                 ->where('items.item_featured', Item::ITEM_FEATURED)
-                ->where(function($query) use ($paid_user_ids) {
+                ->where(function ($query) use ($paid_user_ids) {
 
                     $query->whereIn('items.user_id', $paid_user_ids)
                         ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
                 });
 
             // filter paid listings state
-            if(!empty($filter_state))
-            {
+            if (!empty($filter_state)) {
                 $paid_items_query->where('items.state_id', $filter_state);
             }
 
             // filter paid listings city
-            if(!empty($filter_city))
-            {
+            if (!empty($filter_city)) {
                 $paid_items_query->where('items.city_id', $filter_city);
             }
 
@@ -1309,14 +1061,12 @@ class PagesController extends Controller
                 ->whereIn('items.user_id', $free_user_ids);
 
             // filter free listings state
-            if(!empty($filter_state))
-            {
+            if (!empty($filter_state)) {
                 $free_items_query->where('items.state_id', $filter_state);
             }
 
             // filter free listings city
-            if(!empty($filter_city))
-            {
+            if (!empty($filter_city)) {
                 $free_items_query->where('items.city_id', $filter_city);
             }
 
@@ -1324,24 +1074,15 @@ class PagesController extends Controller
              * Start filter sort by for free listing
              */
             $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
-            if($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED)
-            {
+            if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
                 $free_items_query->orderBy('items.created_at', 'DESC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
                 $free_items_query->orderBy('items.created_at', 'ASC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
                 $free_items_query->orderBy('items.item_average_rating', 'DESC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING) {
                 $free_items_query->orderBy('items.item_average_rating', 'ASC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
                 $free_items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
                     ->where('items.item_type', Item::ITEM_TYPE_REGULAR)
                     ->orderBy('distance', 'ASC');
@@ -1364,22 +1105,17 @@ class PagesController extends Controller
                 'filter_city' => $filter_city,
             ];
 
-            if($total_free_items == 0 || $total_paid_items == 0)
-            {
+            if ($total_free_items == 0 || $total_paid_items == 0) {
                 $paid_items = $paid_items_query->paginate(10);
                 $free_items = $free_items_query->paginate(10);
 
-                if($total_free_items == 0)
-                {
+                if ($total_free_items == 0) {
                     $pagination = $paid_items->appends($querystringArray);
                 }
-                if($total_paid_items == 0)
-                {
+                if ($total_paid_items == 0) {
                     $pagination = $free_items->appends($querystringArray);
                 }
-            }
-            else
-            {
+            } else {
                 $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
                 $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
                 $free_items_per_page = 10 - $paid_items_per_page;
@@ -1387,12 +1123,9 @@ class PagesController extends Controller
                 $paid_items = $paid_items_query->paginate($paid_items_per_page);
                 $free_items = $free_items_query->paginate($free_items_per_page);
 
-                if(ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page))
-                {
+                if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
                     $pagination = $paid_items->appends($querystringArray);
-                }
-                else
-                {
+                } else {
                     $pagination = $free_items->appends($querystringArray);
                 }
             }
@@ -1453,8 +1186,7 @@ class PagesController extends Controller
                 ->orderBy('state_name')->get();
 
             $all_cities = collect([]);
-            if(!empty($filter_state))
-            {
+            if (!empty($filter_state)) {
                 $state = State::find($filter_state);
                 $all_cities = $state->cities()->orderBy('city_name')->get();
             }
@@ -1548,9 +1280,7 @@ class PagesController extends Controller
             //         'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
             //         'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color', 'filter_sort_by',
             //         'filter_categories', 'filter_state', 'filter_city', 'all_cities', 'total_results'));
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -1558,16 +1288,15 @@ class PagesController extends Controller
     public function categoryByState(Request $request, string $category_slug, string $state_slug)
     {
         $category = Category::where('category_slug', $category_slug)->first();
-        $category->category_image = url('/storage/category/'.$category->category_image);
+        $category->category_image = url('/storage/category/' . $category->category_image);
         $state = State::where('state_slug', $state_slug)->first();
-        $state->state_image = url('/storage/state/'.$state->state_image);
-        $state->state_image_tiny = url('/storage/state/'.$state->state_image_tiny);
-        $state->state_image_small = url('/storage/state/'.$state->state_image_small);
-        $state->state_image_medium = url('/storage/state/'.$state->state_image_medium);
-        $state->state_image_blur = url('/storage/state/'.$state->state_image_blur);
+        $state->state_image = url('/storage/state/' . $state->state_image);
+        $state->state_image_tiny = url('/storage/state/' . $state->state_image_tiny);
+        $state->state_image_small = url('/storage/state/' . $state->state_image_small);
+        $state->state_image_medium = url('/storage/state/' . $state->state_image_medium);
+        $state->state_image_blur = url('/storage/state/' . $state->state_image_blur);
 
-        if($category && $state)
-        {
+        if ($category && $state) {
             $settings = app('site_global_settings');
             $site_prefer_country_id = app('site_prefer_country_id');
 
@@ -1597,8 +1326,7 @@ class PagesController extends Controller
             $all_child_categories = collect();
             $all_child_categories_ids = array();
             $category->allChildren($category, $all_child_categories);
-            foreach($all_child_categories as $key => $all_child_category)
-            {
+            foreach ($all_child_categories as $key => $all_child_category) {
                 $all_child_categories_ids[] = $all_child_category->id;
             }
 
@@ -1622,12 +1350,9 @@ class PagesController extends Controller
 
             $all_item_ids = $category_obj->getItemIdsByCategoryIds($all_child_categories_ids);
 
-            if(count($filter_categories) > 0)
-            {
+            if (count($filter_categories) > 0) {
                 $item_ids = $category_obj->getItemIdsByCategoryIds($filter_categories);
-            }
-            else
-            {
+            } else {
                 $item_ids = $all_item_ids;
             }
 
@@ -1641,8 +1366,7 @@ class PagesController extends Controller
             $subscription_obj = new Subscription();
             $paid_user_ids = $subscription_obj->getPaidUserIds();
 
-            if(count($item_ids) > 0)
-            {
+            if (count($item_ids) > 0) {
                 $paid_items_query->whereIn('id', $item_ids);
             }
 
@@ -1650,15 +1374,14 @@ class PagesController extends Controller
                 ->where('items.country_id', $site_prefer_country_id)
                 ->where('items.state_id', $state->id)
                 ->where('items.item_featured', Item::ITEM_FEATURED)
-                ->where(function($query) use ($paid_user_ids) {
+                ->where(function ($query) use ($paid_user_ids) {
 
                     $query->whereIn('items.user_id', $paid_user_ids)
                         ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
                 });
 
             // filter paid listings city
-            if(!empty($filter_city))
-            {
+            if (!empty($filter_city)) {
                 $paid_items_query->where('items.city_id', $filter_city);
             }
 
@@ -1677,8 +1400,7 @@ class PagesController extends Controller
             //$free_user_ids = $subscription_obj->getFreeUserIds();
             $free_user_ids = $subscription_obj->getActiveUserIds();
 
-            if(count($item_ids) > 0)
-            {
+            if (count($item_ids) > 0) {
                 $free_items_query->whereIn('id', $item_ids);
             }
 
@@ -1690,8 +1412,7 @@ class PagesController extends Controller
                 ->whereIn('items.user_id', $free_user_ids);
 
             // filter free listings city
-            if(!empty($filter_city))
-            {
+            if (!empty($filter_city)) {
                 $free_items_query->where('items.city_id', $filter_city);
             }
 
@@ -1699,24 +1420,15 @@ class PagesController extends Controller
              * Start filter sort by for free listing
              */
             $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
-            if($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED)
-            {
+            if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
                 $free_items_query->orderBy('items.created_at', 'DESC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
                 $free_items_query->orderBy('items.created_at', 'ASC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
                 $free_items_query->orderBy('items.item_average_rating', 'DESC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING) {
                 $free_items_query->orderBy('items.item_average_rating', 'ASC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
                 $free_items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
                     ->orderBy('distance', 'ASC');
             }
@@ -1737,22 +1449,17 @@ class PagesController extends Controller
                 'filter_city' => $filter_city,
             ];
 
-            if($total_free_items == 0 || $total_paid_items == 0)
-            {
+            if ($total_free_items == 0 || $total_paid_items == 0) {
                 $paid_items = $paid_items_query->paginate(10);
                 $free_items = $free_items_query->paginate(10);
 
-                if($total_free_items == 0)
-                {
+                if ($total_free_items == 0) {
                     $pagination = $paid_items->appends($querystringArray);
                 }
-                if($total_paid_items == 0)
-                {
+                if ($total_paid_items == 0) {
                     $pagination = $free_items->appends($querystringArray);
                 }
-            }
-            else
-            {
+            } else {
                 $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
                 $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
                 $free_items_per_page = 10 - $paid_items_per_page;
@@ -1760,12 +1467,9 @@ class PagesController extends Controller
                 $paid_items = $paid_items_query->paginate($paid_items_per_page);
                 $free_items = $free_items_query->paginate($free_items_per_page);
 
-                if(ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page))
-                {
+                if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
                     $pagination = $paid_items->appends($querystringArray);
-                }
-                else
-                {
+                } else {
                     $pagination = $free_items->appends($querystringArray);
                 }
             }
@@ -1909,24 +1613,22 @@ class PagesController extends Controller
             //         'filter_sort_by', 'filter_categories', 'filter_city', 'filter_all_cities', 'total_results'));
 
             return response()->json([
-                    'category' => $category,
-                    'state' => $state,
-                    'paid_items' => $paid_items,
-                    'free_items' => $free_items,
-                    'pagination' => $pagination,
-                    'all_item_cities' => $all_item_cities,
-                    'filter_sort_by' => $filter_sort_by,
-                    'parent_categories' => $parent_categories,
-                    'children_categories' => $children_categories,
-                    'parent_category_id' => $parent_category_id,
-                    'filter_categories' => $filter_categories,
-                    'filter_all_cities' => $filter_all_cities,
-                    'filter_city' => $filter_city,
-                    'total_results' => $total_results,
-                ]);
-        }
-        else
-        {
+                'category' => $category,
+                'state' => $state,
+                'paid_items' => $paid_items,
+                'free_items' => $free_items,
+                'pagination' => $pagination,
+                'all_item_cities' => $all_item_cities,
+                'filter_sort_by' => $filter_sort_by,
+                'parent_categories' => $parent_categories,
+                'children_categories' => $children_categories,
+                'parent_category_id' => $parent_category_id,
+                'filter_categories' => $filter_categories,
+                'filter_all_cities' => $filter_all_cities,
+                'filter_city' => $filter_city,
+                'total_results' => $total_results,
+            ]);
+        } else {
             abort(404);
         }
     }
@@ -1934,18 +1636,15 @@ class PagesController extends Controller
     public function categoryByStateCity(Request $request, string $category_slug, string $state_slug, string $city_slug)
     {
         $category = Category::where('category_slug', $category_slug)->first();
-        $category->category_image = url('/storage/category/'.$category->category_image);
+        $category->category_image = url('/storage/category/' . $category->category_image);
 
-        if($category)
-        {
+        if ($category) {
             $state = State::where('state_slug', $state_slug)->first();
 
-            if($state)
-            {
+            if ($state) {
                 $city = $state->cities()->where('city_slug', $city_slug)->first();
 
-                if($city)
-                {
+                if ($city) {
                     $settings = app('site_global_settings');
                     $site_prefer_country_id = app('site_prefer_country_id');
 
@@ -1972,8 +1671,7 @@ class PagesController extends Controller
                     $all_child_categories = collect();
                     $all_child_categories_ids = array();
                     $category->allChildren($category, $all_child_categories);
-                    foreach($all_child_categories as $key => $all_child_category)
-                    {
+                    foreach ($all_child_categories as $key => $all_child_category) {
                         $all_child_categories_ids[] = $all_child_category->id;
                     }
 
@@ -2000,12 +1698,9 @@ class PagesController extends Controller
 
                     $all_item_ids = $category_obj->getItemIdsByCategoryIds($all_child_categories_ids);
 
-                    if(count($filter_categories) > 0)
-                    {
+                    if (count($filter_categories) > 0) {
                         $item_ids = $category_obj->getItemIdsByCategoryIds($filter_categories);
-                    }
-                    else
-                    {
+                    } else {
                         $item_ids = $all_item_ids;
                     }
                     /**
@@ -2016,8 +1711,7 @@ class PagesController extends Controller
                     $subscription_obj = new Subscription();
                     $paid_user_ids = $subscription_obj->getPaidUserIds();
 
-                    if(count($item_ids) > 0)
-                    {
+                    if (count($item_ids) > 0) {
                         $paid_items_query->whereIn('id', $item_ids);
                     }
 
@@ -2026,7 +1720,7 @@ class PagesController extends Controller
                         ->where('items.state_id', $state->id)
                         ->where('items.city_id', $city->id)
                         ->where('items.item_featured', Item::ITEM_FEATURED)
-                        ->where(function($query) use ($paid_user_ids) {
+                        ->where(function ($query) use ($paid_user_ids) {
 
                             $query->whereIn('items.user_id', $paid_user_ids)
                                 ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
@@ -2047,8 +1741,7 @@ class PagesController extends Controller
                     //$free_user_ids = $subscription_obj->getFreeUserIds();
                     $free_user_ids = $subscription_obj->getActiveUserIds();
 
-                    if(count($item_ids) > 0)
-                    {
+                    if (count($item_ids) > 0) {
                         $free_items_query->whereIn('id', $item_ids);
                     }
 
@@ -2064,24 +1757,15 @@ class PagesController extends Controller
                      * Start filter sort by for free listing
                      */
                     $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
-                    if($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED)
-                    {
+                    if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
                         $free_items_query->orderBy('items.created_at', 'DESC');
-                    }
-                    elseif($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED)
-                    {
+                    } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
                         $free_items_query->orderBy('items.created_at', 'ASC');
-                    }
-                    elseif($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING)
-                    {
+                    } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
                         $free_items_query->orderBy('items.item_average_rating', 'DESC');
-                    }
-                    elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
-                    {
+                    } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING) {
                         $free_items_query->orderBy('items.item_average_rating', 'ASC');
-                    }
-                    elseif($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST)
-                    {
+                    } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
                         $free_items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
                             ->orderBy('distance', 'ASC');
                     }
@@ -2101,22 +1785,17 @@ class PagesController extends Controller
                         'filter_sort_by' => $filter_sort_by,
                     ];
 
-                    if($total_free_items == 0 || $total_paid_items == 0)
-                    {
+                    if ($total_free_items == 0 || $total_paid_items == 0) {
                         $paid_items = $paid_items_query->paginate(10);
                         $free_items = $free_items_query->paginate(10);
 
-                        if($total_free_items == 0)
-                        {
+                        if ($total_free_items == 0) {
                             $pagination = $paid_items->appends($querystringArray);
                         }
-                        if($total_paid_items == 0)
-                        {
+                        if ($total_paid_items == 0) {
                             $pagination = $free_items->appends($querystringArray);
                         }
-                    }
-                    else
-                    {
+                    } else {
                         $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
                         $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
                         $free_items_per_page = 10 - $paid_items_per_page;
@@ -2124,12 +1803,9 @@ class PagesController extends Controller
                         $paid_items = $paid_items_query->paginate($paid_items_per_page);
                         $free_items = $free_items_query->paginate($free_items_per_page);
 
-                        if(ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page))
-                        {
+                        if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
                             $pagination = $paid_items->appends($querystringArray);
-                        }
-                        else
-                        {
+                        } else {
                             $pagination = $free_items->appends($querystringArray);
                         }
                     }
@@ -2262,37 +1938,31 @@ class PagesController extends Controller
                      * End initial blade view file path
                      */
 
-                return response()->json([
-                    'category' => $category,
-                    'state' => $state,
-                    'city' => $city,
-                    'paid_items' => $paid_items,
-                    'free_items' => $free_items,
-                    'pagination' => $pagination,
-                    'all_item_cities' => $all_item_cities,
-                    // 'all_cities' => $all_cities,
-                    'filter_sort_by' => $filter_sort_by,
-                    'parent_categories' => $parent_categories,
-                    'children_categories' => $children_categories,
-                    'parent_category_id' => $parent_category_id,
-                    'filter_categories' => $filter_categories,
-                    // 'filter_state' => $filter_state,
-                    // 'filter_city' => $filter_city,
-                    'total_results' => $total_results
-                ]);
-                }
-                else
-                {
+                    return response()->json([
+                        'category' => $category,
+                        'state' => $state,
+                        'city' => $city,
+                        'paid_items' => $paid_items,
+                        'free_items' => $free_items,
+                        'pagination' => $pagination,
+                        'all_item_cities' => $all_item_cities,
+                        // 'all_cities' => $all_cities,
+                        'filter_sort_by' => $filter_sort_by,
+                        'parent_categories' => $parent_categories,
+                        'children_categories' => $children_categories,
+                        'parent_category_id' => $parent_category_id,
+                        'filter_categories' => $filter_categories,
+                        // 'filter_state' => $filter_state,
+                        // 'filter_city' => $filter_city,
+                        'total_results' => $total_results
+                    ]);
+                } else {
                     abort(404);
                 }
-            }
-            else
-            {
+            } else {
                 abort(404);
             }
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -2300,12 +1970,11 @@ class PagesController extends Controller
     public function state(Request $request, string $state_slug)
     {
         $state = State::where('state_slug', $state_slug)->first();
-        $state->state_image = url('/storage/state/'.$state->state_image);
-        $state->state_image_tiny = url('/storage/state/'.$state->state_image_tiny);
-        $state->state_image_medium = url('/storage/state/'.$state->state_image_medium);
-        $state->state_image_blur = url('/storage/state/'.$state->state_image_blur);
-        if($state)
-        {
+        $state->state_image = url('/storage/state/' . $state->state_image);
+        $state->state_image_tiny = url('/storage/state/' . $state->state_image_tiny);
+        $state->state_image_medium = url('/storage/state/' . $state->state_image_medium);
+        $state->state_image_blur = url('/storage/state/' . $state->state_image_blur);
+        if ($state) {
             $settings = app('site_global_settings');
             $site_prefer_country_id = app('site_prefer_country_id');
 
@@ -2350,8 +2019,7 @@ class PagesController extends Controller
             $subscription_obj = new Subscription();
             $paid_user_ids = $subscription_obj->getPaidUserIds();
 
-            if(count($item_ids) > 0)
-            {
+            if (count($item_ids) > 0) {
                 $paid_items_query->whereIn('id', $item_ids);
             }
 
@@ -2359,7 +2027,7 @@ class PagesController extends Controller
                 ->where('items.country_id', $site_prefer_country_id)
                 ->where("items.state_id", $state->id)
                 ->where('items.item_featured', Item::ITEM_FEATURED)
-                ->where(function($query) use ($paid_user_ids) {
+                ->where(function ($query) use ($paid_user_ids) {
 
                     $query->whereIn('items.user_id', $paid_user_ids)
                         ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
@@ -2367,8 +2035,7 @@ class PagesController extends Controller
 
 
             // filter paid listings city
-            if(!empty($filter_city))
-            {
+            if (!empty($filter_city)) {
                 $paid_items_query->where('items.city_id', $filter_city);
             }
 
@@ -2387,8 +2054,7 @@ class PagesController extends Controller
             //$free_user_ids = $subscription_obj->getFreeUserIds();
             $free_user_ids = $subscription_obj->getActiveUserIds();
 
-            if(count($item_ids) > 0)
-            {
+            if (count($item_ids) > 0) {
                 $free_items_query->whereIn('id', $item_ids);
             }
 
@@ -2400,8 +2066,7 @@ class PagesController extends Controller
                 ->whereIn('items.user_id', $free_user_ids);
 
             // filter free listings city
-            if(!empty($filter_city))
-            {
+            if (!empty($filter_city)) {
                 $free_items_query->where('items.city_id', $filter_city);
             }
 
@@ -2409,24 +2074,15 @@ class PagesController extends Controller
              * Start filter sort by for free listing
              */
             $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
-            if($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED)
-            {
+            if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
                 $free_items_query->orderBy('items.created_at', 'DESC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
                 $free_items_query->orderBy('items.created_at', 'ASC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
                 $free_items_query->orderBy('items.item_average_rating', 'DESC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING) {
                 $free_items_query->orderBy('items.item_average_rating', 'ASC');
-            }
-            elseif($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST)
-            {
+            } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
                 $free_items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
                     ->orderBy('distance', 'ASC');
             }
@@ -2447,22 +2103,17 @@ class PagesController extends Controller
                 'filter_city' => $filter_city,
             ];
 
-            if($total_free_items == 0 || $total_paid_items == 0)
-            {
+            if ($total_free_items == 0 || $total_paid_items == 0) {
                 $paid_items = $paid_items_query->paginate(10);
                 $free_items = $free_items_query->paginate(10);
 
-                if($total_free_items == 0)
-                {
+                if ($total_free_items == 0) {
                     $pagination = $paid_items->appends($querystringArray);
                 }
-                if($total_paid_items == 0)
-                {
+                if ($total_paid_items == 0) {
                     $pagination = $free_items->appends($querystringArray);
                 }
-            }
-            else
-            {
+            } else {
                 $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
                 $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
                 $free_items_per_page = 10 - $paid_items_per_page;
@@ -2470,12 +2121,9 @@ class PagesController extends Controller
                 $paid_items = $paid_items_query->paginate($paid_items_per_page);
                 $free_items = $free_items_query->paginate($free_items_per_page);
 
-                if(ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page))
-                {
+                if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
                     $pagination = $paid_items->appends($querystringArray);
-                }
-                else
-                {
+                } else {
                     $pagination = $free_items->appends($querystringArray);
                 }
             }
@@ -2586,22 +2234,20 @@ class PagesController extends Controller
              */
 
             return response()->json([
-                    'state' => $state,
-                    'paid_items' => $paid_items,
-                    'free_items' => $free_items,
-                    'pagination' => $pagination,
-                    'all_item_cities' => $all_item_cities,
-                    'filter_sort_by' => $filter_sort_by,
-                    'filter_all_cities' => $filter_all_cities,
-                    'filter_categories' => $filter_categories,
-                    'all_printable_categories' => $all_printable_categories,
-                    'filter_city' => $filter_city,
-                    'total_results' => $total_results
+                'state' => $state,
+                'paid_items' => $paid_items,
+                'free_items' => $free_items,
+                'pagination' => $pagination,
+                'all_item_cities' => $all_item_cities,
+                'filter_sort_by' => $filter_sort_by,
+                'filter_all_cities' => $filter_all_cities,
+                'filter_categories' => $filter_categories,
+                'all_printable_categories' => $all_printable_categories,
+                'filter_city' => $filter_city,
+                'total_results' => $total_results
             ]);
 
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -2609,17 +2255,15 @@ class PagesController extends Controller
     public function city(Request $request, string $state_slug, string $city_slug)
     {
         $state = State::where('state_slug', $state_slug)->first();
-        $state->state_image = url('/storage/state/'.$state->state_image);
-        $state->state_image_tiny = url('/storage/state/'.$state->state_image_tiny);
-        $state->state_image_small = url('/storage/state/'.$state->state_image_small);
-        $state->state_image_medium = url('/storage/state/'.$state->state_image_medium);
-        $state->state_image_blur = url('/storage/state/'.$state->state_image_blur);
-        if($state)
-        {
+        $state->state_image = url('/storage/state/' . $state->state_image);
+        $state->state_image_tiny = url('/storage/state/' . $state->state_image_tiny);
+        $state->state_image_small = url('/storage/state/' . $state->state_image_small);
+        $state->state_image_medium = url('/storage/state/' . $state->state_image_medium);
+        $state->state_image_blur = url('/storage/state/' . $state->state_image_blur);
+        if ($state) {
             $city = $state->cities()->where('city_slug', $city_slug)->first();
 
-            if($city)
-            {
+            if ($city) {
                 $settings = app('site_global_settings');
                 $site_prefer_country_id = app('site_prefer_country_id');
 
@@ -2661,8 +2305,7 @@ class PagesController extends Controller
                 $subscription_obj = new Subscription();
                 $paid_user_ids = $subscription_obj->getPaidUserIds();
 
-                if(count($item_ids) > 0)
-                {
+                if (count($item_ids) > 0) {
                     $paid_items_query->whereIn('id', $item_ids);
                 }
 
@@ -2671,7 +2314,7 @@ class PagesController extends Controller
                     ->where("items.state_id", $state->id)
                     ->where("items.city_id", $city->id)
                     ->where('items.item_featured', Item::ITEM_FEATURED)
-                    ->where(function($query) use ($paid_user_ids) {
+                    ->where(function ($query) use ($paid_user_ids) {
 
                         $query->whereIn('items.user_id', $paid_user_ids)
                             ->orWhere('items.item_featured_by_admin', Item::ITEM_FEATURED_BY_ADMIN);
@@ -2692,8 +2335,7 @@ class PagesController extends Controller
                 //$free_user_ids = $subscription_obj->getFreeUserIds();
                 $free_user_ids = $subscription_obj->getActiveUserIds();
 
-                if(count($item_ids) > 0)
-                {
+                if (count($item_ids) > 0) {
                     $free_items_query->whereIn('id', $item_ids);
                 }
 
@@ -2709,24 +2351,15 @@ class PagesController extends Controller
                  * Start filter sort by for free listing
                  */
                 $filter_sort_by = empty($request->filter_sort_by) ? Item::ITEMS_SORT_BY_NEWEST_CREATED : $request->filter_sort_by;
-                if($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED)
-                {
+                if ($filter_sort_by == Item::ITEMS_SORT_BY_NEWEST_CREATED) {
                     $free_items_query->orderBy('items.created_at', 'DESC');
-                }
-                elseif($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED)
-                {
+                } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_OLDEST_CREATED) {
                     $free_items_query->orderBy('items.created_at', 'ASC');
-                }
-                elseif($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING)
-                {
+                } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_HIGHEST_RATING) {
                     $free_items_query->orderBy('items.item_average_rating', 'DESC');
-                }
-                elseif($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING)
-                {
+                } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_LOWEST_RATING) {
                     $free_items_query->orderBy('items.item_average_rating', 'ASC');
-                }
-                elseif($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST)
-                {
+                } elseif ($filter_sort_by == Item::ITEMS_SORT_BY_NEARBY_FIRST) {
                     $free_items_query->selectRaw('*, ( 6367 * acos( cos( radians( ? ) ) * cos( radians( item_lat ) ) * cos( radians( item_lng ) - radians( ? ) ) + sin( radians( ? ) ) * sin( radians( item_lat ) ) ) ) AS distance', [$this->getLatitude(), $this->getLongitude(), $this->getLatitude()])
                         ->orderBy('distance', 'ASC');
                 }
@@ -2746,22 +2379,17 @@ class PagesController extends Controller
                     'filter_sort_by' => $filter_sort_by,
                 ];
 
-                if($total_free_items == 0 || $total_paid_items == 0)
-                {
+                if ($total_free_items == 0 || $total_paid_items == 0) {
                     $paid_items = $paid_items_query->paginate(10);
                     $free_items = $free_items_query->paginate(10);
 
-                    if($total_free_items == 0)
-                    {
+                    if ($total_free_items == 0) {
                         $pagination = $paid_items->appends($querystringArray);
                     }
-                    if($total_paid_items == 0)
-                    {
+                    if ($total_paid_items == 0) {
                         $pagination = $free_items->appends($querystringArray);
                     }
-                }
-                else
-                {
+                } else {
                     $num_of_pages = ceil(($total_paid_items + $total_free_items) / 10);
                     $paid_items_per_page = ceil($total_paid_items / $num_of_pages) < 4 ? 4 : ceil($total_paid_items / $num_of_pages);
                     $free_items_per_page = 10 - $paid_items_per_page;
@@ -2769,12 +2397,9 @@ class PagesController extends Controller
                     $paid_items = $paid_items_query->paginate($paid_items_per_page);
                     $free_items = $free_items_query->paginate($free_items_per_page);
 
-                    if(ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page))
-                    {
+                    if (ceil($total_paid_items / $paid_items_per_page) > ceil($total_free_items / $free_items_per_page)) {
                         $pagination = $paid_items->appends($querystringArray);
-                    }
-                    else
-                    {
+                    } else {
                         $pagination = $free_items->appends($querystringArray);
                     }
                 }
@@ -2896,14 +2521,10 @@ class PagesController extends Controller
                     'total_results' => $total_results
                 ]);
 
-            }
-            else
-            {
+            } else {
                 abort(404);
             }
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -2916,18 +2537,15 @@ class PagesController extends Controller
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->first();
 
-        if($item)
-        {
+        if ($item) {
             // validate product record
             $product = Product::where('product_slug', $product_slug)
                 ->where('product_status', Product::STATUS_APPROVED)
                 ->first();
 
-            if($product)
-            {
+            if ($product) {
                 // validate if the item has collected the product in the listing page
-                if($item->hasCollectedProduct($product))
-                {
+                if ($item->hasCollectedProduct($product)) {
                     /**
                      * Start SEO
                      */
@@ -2940,12 +2558,9 @@ class PagesController extends Controller
                     OpenGraph::setTitle($product->product_name . ' - ' . $item->item_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
                     OpenGraph::setDescription($product->product_description);
                     OpenGraph::setUrl(URL::current());
-                    if(empty($product->product_image_large))
-                    {
+                    if (empty($product->product_image_large)) {
                         OpenGraph::addImage(asset('frontend/images/placeholder/full_item_feature_image.webp'));
-                    }
-                    else
-                    {
+                    } else {
                         OpenGraph::addImage(Storage::disk('public')->url('product/' . $product->product_image_large));
                     }
 
@@ -2979,53 +2594,35 @@ class PagesController extends Controller
                     $opening_hour_exceptions_array = array();
 
                     $item_hours = $item->itemHours()->get();
-                    foreach($item_hours as $item_hours_key => $item_hour)
-                    {
+                    foreach ($item_hours as $item_hours_key => $item_hour) {
                         $item_hour_open_time = substr($item_hour->item_hour_open_time, 0, -3);
                         $item_hour_close_time = substr($item_hour->item_hour_close_time, 0, -3);
 
-                        if($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_MONDAY)
-                        {
+                        if ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_MONDAY) {
                             $opening_hours_array_monday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_TUESDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_TUESDAY) {
                             $opening_hours_array_tuesday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_WEDNESDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_WEDNESDAY) {
                             $opening_hours_array_wednesday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_THURSDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_THURSDAY) {
                             $opening_hours_array_thursday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_FRIDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_FRIDAY) {
                             $opening_hours_array_friday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SATURDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SATURDAY) {
                             $opening_hours_array_saturday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SUNDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SUNDAY) {
                             $opening_hours_array_sunday[] = $item_hour_open_time . "-" . $item_hour_close_time;
                         }
                     }
 
                     $item_hour_exceptions = $item->itemHourExceptions()->get();
-                    foreach($item_hour_exceptions as $item_hour_exceptions_key => $item_hour_exception)
-                    {
+                    foreach ($item_hour_exceptions as $item_hour_exceptions_key => $item_hour_exception) {
                         $item_hour_exception_open_time = empty($item_hour_exception->item_hour_exception_open_time) ? null : substr($item_hour_exception->item_hour_exception_open_time, 0, -3);
                         $item_hour_exception_close_time = empty($item_hour_exception->item_hour_exception_close_time) ? null : substr($item_hour_exception->item_hour_exception_close_time, 0, -3);
 
-                        if(!empty($item_hour_exception_open_time) && !empty($item_hour_exception_close_time))
-                        {
+                        if (!empty($item_hour_exception_open_time) && !empty($item_hour_exception_close_time)) {
                             $opening_hour_exceptions_array[$item_hour_exception->item_hour_exception_date][] = $item_hour_exception_open_time . "-" . $item_hour_exception_close_time;
-                        }
-                        else
-                        {
+                        } else {
                             $opening_hour_exceptions_array[$item_hour_exception->item_hour_exception_date] = [];
                         }
                     }
@@ -3086,8 +2683,7 @@ class PagesController extends Controller
                      * get 4 similar items by current item lat and lng
                      */
                     $item_category_ids = array();
-                    foreach($item_all_categories as $key => $category)
-                    {
+                    foreach ($item_all_categories as $key => $category) {
                         $item_category_ids[] = $category->id;
                     }
 
@@ -3095,9 +2691,8 @@ class PagesController extends Controller
                     $similar_item_ids = $category_obj->getItemIdsByCategoryIds($item_category_ids);
 
                     $similar_item_ids_length = count($similar_item_ids);
-                    if($similar_item_ids_length > Item::ITEM_SIMILAR_SHOW_MAX)
-                    {
-                        $similar_item_ids = array_slice($similar_item_ids, rand(0, $similar_item_ids_length-Item::ITEM_SIMILAR_SHOW_MAX), Item::ITEM_SIMILAR_SHOW_MAX);
+                    if ($similar_item_ids_length > Item::ITEM_SIMILAR_SHOW_MAX) {
+                        $similar_item_ids = array_slice($similar_item_ids, rand(0, $similar_item_ids_length - Item::ITEM_SIMILAR_SHOW_MAX), Item::ITEM_SIMILAR_SHOW_MAX);
                     }
 
                     $similar_items = Item::whereIn('items.id', $similar_item_ids)
@@ -3148,7 +2743,7 @@ class PagesController extends Controller
 
                     /**
                      * Start initial Google reCAPTCHA version 2
-                    //  */
+                     * //  */
                     // if($settings->setting_site_recaptcha_item_lead_enable == Setting::SITE_RECAPTCHA_ITEM_LEAD_ENABLE)
                     // {
                     //     config_re_captcha($settings->setting_site_recaptcha_site_key, $settings->setting_site_recaptcha_secret_key);
@@ -3165,19 +2760,13 @@ class PagesController extends Controller
                             'item_hours_tuesday', 'item_hours_wednesday', 'item_hours_thursday', 'item_hours_friday',
                             'item_hours_saturday', 'item_hours_sunday', 'item_hour_exceptions_obj', 'item_hours',
                             'item_hour_exceptions'));
-                }
-                else
-                {
+                } else {
                     abort(404);
                 }
-            }
-            else
-            {
+            } else {
                 abort(404);
             }
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -3194,19 +2783,16 @@ class PagesController extends Controller
         $item = Item::where('item_slug', $item_slug)
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->first();
-        $item->item_image = url('/storage/item/'.$item->item_image);
-        $item->item_image_medium = url('/storage/item/'.$item->item_image_medium);
-        $item->item_image_small = url('/storage/item/'.$item->item_image_small);
-        $item->item_image_tiny = url('/storage/item/'.$item->item_image_tiny);
-        $item->item_image_blur = url('/storage/item/'.$item->item_image_blur);
-        if($item)
-        {
+        $item->item_image = url('/storage/item/' . $item->item_image);
+        $item->item_image_medium = url('/storage/item/' . $item->item_image_medium);
+        $item->item_image_small = url('/storage/item/' . $item->item_image_small);
+        $item->item_image_tiny = url('/storage/item/' . $item->item_image_tiny);
+        $item->item_image_blur = url('/storage/item/' . $item->item_image_blur);
+        if ($item) {
             $item_user = $item->user()->first();
 
-            if($item_user)
-            {
-                if($item_user->hasActive())
-                {
+            if ($item_user) {
+                if ($item_user->hasActive()) {
                     /**
                      * Start SEO
                      */
@@ -3219,12 +2805,9 @@ class PagesController extends Controller
                     OpenGraph::setTitle($item->item_title . ' - ' . (empty($settings->setting_site_name) ? config('app.name', 'Laravel') : $settings->setting_site_name));
                     OpenGraph::setDescription($item->item_description);
                     OpenGraph::setUrl(URL::current());
-                    if(empty($item->item_image))
-                    {
+                    if (empty($item->item_image)) {
                         OpenGraph::addImage(asset('frontend/images/placeholder/full_item_feature_image.webp'));
-                    }
-                    else
-                    {
+                    } else {
                         OpenGraph::addImage(Storage::disk('public')->url('item/' . $item->item_image));
                     }
 
@@ -3261,53 +2844,35 @@ class PagesController extends Controller
                     $opening_hour_exceptions_array = array();
 
                     $item_hours = $item->itemHours()->get();
-                    foreach($item_hours as $item_hours_key => $item_hour)
-                    {
+                    foreach ($item_hours as $item_hours_key => $item_hour) {
                         $item_hour_open_time = substr($item_hour->item_hour_open_time, 0, -3);
                         $item_hour_close_time = substr($item_hour->item_hour_close_time, 0, -3);
 
-                        if($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_MONDAY)
-                        {
+                        if ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_MONDAY) {
                             $opening_hours_array_monday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_TUESDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_TUESDAY) {
                             $opening_hours_array_tuesday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_WEDNESDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_WEDNESDAY) {
                             $opening_hours_array_wednesday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_THURSDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_THURSDAY) {
                             $opening_hours_array_thursday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_FRIDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_FRIDAY) {
                             $opening_hours_array_friday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SATURDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SATURDAY) {
                             $opening_hours_array_saturday[] = $item_hour_open_time . "-" . $item_hour_close_time;
-                        }
-                        elseif($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SUNDAY)
-                        {
+                        } elseif ($item_hour->item_hour_day_of_week == ItemHour::DAY_OF_WEEK_SUNDAY) {
                             $opening_hours_array_sunday[] = $item_hour_open_time . "-" . $item_hour_close_time;
                         }
                     }
 
                     $item_hour_exceptions = $item->itemHourExceptions()->get();
-                    foreach($item_hour_exceptions as $item_hour_exceptions_key => $item_hour_exception)
-                    {
+                    foreach ($item_hour_exceptions as $item_hour_exceptions_key => $item_hour_exception) {
                         $item_hour_exception_open_time = empty($item_hour_exception->item_hour_exception_open_time) ? null : substr($item_hour_exception->item_hour_exception_open_time, 0, -3);
                         $item_hour_exception_close_time = empty($item_hour_exception->item_hour_exception_close_time) ? null : substr($item_hour_exception->item_hour_exception_close_time, 0, -3);
 
-                        if(!empty($item_hour_exception_open_time) && !empty($item_hour_exception_close_time))
-                        {
+                        if (!empty($item_hour_exception_open_time) && !empty($item_hour_exception_close_time)) {
                             $opening_hour_exceptions_array[$item_hour_exception->item_hour_exception_date][] = $item_hour_exception_open_time . "-" . $item_hour_exception_close_time;
-                        }
-                        else
-                        {
+                        } else {
                             $opening_hour_exceptions_array[$item_hour_exception->item_hour_exception_date] = [];
                         }
                     }
@@ -3369,8 +2934,7 @@ class PagesController extends Controller
                      */
 
                     $item_category_ids = array();
-                    foreach($item_all_categories as $item_all_categories_key => $category)
-                    {
+                    foreach ($item_all_categories as $item_all_categories_key => $category) {
                         $item_category_ids[] = $category->id;
                     }
 
@@ -3378,9 +2942,8 @@ class PagesController extends Controller
                     $similar_item_ids = $category_obj->getItemIdsByCategoryIds($item_category_ids);
 
                     $similar_item_ids_length = count($similar_item_ids);
-                    if($similar_item_ids_length > Item::ITEM_SIMILAR_SHOW_MAX)
-                    {
-                        $similar_item_ids = array_slice($similar_item_ids, rand(0, $similar_item_ids_length-Item::ITEM_SIMILAR_SHOW_MAX), Item::ITEM_SIMILAR_SHOW_MAX);
+                    if ($similar_item_ids_length > Item::ITEM_SIMILAR_SHOW_MAX) {
+                        $similar_item_ids = array_slice($similar_item_ids, rand(0, $similar_item_ids_length - Item::ITEM_SIMILAR_SHOW_MAX), Item::ITEM_SIMILAR_SHOW_MAX);
                     }
 
                     $similar_items = Item::whereIn('items.id', $similar_item_ids)
@@ -3590,7 +3153,7 @@ class PagesController extends Controller
                      */
 
                     return response()->json([
-                        'item'=>$item,
+                        'item' => $item,
                         'nearby_items' => $nearby_items,
                         'similar_items' => $similar_items,
                         'reviews' => $reviews,
@@ -3640,19 +3203,13 @@ class PagesController extends Controller
                         'item_hours' => $item_hours,
                         'item_hour_exceptions' => $item_hour_exceptions
                     ]);
-                }
-                else
-                {
+                } else {
                     abort(404);
                 }
-            }
-            else
-            {
+            } else {
                 abort(404);
             }
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -3663,8 +3220,7 @@ class PagesController extends Controller
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->first();
 
-        if($item)
-        {
+        if ($item) {
             $settings = app('site_global_settings');
 
             $request->validate([
@@ -3688,8 +3244,7 @@ class PagesController extends Controller
             /**
              * Start email notification
              */
-            if($settings->settings_site_smtp_enabled == Setting::SITE_SMTP_ENABLED)
-            {
+            if ($settings->settings_site_smtp_enabled == Setting::SITE_SMTP_ENABLED) {
                 // config SMTP
                 config_smtp(
                     $settings->settings_site_smtp_sender_name,
@@ -3702,8 +3257,7 @@ class PagesController extends Controller
                 );
             }
 
-            if(!empty($settings->setting_site_name))
-            {
+            if (!empty($settings->setting_site_name)) {
                 // set up APP_NAME
                 config([
                     'app.name' => $settings->setting_site_name,
@@ -3721,8 +3275,7 @@ class PagesController extends Controller
             ];
             $email_notify_action_text = __('role_permission.item-leads.email.action-text');
 
-            try
-            {
+            try {
                 Mail::to($email_admin)->send(
                     new Notification(
                         $email_subject,
@@ -3735,8 +3288,7 @@ class PagesController extends Controller
                     )
                 );
 
-                if($email_user)
-                {
+                if ($email_user) {
                     Mail::to($email_user)->send(
                         new Notification(
                             $email_subject,
@@ -3749,9 +3301,7 @@ class PagesController extends Controller
                         )
                     );
                 }
-            }
-            catch (\Exception $e)
-            {
+            } catch (\Exception $e) {
                 Log::error($e->getMessage() . "\n" . $e->getTraceAsString());
             }
             /**
@@ -3762,9 +3312,7 @@ class PagesController extends Controller
             \Session::flash('flash_type', 'success');
 
             return back();
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -3777,10 +3325,8 @@ class PagesController extends Controller
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->first();
 
-        if($item)
-        {
-            if(Auth::check())
-            {
+        if ($item) {
+            if (Auth::check()) {
                 $request->validate([
                     'item_share_email_name' => 'required|max:255',
                     'item_share_email_from_email' => 'required|email|max:255',
@@ -3794,12 +3340,7 @@ class PagesController extends Controller
                 $email_subject = __('frontend.item.send-email-subject', ['name' => $email_from_name]);
 
                 $email_notify_message = [
-                    __('frontend.item.send-email-body', ['from_name' => $email_from_name, 'url' => route('page.item',  [
-                        'category_slug' => $item->category->parent?->category_slug ?? $item->category->category_slug,
-                        'sub_category_slug' => $item->category->category_slug,
-                        'state_slug' => $item->state->state_slug,
-                        'item_slug' => $item->item_slug
-                    ])]),
+                    __('frontend.item.send-email-body', ['from_name' => $email_from_name, 'url' => route('page.item', $item->item_slug)]),
                     __('frontend.item.send-email-note'),
                     $email_note,
                 ];
@@ -3807,8 +3348,7 @@ class PagesController extends Controller
                 /**
                  * Start initial SMTP settings
                  */
-                if($settings->settings_site_smtp_enabled == Setting::SITE_SMTP_ENABLED)
-                {
+                if ($settings->settings_site_smtp_enabled == Setting::SITE_SMTP_ENABLED) {
                     // config SMTP
                     config_smtp(
                         $settings->settings_site_smtp_sender_name,
@@ -3824,16 +3364,14 @@ class PagesController extends Controller
                  * End initial SMTP settings
                  */
 
-                if(!empty($settings->setting_site_name))
-                {
+                if (!empty($settings->setting_site_name)) {
                     // set up APP_NAME
                     config([
                         'app.name' => $settings->setting_site_name,
                     ]);
                 }
 
-                try
-                {
+                try {
                     // to admin
                     Mail::to($email_to)->send(
                         new Notification(
@@ -3843,44 +3381,28 @@ class PagesController extends Controller
                             $email_notify_message,
                             __('frontend.item.view-listing'),
                             'success',
-                            route('page.item',  [
-                                'category_slug' => $item->category->parent?->category_slug ?? $item->category->category_slug,
-                                'sub_category_slug' => $item->category->category_slug,
-                                'state_slug' => $item->state->state_slug,
-                                'item_slug' => $item->item_slug
-                            ])
+                            route('page.item', $item->item_slug)
                         )
                     );
 
                     \Session::flash('flash_message', __('frontend.item.send-email-success'));
                     \Session::flash('flash_type', 'success');
 
-                }
-                catch (\Exception $e)
-                {
+                } catch (\Exception $e) {
                     Log::error($e->getMessage() . "\n" . $e->getTraceAsString());
 
                     \Session::flash('flash_message', __('theme_directory_hub.email.alert.sending-problem'));
                     \Session::flash('flash_type', 'danger');
                 }
 
-                return redirect()->route('page.item', [
-                    'category_slug' => $item->category->parent?->category_slug ?? $item->category->category_slug,
-                    'sub_category_slug' => $item->category->category_slug,
-                    'state_slug' => $item->state->state_slug,
-                    'item_slug' => $item->item_slug
-                ]);
-            }
-            else
-            {
+                return redirect()->route('page.item', $item->item_slug);
+            } else {
                 \Session::flash('flash_message', __('frontend.item.send-email-error-login'));
                 \Session::flash('flash_type', 'danger');
 
                 return redirect()->route('page.item', $item->item_slug);
             }
-        }
-        else
-        {
+        } else {
             abort(404);
         }
 
@@ -3892,21 +3414,16 @@ class PagesController extends Controller
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->first();
 
-        if($item)
-        {
-            if(Auth::check())
-            {
+        if ($item) {
+            if (Auth::check()) {
                 $login_user = Auth::user();
 
-                if($login_user->hasSavedItem($item->id))
-                {
+                if ($login_user->hasSavedItem($item->id)) {
                     \Session::flash('flash_message', __('frontend.item.save-item-error-exist'));
                     \Session::flash('flash_type', 'danger');
 
                     return redirect()->route('page.item', $item->item_slug);
-                }
-                else
-                {
+                } else {
                     $login_user->savedItems()->attach($item->id);
 
                     \Session::flash('flash_message', __('frontend.item.save-item-success'));
@@ -3914,17 +3431,13 @@ class PagesController extends Controller
 
                     return redirect()->route('page.item', $item->item_slug);
                 }
-            }
-            else
-            {
+            } else {
                 \Session::flash('flash_message', __('frontend.item.save-item-error-login'));
                 \Session::flash('flash_type', 'danger');
 
                 return redirect()->route('page.item', $item->item_slug);
             }
-        }
-        else
-        {
+        } else {
             abort(404);
         }
     }
@@ -3935,14 +3448,11 @@ class PagesController extends Controller
             ->where('item_status', Item::ITEM_PUBLISHED)
             ->first();
 
-        if($item)
-        {
-            if(Auth::check())
-            {
+        if ($item) {
+            if (Auth::check()) {
                 $login_user = Auth::user();
 
-                if($login_user->hasSavedItem($item->id))
-                {
+                if ($login_user->hasSavedItem($item->id)) {
                     $login_user->savedItems()->detach($item->id);
 
 
@@ -3950,25 +3460,19 @@ class PagesController extends Controller
                     \Session::flash('flash_type', 'success');
 
                     return redirect()->route('page.item', $item->item_slug);
-                }
-                else
-                {
+                } else {
                     \Session::flash('flash_message', __('frontend.item.unsave-item-error-exist'));
                     \Session::flash('flash_type', 'danger');
 
                     return redirect()->route('page.item', $item->item_slug);
                 }
-            }
-            else
-            {
+            } else {
                 \Session::flash('flash_message', __('frontend.item.unsave-item-error-login'));
                 \Session::flash('flash_type', 'danger');
 
                 return redirect()->route('page.item', $item->item_slug);
             }
-        }
-        else
-        {
+        } else {
             abort(404);
         }
 
@@ -4077,11 +3581,11 @@ class PagesController extends Controller
 
         return response()->view($theme_view_path . 'blog.index',
             compact('data', 'all_topics', 'all_tags', 'recent_posts',
-                    'ads_before_breadcrumb', 'ads_after_breadcrumb', 'ads_before_content', 'ads_after_content',
-                    'ads_before_sidebar_content', 'ads_after_sidebar_content', 'site_innerpage_header_background_type',
-                    'site_innerpage_header_background_color', 'site_innerpage_header_background_image',
-                    'site_innerpage_header_background_youtube_video', 'site_innerpage_header_title_font_color',
-                    'site_innerpage_header_paragraph_font_color'));
+                'ads_before_breadcrumb', 'ads_after_breadcrumb', 'ads_before_content', 'ads_after_content',
+                'ads_before_sidebar_content', 'ads_after_sidebar_content', 'site_innerpage_header_background_type',
+                'site_innerpage_header_background_color', 'site_innerpage_header_background_image',
+                'site_innerpage_header_background_youtube_video', 'site_innerpage_header_title_font_color',
+                'site_innerpage_header_paragraph_font_color'));
     }
 
     public function blogByTag(string $tag_slug)
@@ -4192,7 +3696,7 @@ class PagesController extends Controller
              */
 
             return response()->view($theme_view_path . 'blog.tag',
-                compact('tag','data', 'all_topics', 'all_tags', 'recent_posts',
+                compact('tag', 'data', 'all_topics', 'all_tags', 'recent_posts',
                     'ads_before_breadcrumb', 'ads_after_breadcrumb', 'ads_before_content', 'ads_after_content',
                     'ads_before_sidebar_content', 'ads_after_sidebar_content', 'site_innerpage_header_background_type',
                     'site_innerpage_header_background_color', 'site_innerpage_header_background_image',
@@ -4422,8 +3926,8 @@ class PagesController extends Controller
 
             $data = [
                 'author' => $post->user,
-                'post'   => $post,
-                'meta'   => $post->meta,
+                'post' => $post,
+                'meta' => $post->meta,
             ];
 
             // IMPORTANT: This event must be called for tracking visitor/view traffic
@@ -4472,12 +3976,12 @@ class PagesController extends Controller
 
             return response()->view($theme_view_path . 'blog.show',
                 compact('data', 'all_topics', 'all_tags', 'blog_post', 'recent_posts',
-                        'ads_before_breadcrumb', 'ads_after_breadcrumb', 'ads_before_feature_image',
-                        'ads_before_title', 'ads_before_post_content', 'ads_after_post_content',
-                        'ads_before_comments', 'ads_before_share', 'ads_after_share', 'ads_before_sidebar_content',
-                        'ads_after_sidebar_content', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
-                        'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
-                        'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
+                    'ads_before_breadcrumb', 'ads_after_breadcrumb', 'ads_before_feature_image',
+                    'ads_before_title', 'ads_before_post_content', 'ads_after_post_content',
+                    'ads_before_comments', 'ads_before_share', 'ads_after_share', 'ads_before_sidebar_content',
+                    'ads_after_sidebar_content', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
+                    'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
+                    'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
         } else {
             abort(404);
         }
@@ -4571,11 +4075,11 @@ class PagesController extends Controller
 
         Gate::authorize('delete-item-image-gallery', $item_image_gallery);
 
-        if(Storage::disk('public')->exists('item/gallery/' . $item_image_gallery->item_image_gallery_name)){
+        if (Storage::disk('public')->exists('item/gallery/' . $item_image_gallery->item_image_gallery_name)) {
             Storage::disk('public')->delete('item/gallery/' . $item_image_gallery->item_image_gallery_name);
         }
 
-        if(!empty($item_image_gallery->item_image_gallery_thumb_name) && Storage::disk('public')->exists('item/gallery/' . $item_image_gallery->item_image_gallery_thumb_name)){
+        if (!empty($item_image_gallery->item_image_gallery_thumb_name) && Storage::disk('public')->exists('item/gallery/' . $item_image_gallery->item_image_gallery_thumb_name)) {
             Storage::disk('public')->delete('item/gallery/' . $item_image_gallery->item_image_gallery_thumb_name);
         }
 
@@ -4586,8 +4090,7 @@ class PagesController extends Controller
 
     public function jsonDeleteReviewImageGallery(int $review_image_gallery_id)
     {
-        if(!Auth::check())
-        {
+        if (!Auth::check()) {
             return response()->json(['error' => 'user not login']);
         }
 
@@ -4595,8 +4098,7 @@ class PagesController extends Controller
             ->where('id', $review_image_gallery_id)
             ->get();
 
-        if($review_image_gallery->count() == 0)
-        {
+        if ($review_image_gallery->count() == 0) {
             return response()->json(['error' => 'review image gallery not found.']);
         }
 
@@ -4608,23 +4110,21 @@ class PagesController extends Controller
             ->where('id', $review_id)
             ->get();
 
-        if($review->count() == 0)
-        {
+        if ($review->count() == 0) {
             return response()->json(['error' => 'review not found.']);
         }
 
         $review = $review->first();
 
-        if(Auth::user()->id != $review->author_id)
-        {
+        if (Auth::user()->id != $review->author_id) {
             return response()->json(['error' => 'you cannot delete review image gallery which does not belong to you.']);
         }
 
-        if(Storage::disk('public')->exists('item/review/' . $review_image_gallery->review_image_gallery_name)){
+        if (Storage::disk('public')->exists('item/review/' . $review_image_gallery->review_image_gallery_name)) {
             Storage::disk('public')->delete('item/review/' . $review_image_gallery->review_image_gallery_name);
         }
 
-        if(Storage::disk('public')->exists('item/review/' . $review_image_gallery->review_image_gallery_thumb_name)){
+        if (Storage::disk('public')->exists('item/review/' . $review_image_gallery->review_image_gallery_thumb_name)) {
             Storage::disk('public')->delete('item/review/' . $review_image_gallery->review_image_gallery_thumb_name);
         }
 
@@ -4643,15 +4143,12 @@ class PagesController extends Controller
         $old_lng = session('user_device_location_lng', 0.0);
 
         $reload_page = false;
-        if($settings->setting_site_map_reload_homepage == Setting::SITE_MAP_RELOAD_HOMEPAGE_YES)
-        {
-            if(!empty($lat) && !empty($lng))
-            {
+        if ($settings->setting_site_map_reload_homepage == Setting::SITE_MAP_RELOAD_HOMEPAGE_YES) {
+            if (!empty($lat) && !empty($lng)) {
                 $distance_meters = get_vincenty_great_circle_distance($old_lat, $old_lng, $lat, $lng);
 
                 // if the location changed more than 50000m, ask reload page
-                if($distance_meters > 50000)
-                {
+                if ($distance_meters > 50000) {
                     $reload_page = true;
                 }
             }
@@ -4667,7 +4164,7 @@ class PagesController extends Controller
             'lat' => session('user_device_location_lat', ''),
             'lng' => session('user_device_location_lng', ''),
             'reload' => $reload_page,
-            ]);
+        ]);
     }
 
     public function pricing(Request $request)
@@ -4689,8 +4186,7 @@ class PagesController extends Controller
 
         $login_user = null;
 
-        if(Auth::check())
-        {
+        if (Auth::check()) {
             $login_user = Auth::user();
         }
 
@@ -4734,7 +4230,7 @@ class PagesController extends Controller
          */
 
         return response()->view($theme_view_path . 'pricing',
-            compact('plans','login_user', 'site_name', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
+            compact('plans', 'login_user', 'site_name', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
                 'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
                 'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
     }
@@ -4754,8 +4250,7 @@ class PagesController extends Controller
          * End SEO
          */
 
-        if($settings->setting_page_terms_of_service_enable == Setting::TERM_PAGE_ENABLED)
-        {
+        if ($settings->setting_page_terms_of_service_enable == Setting::TERM_PAGE_ENABLED) {
             $terms_of_service = $settings->setting_page_terms_of_service;
 
             /**
@@ -4793,11 +4288,9 @@ class PagesController extends Controller
 
             return response()->view($theme_view_path . 'terms-of-service',
                 compact('terms_of_service', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
-                        'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
-                        'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
-        }
-        else
-        {
+                    'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
+                    'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
+        } else {
             abort(404);
         }
     }
@@ -4817,8 +4310,7 @@ class PagesController extends Controller
          * End SEO
          */
 
-        if($settings->setting_page_privacy_policy_enable == Setting::PRIVACY_PAGE_ENABLED)
-        {
+        if ($settings->setting_page_privacy_policy_enable == Setting::PRIVACY_PAGE_ENABLED) {
             $privacy_policy = $settings->setting_page_privacy_policy;
 
             /**
@@ -4856,11 +4348,9 @@ class PagesController extends Controller
 
             return response()->view($theme_view_path . 'privacy-policy',
                 compact('privacy_policy', 'site_innerpage_header_background_type', 'site_innerpage_header_background_color',
-                        'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
-                        'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
-        }
-        else
-        {
+                    'site_innerpage_header_background_image', 'site_innerpage_header_background_youtube_video',
+                    'site_innerpage_header_title_font_color', 'site_innerpage_header_paragraph_font_color'));
+        } else {
             abort(404);
         }
     }
@@ -4873,14 +4363,11 @@ class PagesController extends Controller
      */
     public function updateLocale(Request $request, string $user_prefer_language)
     {
-        if(Auth::check())
-        {
+        if (Auth::check()) {
             $login_user = Auth::user();
             $login_user->user_prefer_language = $user_prefer_language;
             $login_user->save();
-        }
-        else
-        {
+        } else {
             // save to language preference to session.
             Session::put('user_prefer_language', $user_prefer_language);
         }
@@ -4898,16 +4385,12 @@ class PagesController extends Controller
     public function updateCountry(Request $request, int $user_prefer_country_id)
     {
         $country_exist = Country::find($user_prefer_country_id);
-        if($country_exist)
-        {
-            if(Auth::check())
-            {
+        if ($country_exist) {
+            if (Auth::check()) {
                 $login_user = Auth::user();
                 $login_user->user_prefer_country_id = $country_exist->id;
                 $login_user->save();
-            }
-            else
-            {
+            } else {
                 // save to language preference to session.
                 Session::put('user_prefer_country_id', $country_exist->id);
             }
@@ -4926,11 +4409,11 @@ class PagesController extends Controller
 
         Gate::authorize('delete-product-image-gallery', $product_image_gallery);
 
-        if(Storage::disk('public')->exists('product/gallery/' . $product_image_gallery->product_image_gallery_name)){
+        if (Storage::disk('public')->exists('product/gallery/' . $product_image_gallery->product_image_gallery_name)) {
             Storage::disk('public')->delete('product/gallery/' . $product_image_gallery->product_image_gallery_name);
         }
 
-        if(Storage::disk('public')->exists('product/gallery/' . $product_image_gallery->product_image_gallery_thumb_name)){
+        if (Storage::disk('public')->exists('product/gallery/' . $product_image_gallery->product_image_gallery_thumb_name)) {
             Storage::disk('public')->delete('product/gallery/' . $product_image_gallery->product_image_gallery_thumb_name);
         }
 
@@ -4941,12 +4424,9 @@ class PagesController extends Controller
 
     private function getLatitude()
     {
-        if(!empty(session('user_device_location_lat', '')))
-        {
+        if (!empty(session('user_device_location_lat', ''))) {
             $latitude = session('user_device_location_lat', '');
-        }
-        else
-        {
+        } else {
             $latitude = app('site_global_settings')->setting_site_location_lat;
         }
 
@@ -4955,12 +4435,9 @@ class PagesController extends Controller
 
     private function getLongitude()
     {
-        if(!empty(session('user_device_location_lng', '')))
-        {
+        if (!empty(session('user_device_location_lng', ''))) {
             $longitude = session('user_device_location_lng', '');
-        }
-        else
-        {
+        } else {
             $longitude = app('site_global_settings')->setting_site_location_lng;
         }
 

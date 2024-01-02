@@ -10,7 +10,6 @@ class BlogsCollection extends JsonResource
 {
     public function toArray($request)
     {
-
         return [
                 "id"=> $this->id,
                 "title"=> $this->title??'',
@@ -26,7 +25,7 @@ class BlogsCollection extends JsonResource
                 "meta_keywords"=> $this->meta_keywords??'',
                 "meta_keywords_ar"=> $this->meta_keywords_ar??'',
                 "canonical"=> $this->canonical??'',
-            "image"=> $this->image ? asset('storage/'.$this->getImg($this->image)):null,
+                "image"=> $this->image ? asset('storage/'.$this->image ?? ''):null,
                 "blog_category_id"=> $this->blog_category_id??'',
                 "alt_image"=> $this->alt_image??'',
                 "alt_image_ar"=> $this->alt_image_ar??'',

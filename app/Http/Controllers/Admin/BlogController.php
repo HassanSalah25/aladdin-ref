@@ -23,7 +23,7 @@ class BlogController extends Controller
         //
         $all_blogs = Blog::orderBy('id','DESC');
             if($request->search_keyword){
-                $all_blogs->where('blog_slug->ar','LIKE','%'.$request->search_keyword.'%');
+                $all_blogs->where('title->ar','LIKE','%'.$request->search_keyword.'%');
             }
         $all_blogs =  $all_blogs->paginate(10);
 

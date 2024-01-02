@@ -284,7 +284,11 @@
 
                                 @if($free_items->count() > 0)
                                     @foreach($free_items as $free_items_key => $item)
-                                        @include('frontend.partials.free-item-inline')
+                                        @if($item->item_featured == 1)
+                                            @include('frontend.partials.reverse-free-item-inline')
+                                        @else
+                                            @include('frontend.partials.free-item-inline')
+                                        @endif
                                     @endforeach
                                 @endif
                             </div>

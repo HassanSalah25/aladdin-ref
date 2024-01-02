@@ -71,6 +71,7 @@ class Category extends Model
         'alt_image',
         'items_count',
         'canonical',
+        'children_count',
     ];
 /*'meta_title', 'meta_description', 'meta_keywords',
 'alt_image','canonical'*/

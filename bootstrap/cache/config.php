@@ -1351,9 +1351,9 @@
     array (
       'defaults' => 
       array (
-        'title' => 'It\'s Over 9000!',
+        'title' => '',
         'titleBefore' => false,
-        'description' => 'For those who helped create the Genki Dama',
+        'description' => '',
         'separator' => ' - ',
         'keywords' => 
         array (

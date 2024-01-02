@@ -3,12 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
-use App\Models\ImportCsvData;
 use App\Models\Item;
 use App\Models\ItemEN;
 use App\Services\DataServices;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class UploadDataController extends Controller
 {
@@ -41,13 +39,13 @@ class UploadDataController extends Controller
 
     public function update_counts()
     {
-        Category::chunk(100,function($categories){
-            foreach($categories as $category){
-                if($category->children->count() > 0)
+        Category::chunk(100, function ($categories) {
+            foreach ($categories as $category) {
+                if ($category->children->count() > 0)
                     $category->update([
                         'children_count' => $category->children->count(),
                     ]);
-                else{
+                else {
                     $category->update([
                         'items_count' => $category->items->count(),
                     ]);
@@ -84,6 +82,35 @@ class UploadDataController extends Controller
         dd($arr);
     }
 
+    public function update_title_desc()
+    {
+
+        $file = file_get_contents(storage_path('app/importer/metas_listing.json'));
+        $objects = json_decode($file);
+        $arr = [];
+        foreach ($objects as $key => $object) {
+            foreach ($object as $inner_key => $inner_object) {
+                $word = $this->unifyArabicCharacters(trim($inner_key));
+                $category = Category::where('category_name', $word)->first();
+                if ($word)
+                    Item::where('category_id', $category->id)
+                        ->chunk(100, function ($items) use ($inner_object) {
+                            foreach ($items as $item) {
+                                $item->update([
+                                    'meta_title' => str_replace('( brand name )', $item->item_title, $inner_object[0]),
+                                    'meta_description' => str_replace(['( brand name )', '( الحي او المدينة)'], [$item->item_title, $item->city_city_name], $inner_object[1]),
+                                ]);
+                            }
+                        });
+                else{
+                    array_push($arr,$word);
+                }
+            }
+        }
+        dd($arr);
+
+    }
+
     public function delete_dublicates(Request $request)
     {
         $duplicateItems = Item::select('item_title', 'item_address')
@@ -118,7 +145,7 @@ class UploadDataController extends Controller
         }
     }
 
-        public function update_company_id()
+    public function update_company_id()
     {
         $files = scandir(storage_path('app/importer/'));
 

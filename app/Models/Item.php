@@ -137,8 +137,7 @@ class Item extends Model implements ReviewRateable
         'canonical',
     ];
 
-    public $translatable = ['meta_title', 'meta_description', 'meta_keywords',
-        'alt_image','canonical'];
+    public $translatable = [];
 
     public function searchableAs()
     {

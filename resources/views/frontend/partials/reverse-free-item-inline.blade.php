@@ -124,16 +124,20 @@
               </button>--}}
             @if($item->item_phone)
                 <a href="tel:{{ $item->item_phone}}"
-                   class="btn style="color: var(--primary) !important;background-color: white;btn-primary profile__details__contact-btn">
-                    <i class="las la-phone"></i>
+                   class="btn my-btn profile__details__contact-btn"
+                   style="color: var(--primary) !important;background-color: white;">
+                    <i class="las la-phone"
+                       style="color: var(--primary) !important;background-color: white;"></i>
                     <span>الهاتف</span>
                 </a>
             @endif
             @if(!empty($item->itemPhones))
                 @foreach($item->itemPhones as $phone)
                     <a href="tel:{{ $phone->phone}}"
-                       class="btn style="color: var(--primary) !important;background-color: white;btn-primary profile__details__contact-btn">
-                        <i class="las la-phone"></i>
+                       class="btn my-btn profile__details__contact-btn"
+                       style="color: var(--primary) !important;background-color: white;">
+                        <i class="las la-phone"
+                           style="color: var(--primary) !important;background-color: white;"></i>
                         <span>الهاتف {{$loop->iteration}}</span>
                     </a>
                 @endforeach
@@ -141,7 +145,7 @@
             @endif
             @if($item->item_lat != 0 && $item->item_lng != 0)
                     <a class="btn my-btn profile__details__contact-btn"
-                       style="color: var(--primary) !important;background-color: white;
+                       style="color: var(--primary) !important;background-color: white;"
                    target="_blank"
                    href="{{ 'https://www.google.com/maps/dir/?api=1&destination=' . $item->item_lat . ',' . $item->item_lng }}">
                     <i class="las la-map-marker"></i>
